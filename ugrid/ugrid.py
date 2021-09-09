@@ -1,6 +1,6 @@
 import logging
 import platform
-from ctypes import CDLL, byref, c_char_p, c_double, c_int, c_size_t, c_wchar_p
+from ctypes import CDLL, byref, c_char_p, c_int
 from enum import IntEnum, unique
 from pathlib import Path
 from typing import Callable
@@ -24,7 +24,7 @@ class Status(IntEnum):
 
 
 class UGrid:
-    """This class is the entry point for interacting with the MeshKernel library"""
+    """This class is the entry point for interacting with the UGridPy library"""
 
     def __init__(self, file_path, method):
         """Constructor of UGrid
@@ -45,7 +45,6 @@ class UGrid:
             raise OSError(f"Unsupported operating system: {system}")
 
         self.lib = CDLL(str(lib_path))
-        self._file_id = -1
         self._open(file_path, method)
 
     def __enter__(self):
@@ -73,7 +72,7 @@ class UGrid:
         if method == "r+":
             file_mode = self.lib.ug_file_replace_mode()
 
-        c_file_id = c_int(self._file_id)
+        c_file_id = c_int(-1)
         file_path_bytes = bytes(file_path, encoding="utf8")
         self._execute_function(
             self.lib.ug_file_open,
@@ -147,16 +146,16 @@ class UGrid:
             c_network1d.node_name_long, c_network1d.num_nodes, name_long_size
         )
 
-        network1d.node_name_id = decode_byte_vector_to_list_of_str(
-            c_network1d.node_name_id, c_network1d.num_nodes, name_size
+        network1d.branch_name_id = decode_byte_vector_to_list_of_str(
+            c_network1d.branch_name_id, c_network1d.num_branches, name_size
         )
-        network1d.node_name_long = decode_byte_vector_to_list_of_str(
-            c_network1d.node_name_long, c_network1d.num_nodes, name_long_size
+        network1d.branch_name_long = decode_byte_vector_to_list_of_str(
+            c_network1d.branch_name_long, c_network1d.num_branches, name_long_size
         )
 
         return network1d
 
-    def network1d_define(self, network1d: Network1D, topology_id) -> None:
+    def network1d_define(self, network1d: Network1D, topology_id: int) -> None:
         """Description
 
         Comment
@@ -168,10 +167,10 @@ class UGrid:
         c_network1D = CNetwork1D.from_py_structure(network1d)
 
         self._execute_function(
-            self.lib.ug_network1d_def, c_int(self.topology_id), byref(c_network1D)
+            self.lib.ug_network1d_def, byref(c_int(topology_id)), byref(c_network1D)
         )
 
-    def network1d_put(self, network1d: Network1D, topology_id) -> None:
+    def network1d_put(self, topology_id: int, network1d: Network1D) -> None:
         """Description
 
         Comment
@@ -182,7 +181,7 @@ class UGrid:
         c_network1D = CNetwork1D.from_py_structure(network1d)
 
         self._execute_function(
-            self.lib.ug_network1d_put, c_int(self.topology_id), byref(c_network1D)
+            self.lib.ug_network1d_put, c_int(topology_id), byref(c_network1D)
         )
 
     def _get_error(self) -> str:
@@ -191,7 +190,7 @@ class UGrid:
         return c_error_message.value.decode("ASCII")
 
     def get_ugrid_version(self) -> str:
-        """Get the version of the underlying C++ MeshKernel library
+        """Get the version of the underlying C++ UGrid library
 
         Returns:
             str: The version string

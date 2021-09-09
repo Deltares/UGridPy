@@ -9,14 +9,14 @@ from ugrid.py_structures import Network1D
 
 
 def decode_byte_vector_to_str(bvector: bytes, ncolumns: int) -> str:
-    return bvector[:ncolumns].decode("UTF-8")
+    return bvector[:ncolumns].decode("UTF-8").strip()
 
 
 def decode_byte_vector_to_list_of_str(
     bvector: bytes, nrows: int, ncolumns: int
 ) -> list:
     return [
-        bvector[ncolumns * r : ncolumns * (r + 1)].decode("UTF-8") for r in range(nrows)
+        bvector[ncolumns * r : ncolumns * (r + 1)].decode("UTF-8").strip() for r in range(nrows)
     ]
 
 
