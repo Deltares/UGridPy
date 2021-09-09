@@ -53,6 +53,7 @@ class UGrid:
     def __exit__(self, type, value, traceback):
         self._execute_function(self.lib.ug_file_close, self._file_id)
         error_message = self._get_error()
+        # Raise an exception if an error is present
         if error_message:
             raise UGridError(error_message)
 

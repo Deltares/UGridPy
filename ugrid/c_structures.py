@@ -100,7 +100,7 @@ class CNetwork1D(Structure):
         node_name_id = np.chararray(self.num_nodes * name_size)
         node_name_long = np.chararray(self.num_nodes * name_long_size)
         branch_node = np.empty(self.num_nodes, dtype=np.int)
-        branch_length = np.empty(self.num_nodes, dtype=np.double)
+        branch_length = np.empty(self.num_branches, dtype=np.double)
         branch_order = np.empty(self.num_branches, dtype=np.int)
         branch_name_id = np.chararray(self.num_branches * name_size)
         branch_name_long = np.chararray(self.num_branches * name_long_size)
