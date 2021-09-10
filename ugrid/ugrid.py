@@ -186,10 +186,14 @@ class UGrid:
         Args:
 
         """
-        c_network1D = CNetwork1D.from_py_structure(network1d)
+
+        name_size = self.lib.ug_name_get_length()
+        name_long_size = self.lib.ug_name_get_long_length()
+
+        c_network1D = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
 
         self._execute_function(
-            self.lib.ug_network1d_put, c_int(topology_id), byref(c_network1D)
+            self.lib.ug_network1d_put, self._file_id, c_int(topology_id), byref(c_network1D)
         )
 
     def _get_error(self) -> str:

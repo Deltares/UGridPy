@@ -66,9 +66,10 @@ def test_network1d_get():
 
 
 def test_network1d_define():
-    r"""Tests `network1d_get_num_topologies` and `network1d_get` to read a network1d from file."""
+    r"""Tests `network1d_define` and `network1d_put` to read a network1d from file."""
 
-    with UGrid("./data/written_files/AllUGridEntities.nc", "w+") as ug:
+    with UGrid("./data/written_files/Network1DWrite.nc", "w+") as ug:
         network1d = create_network1d()
         topology_id = ug.network1d_define(network1d)
         assert topology_id == 0
+        ug.network1d_put(topology_id, network1d)

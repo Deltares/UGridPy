@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from ctypes import POINTER, Structure, c_char, c_double, c_int, c_char_p
+from ctypes import POINTER, Structure, c_double, c_int, c_char_p
 
 import numpy as np
 from numpy.ctypeslib import as_ctypes
 
 from ugrid.py_structures import Network1D
 
+
 def decode_byte_vector_to_string(byte_vector: bytes, ncolumns: int) -> str:
     return byte_vector[:ncolumns].decode("UTF-8").strip()
+
 
 def decode_byte_vector_to_list_of_string(
         byte_vector: bytes, nrows: int, str_size: int
@@ -17,12 +19,13 @@ def decode_byte_vector_to_list_of_string(
         byte_vector[str_size * r: str_size * (r + 1)].decode("UTF-8").strip() for r in range(nrows)
     ]
 
-def pad_and_join_list_of_strings(string_list: list, str_size: int):
 
+def pad_and_join_list_of_strings(string_list: list, str_size: int):
     for i in range(len(string_list)):
         string_list[i] = string_list[i].ljust(str_size)
     result = "".join(string_list)
     return result
+
 
 class CNetwork1D(Structure):
     """C-structure intended for internal use only.
