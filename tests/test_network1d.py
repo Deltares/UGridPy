@@ -5,7 +5,7 @@ from ugrid import UGrid, Network1D
 
 
 def create_network1d():
-    r"""Create a network1d"""
+    r"""Create a network1d with dimensions and data"""
 
     node_x = np.array([293.78, 538.89], dtype=np.double)
     node_y = np.array([27.48, 956.75], dtype=np.double)
@@ -31,7 +31,7 @@ def create_network1d():
                           geometry_nodes_x,
                           geometry_nodes_y)
 
-    network1d.name = "network1d"
+    network1d.name = "network"
     network1d.node_name_id = ["nodesids", "nodesids"]
     network1d.node_name_long = ["nodeslongNames", "nodeslongNames"]
     network1d.branch_name_id = ["branchids"]
@@ -48,6 +48,8 @@ def test_network1d_get():
         network1d = ug.network1d_get(num_network_topologies - 1)
 
         expected_network1d = create_network1d()
+
+        assert expected_network1d.name == network1d.name
 
         assert_array_equal(network1d.node_name_id, expected_network1d.node_name_id)
         assert_array_equal(network1d.node_name_long, expected_network1d.node_name_long)
