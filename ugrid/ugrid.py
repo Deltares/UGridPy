@@ -7,15 +7,14 @@ from typing import Callable
 
 from ugrid.c_structures import (
     CNetwork1D,
-    decode_byte_vector_to_list_of_str,
-    decode_byte_vector_to_str,
+    decode_byte_vector_to_list_of_string,
+    decode_byte_vector_to_string,
 )
 from ugrid.errors import UGridError
 from ugrid.py_structures import Network1D
 from ugrid.version import __version__
 
 logger = logging.getLogger(__name__)
-
 
 @unique
 class Status(IntEnum):
@@ -68,20 +67,23 @@ class UGrid:
 
         if method == "r":
             file_mode = self.lib.ug_file_read_mode()
-        if method == "w":
+        elif method == "w":
             file_mode = self.lib.ug_file_write_mode()
-        if method == "r+":
+        elif method == "w+":
             file_mode = self.lib.ug_file_replace_mode()
+        else:
+            raise ValueError('Unsupported file mode')
 
-        c_file_id = c_int(-1)
+        self._file_id = c_int(-1)
+
         file_path_bytes = bytes(file_path, encoding="utf8")
         self._execute_function(
             self.lib.ug_file_open,
             file_path_bytes,
             c_int(file_mode),
-            byref(c_file_id),
+            byref(self._file_id),
         )
-        self._file_id = c_file_id
+
 
     def network1d_get_num_topologies(self) -> int:
         """Description
@@ -139,24 +141,24 @@ class UGrid:
 
         network1d.is_spherical = bool(c_network1d.is_spherical)
         network1d.start_index = c_network1d.start_index
-        network1d.name = decode_byte_vector_to_str(c_network1d.name, name_size)
-        network1d.node_name_id = decode_byte_vector_to_list_of_str(
+        network1d.name = decode_byte_vector_to_string(c_network1d.name, name_size)
+        network1d.node_name_id = decode_byte_vector_to_list_of_string(
             c_network1d.node_name_id, c_network1d.num_nodes, name_size
         )
-        network1d.node_name_long = decode_byte_vector_to_list_of_str(
+        network1d.node_name_long = decode_byte_vector_to_list_of_string(
             c_network1d.node_name_long, c_network1d.num_nodes, name_long_size
         )
 
-        network1d.branch_name_id = decode_byte_vector_to_list_of_str(
+        network1d.branch_name_id = decode_byte_vector_to_list_of_string(
             c_network1d.branch_name_id, c_network1d.num_branches, name_size
         )
-        network1d.branch_name_long = decode_byte_vector_to_list_of_str(
+        network1d.branch_name_long = decode_byte_vector_to_list_of_string(
             c_network1d.branch_name_long, c_network1d.num_branches, name_long_size
         )
 
         return network1d
 
-    def network1d_define(self, network1d: Network1D, topology_id: int) -> None:
+    def network1d_define(self, network1d: Network1D) -> int:
         """Description
 
         Comment
@@ -165,11 +167,16 @@ class UGrid:
 
         """
 
-        c_network1D = CNetwork1D.from_py_structure(network1d)
+        name_size = self.lib.ug_name_get_length()
+        name_long_size = self.lib.ug_name_get_long_length()
 
-        self._execute_function(
-            self.lib.ug_network1d_def, byref(c_int(topology_id)), byref(c_network1D)
-        )
+        c_network1D = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
+
+        c_topology_id = c_int(-1)
+
+        self._execute_function(self.lib.ug_network1d_def, self._file_id, byref(c_network1D), byref(c_topology_id))
+
+        return c_topology_id.value
 
     def network1d_put(self, topology_id: int, network1d: Network1D) -> None:
         """Description
