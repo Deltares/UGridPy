@@ -103,11 +103,8 @@ def create_mesh1d():
     edge_x = np.empty(edge_node.size // 2, dtype=np.double)
     edge_y = np.empty(edge_node.size // 2, dtype=np.double)
 
-    node_name_id = []
-    node_name_long = []
-    for n in range(branch_id.size):
-        node_name_id.append("meshnodeids")
-        node_name_long.append("meshnodelongnames")
+    node_name_id = ["meshnodeids" for _ in range(branch_id.size)]
+    node_name_long = ["meshnodelongnames" for _ in range(branch_id.size)]
 
     mesh1d = Mesh1D(
         name=name,

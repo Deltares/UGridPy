@@ -68,8 +68,8 @@ def create_contacts():
     mesh_to_name = "1dmesh"
     mesh_from_location = 0
     mesh_to_location = 0
-    contact_name_id = ["linkid" for n in range(contacts.size // 2)]
-    contact_name_long = ["linklongname" for n in range(contacts.size // 2)]
+    contact_name_id = ["linkid" for _ in range(contacts.size // 2)]
+    contact_name_long = ["linklongname" for _ in range(contacts.size // 2)]
 
     contacts = Contacts(
         name=name,

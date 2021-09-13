@@ -513,16 +513,16 @@ class CContacts(Structure):
         mesh_from_name_padded = contacts.mesh_from_name.ljust(name_size)
         mesh_to_name_padded = contacts.mesh_to_name.ljust(name_size)
 
-        contact_name_id = pad_and_join_list_of_strings(contacts.contact_name_id, name_size)
-        contact_name_long = pad_and_join_list_of_strings(contacts.contact_name_long, name_long_size)
+        contact_name_id_padded = pad_and_join_list_of_strings(contacts.contact_name_id, name_size)
+        contact_name_long_padded = pad_and_join_list_of_strings(contacts.contact_name_long, name_long_size)
 
         c_contacts.name = c_char_p(contacts_name_padded.encode("utf-8"))
         c_contacts.contacts = numpy_array_to_ctypes(contacts.contacts)
         c_contacts.contact_type = numpy_array_to_ctypes(contacts.contact_type)
         c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("utf-8"))
         c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("utf-8"))
-        c_contacts.contact_name_id = c_char_p(contact_name_id.encode("utf-8"))
-        c_contacts.contact_name_long = c_char_p(contact_name_long.encode("utf-8"))
+        c_contacts.contact_name_id = c_char_p(contact_name_id_padded.encode("utf-8"))
+        c_contacts.contact_name_long = c_char_p(contact_name_long_padded.encode("utf-8"))
         c_contacts.mesh_from_location = contacts.mesh_from_location
         c_contacts.mesh_to_location = contacts.mesh_to_location
 
