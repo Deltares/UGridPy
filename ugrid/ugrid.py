@@ -8,11 +8,12 @@ from typing import Callable
 from ugrid.c_structures import (
     CNetwork1D,
     CMesh1D,
+    CMesh2D,
     decode_byte_vector_to_list_of_string,
     decode_byte_vector_to_string,
 )
 from ugrid.errors import UGridError
-from ugrid.py_structures import Network1D, Mesh1D
+from ugrid.py_structures import Network1D, Mesh1D, Mesh2D
 from ugrid.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,7 @@ class UGrid:
         elif method == "w+":
             file_mode = self.lib.ug_file_replace_mode()
         else:
-            raise ValueError('Unsupported file mode')
+            raise ValueError("Unsupported file mode")
 
         self._file_id = c_int(-1)
 
@@ -183,7 +184,12 @@ class UGrid:
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(self.lib.ug_network1d_def, self._file_id, byref(c_network1D), byref(c_topology_id))
+        self._execute_function(
+            self.lib.ug_network1d_def,
+            self._file_id,
+            byref(c_network1D),
+            byref(c_topology_id),
+        )
 
         return c_topology_id.value
 
@@ -201,7 +207,10 @@ class UGrid:
         c_network1D = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
 
         self._execute_function(
-            self.lib.ug_network1d_put, self._file_id, c_int(topology_id), byref(c_network1D)
+            self.lib.ug_network1d_put,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_network1D),
         )
 
     def mesh1d_get_num_topologies(self) -> int:
@@ -264,8 +273,15 @@ class UGrid:
             byref(c_mesh1d),
         )
 
+        mesh1d.is_spherical = bool(c_mesh1d.is_spherical)
+        mesh1d.start_index = c_mesh1d.start_index
+        mesh1d.double_fill_value = c_mesh1d.double_fill_value
+        mesh1d.int_fill_value = c_mesh1d.int_fill_value
+
         mesh1d.name = decode_byte_vector_to_string(c_mesh1d.name, name_size)
-        mesh1d.network_name = decode_byte_vector_to_string(c_mesh1d.network_name, name_size)
+        mesh1d.network_name = decode_byte_vector_to_string(
+            c_mesh1d.network_name, name_size
+        )
 
         mesh1d.node_name_id = decode_byte_vector_to_list_of_string(
             c_mesh1d.node_name_id, c_mesh1d.num_nodes, name_size
@@ -273,9 +289,6 @@ class UGrid:
         mesh1d.node_name_long = decode_byte_vector_to_list_of_string(
             c_mesh1d.node_name_long, c_mesh1d.num_nodes, name_long_size
         )
-
-        mesh1d.is_spherical = bool(c_mesh1d.is_spherical)
-        mesh1d.start_index = c_mesh1d.start_index
 
         return mesh1d
 
@@ -296,7 +309,9 @@ class UGrid:
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(self.lib.ug_mesh1d_def, self._file_id, byref(c_mesh1d), byref(c_topology_id))
+        self._execute_function(
+            self.lib.ug_mesh1d_def, self._file_id, byref(c_mesh1d), byref(c_topology_id)
+        )
 
         return c_topology_id.value
 
@@ -315,6 +330,111 @@ class UGrid:
 
         self._execute_function(
             self.lib.ug_mesh1d_put, self._file_id, c_int(topology_id), byref(c_mesh1d)
+        )
+
+    def mesh2d_get_num_topologies(self) -> int:
+        """Description
+
+        Gets the number of mesh2d topologies contained in the file.
+
+        Returns:
+            int: The number of mesh2d topologies contained in the file.
+
+        """
+
+        topology_enum = self.lib.ug_topology_get_mesh2d_enum()
+        num_topologies = self.lib.ug_topology_get_count(
+            self._file_id, c_int(topology_enum)
+        )
+        return num_topologies
+
+    def _mesh2d_inquire(self, topology_id) -> CMesh2D:
+        """For internal use only.
+
+        Inquires the mesh2d dimensions and names.
+
+        Args:
+            topology_id (int): The index of the mesh2d topology to inquire.
+
+        Returns:
+            CMesh2D: The mesh2d dimensions.
+
+        """
+
+        c_mesh2d = CMesh2D()
+        self._execute_function(
+            self.lib.ug_mesh2d_inq,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_mesh2d),
+        )
+        return c_mesh2d
+
+    def mesh2d_get(self, topology_id) -> Mesh2D:
+        """Gets the mesh2d data.
+
+        Args:
+            topology_id (int): The index of the mesh2d topology to retrieve.
+
+        Returns:
+            Mesh2D: The mesh2d (dimensions and data)
+        """
+
+        c_mesh2d = self._mesh2d_inquire(topology_id)
+        name_size = self.lib.ug_name_get_length()
+
+        mesh2d = c_mesh2d.allocate_memory(name_size)
+        self._execute_function(
+            self.lib.ug_mesh2d_get,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_mesh2d),
+        )
+
+        mesh2d.is_spherical = bool(c_mesh2d.is_spherical)
+        mesh2d.start_index = c_mesh2d.start_index
+        mesh2d.double_fill_value = c_mesh2d.double_fill_value
+        mesh2d.int_fill_value = c_mesh2d.int_fill_value
+
+        mesh2d.name = decode_byte_vector_to_string(c_mesh2d.name, name_size)
+
+        return mesh2d
+
+    def mesh2d_define(self, mesh2d: Mesh2D) -> int:
+        """Defines a new mesh2d in a UGrid file.
+
+        Args:
+            mesh2d (Mesh2D): A mesh2d (dimensions and data)
+
+        Returns:
+            int: The index of the defined mesh2d topology.
+        """
+
+        name_size = self.lib.ug_name_get_length()
+
+        c_mesh2d = CMesh2D.from_py_structure(mesh2d, name_size)
+
+        c_topology_id = c_int(-1)
+
+        self._execute_function(
+            self.lib.ug_mesh2d_def, self._file_id, byref(c_mesh2d), byref(c_topology_id)
+        )
+
+        return c_topology_id.value
+
+    def mesh2d_put(self, topology_id: int, mesh2d: Mesh2D) -> None:
+        """Writes a new mesh2d in a UGrid file.
+
+        Args:
+            topology_id (int): The index of the mesh2d topology to write.
+            mesh2d (Mesh2D): A mesh2d (dimensions and data)
+        """
+
+        name_size = self.lib.ug_name_get_length()
+        c_mesh2d = CMesh2D.from_py_structure(mesh2d, name_size)
+
+        self._execute_function(
+            self.lib.ug_mesh2d_put, self._file_id, c_int(topology_id), byref(c_mesh2d)
         )
 
     def _get_error(self) -> str:
