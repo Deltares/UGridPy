@@ -122,8 +122,7 @@ def create_mesh1d():
         edge_x=edge_x,
         edge_y=edge_y,
         node_name_id=node_name_id,
-        node_name_long=node_name_long,
-    )
+        node_name_long=node_name_long)
     return mesh1d
 
 

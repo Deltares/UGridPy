@@ -9,11 +9,12 @@ from ugrid.c_structures import (
     CNetwork1D,
     CMesh1D,
     CMesh2D,
-    decode_byte_vector_to_list_of_string,
+    CContacts,
+    decode_byte_vector_to_list_of_strings,
     decode_byte_vector_to_string,
 )
 from ugrid.errors import UGridError
-from ugrid.py_structures import Network1D, Mesh1D, Mesh2D
+from ugrid.py_structures import Network1D, Mesh1D, Mesh2D, Contacts
 from ugrid.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -151,17 +152,17 @@ class UGrid:
         network1d.is_spherical = bool(c_network1d.is_spherical)
         network1d.start_index = c_network1d.start_index
         network1d.name = decode_byte_vector_to_string(c_network1d.name, name_size)
-        network1d.node_name_id = decode_byte_vector_to_list_of_string(
+        network1d.node_name_id = decode_byte_vector_to_list_of_strings(
             c_network1d.node_name_id, c_network1d.num_nodes, name_size
         )
-        network1d.node_name_long = decode_byte_vector_to_list_of_string(
+        network1d.node_name_long = decode_byte_vector_to_list_of_strings(
             c_network1d.node_name_long, c_network1d.num_nodes, name_long_size
         )
 
-        network1d.branch_name_id = decode_byte_vector_to_list_of_string(
+        network1d.branch_name_id = decode_byte_vector_to_list_of_strings(
             c_network1d.branch_name_id, c_network1d.num_branches, name_size
         )
-        network1d.branch_name_long = decode_byte_vector_to_list_of_string(
+        network1d.branch_name_long = decode_byte_vector_to_list_of_strings(
             c_network1d.branch_name_long, c_network1d.num_branches, name_long_size
         )
 
@@ -283,10 +284,10 @@ class UGrid:
             c_mesh1d.network_name, name_size
         )
 
-        mesh1d.node_name_id = decode_byte_vector_to_list_of_string(
+        mesh1d.node_name_id = decode_byte_vector_to_list_of_strings(
             c_mesh1d.node_name_id, c_mesh1d.num_nodes, name_size
         )
-        mesh1d.node_name_long = decode_byte_vector_to_list_of_string(
+        mesh1d.node_name_long = decode_byte_vector_to_list_of_strings(
             c_mesh1d.node_name_long, c_mesh1d.num_nodes, name_long_size
         )
 
@@ -435,6 +436,115 @@ class UGrid:
 
         self._execute_function(
             self.lib.ug_mesh2d_put, self._file_id, c_int(topology_id), byref(c_mesh2d)
+        )
+
+    def contacts_get_num_topologies(self) -> int:
+        """Description
+
+        Gets the number of contacts topologies contained in the file.
+
+        Returns:
+            int: The number of contacts topologies contained in the file.
+
+        """
+
+        topology_enum = self.lib.ug_topology_get_contacts_enum()
+        num_topologies = self.lib.ug_topology_get_count(
+            self._file_id, c_int(topology_enum)
+        )
+        return num_topologies
+
+    def _contacts_inquire(self, topology_id) -> CContacts:
+        """For internal use only.
+
+        Inquires the contacts dimensions and names.
+
+        Args:
+            topology_id (int): The index of the contacts topology to inquire.
+
+        Returns:
+            CContacts: The contacts dimensions.
+
+        """
+
+        c_contacts = CContacts()
+        self._execute_function(
+            self.lib.ug_contacts_inq,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_contacts),
+        )
+        return c_contacts
+
+    def contacts_get(self, topology_id) -> Contacts:
+        """Gets the contacts data.
+
+        Args:
+            topology_id (int): The index of the contacts topology to retrieve.
+
+        Returns:
+            Contacts: The contacts (dimensions and data)
+        """
+
+        c_contacts = self._contacts_inquire(topology_id)
+        name_size = self.lib.ug_name_get_length()
+        name_long_size = self.lib.ug_name_get_long_length()
+
+        contacts = c_contacts.allocate_memory(name_size, name_long_size)
+        self._execute_function(
+            self.lib.ug_contacts_get,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_contacts),
+        )
+
+        contacts.name = decode_byte_vector_to_string(c_contacts.name, name_size)
+        contacts.contact_name_id = decode_byte_vector_to_list_of_strings(c_contacts.contact_name_id, c_contacts.num_contacts, name_size)
+        contacts.contact_name_long = decode_byte_vector_to_list_of_strings(c_contacts.contact_name_long, c_contacts.num_contacts, name_long_size)
+
+        contacts.mesh_from_name = decode_byte_vector_to_string(c_contacts.mesh_from_name, name_size)
+        contacts.mesh_to_name = decode_byte_vector_to_string(c_contacts.mesh_to_name, name_size)
+
+        return contacts
+
+    def contacts_define(self, contacts: Contacts) -> int:
+        """Defines a new contacts in a UGrid file.
+
+        Args:
+            contacts (Contacts): An instance of Contacts class (dimensions and data)
+
+        Returns:
+            int: The index of the defined contacts topology.
+        """
+
+        name_size = self.lib.ug_name_get_length()
+        name_long_size = self.lib.ug_name_get_long_length()
+
+        c_contacts = CContacts.from_py_structure(contacts, name_size, name_long_size)
+
+        c_topology_id = c_int(-1)
+
+        self._execute_function(
+            self.lib.ug_contacts_def, self._file_id, byref(c_contacts), byref(c_topology_id)
+        )
+
+        return c_topology_id.value
+
+    def contacts_put(self, topology_id: int, contacts: Contacts) -> None:
+        """Writes a new contacts in a UGrid file.
+
+        Args:
+            topology_id (int): The index of the contacts topology to write.
+            contacts (Contacts): A contacts (dimensions and data)
+        """
+
+        name_size = self.lib.ug_name_get_length()
+        name_long_size = self.lib.ug_name_get_long_length()
+
+        c_contacts = CContacts.from_py_structure(contacts, name_size, name_long_size)
+
+        self._execute_function(
+            self.lib.ug_contacts_put, self._file_id, c_int(topology_id), byref(c_contacts)
         )
 
     def _get_error(self) -> str:

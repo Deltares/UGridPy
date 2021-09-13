@@ -5,14 +5,14 @@ from ctypes import POINTER, Structure, c_double, c_int, c_char_p
 import numpy as np
 from numpy.ctypeslib import as_ctypes
 
-from ugrid.py_structures import Network1D, Mesh1D, Mesh2D
+from ugrid.py_structures import Network1D, Mesh1D, Mesh2D, Contacts
 
 
 def decode_byte_vector_to_string(byte_vector: bytes, ncolumns: int) -> str:
     return byte_vector[:ncolumns].decode("UTF-8").strip()
 
 
-def decode_byte_vector_to_list_of_string(
+def decode_byte_vector_to_list_of_strings(
         byte_vector: bytes, nrows: int, str_size: int
 ) -> list:
     return [
@@ -20,16 +20,19 @@ def decode_byte_vector_to_list_of_string(
         for r in range(nrows)
     ]
 
+
 def pad_and_join_list_of_strings(string_list: list, str_size: int):
     for i in range(len(string_list)):
         string_list[i] = string_list[i].ljust(str_size)
     result = "".join(string_list)
     return result
 
+
 def numpy_array_to_ctypes(arr):
     if len(arr) == 0:
         return None
     return as_ctypes(arr)
+
 
 class CNetwork1D(Structure):
     """C-structure intended for internal use only.
@@ -237,7 +240,7 @@ class CMesh1D(Structure):
 
         return c_mesh1d
 
-    def allocate_memory(self, name_size: int, name_long_size: int) -> Network1D:
+    def allocate_memory(self, name_size: int, name_long_size: int) -> Mesh1D:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Mesh1d instance which is returned by this method.
@@ -289,6 +292,7 @@ class CMesh1D(Structure):
             node_name_id=node_name_id,
             node_name_long=node_name_long,
         )
+
 
 class CMesh2D(Structure):
     """C-structure intended for internal use only.
@@ -465,3 +469,97 @@ class CMesh2D(Structure):
             boundary_node_connectivity=boundary_node_connectivity,
             volume_coordinates=volume_coordinates,
         )
+
+
+class CContacts(Structure):
+    """C-structure intended for internal use only.
+    It represents a Contacts struct as described by the UGrid API.
+
+    Used for communicating with the UGrid dll.
+
+    Attributes:
+    """
+
+    _fields_ = [
+        ("name", c_char_p),
+        ("contacts", POINTER(c_int)),
+        ("contact_type", POINTER(c_int)),
+        ("contact_name_id", c_char_p),
+        ("contact_name_long", c_char_p),
+        ("mesh_from_name", c_char_p),
+        ("mesh_to_name", c_char_p),
+        ("mesh_from_location", c_int),
+        ("mesh_to_location", c_int),
+        ("num_contacts", c_int),
+    ]
+
+    @staticmethod
+    def from_py_structure(
+            contacts: Contacts, name_size: int, name_long_size: int
+    ) -> CContacts:
+        """Creates a new CContacts instance from a given Contacts instance.
+
+        Args:
+            contacts (Contacts): Class of numpy instances owning the state.
+
+        Returns:
+            CContacts: The created CContacts instance.
+        """
+
+        c_contacts = CContacts()
+
+        # Set the pointers
+        contacts_name_padded = contacts.name.ljust(name_size)
+        mesh_from_name_padded = contacts.mesh_from_name.ljust(name_size)
+        mesh_to_name_padded = contacts.mesh_to_name.ljust(name_size)
+
+        contact_name_id = pad_and_join_list_of_strings(contacts.contact_name_id, name_size)
+        contact_name_long = pad_and_join_list_of_strings(contacts.contact_name_long, name_long_size)
+
+        c_contacts.name = c_char_p(contacts_name_padded.encode("utf-8"))
+        c_contacts.contacts = numpy_array_to_ctypes(contacts.contacts)
+        c_contacts.contact_type = numpy_array_to_ctypes(contacts.contact_type)
+        c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("utf-8"))
+        c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("utf-8"))
+        c_contacts.contact_name_id = c_char_p(contact_name_id.encode("utf-8"))
+        c_contacts.contact_name_long = c_char_p(contact_name_long.encode("utf-8"))
+        c_contacts.mesh_from_location = contacts.mesh_from_location
+        c_contacts.mesh_to_location = contacts.mesh_to_location
+
+        # Set the size
+        c_contacts.num_contacts = contacts.num_contacts
+
+        return c_contacts
+
+    def allocate_memory(self, name_size: int, name_long_size: int) -> Contacts:
+        """Allocate data according to the parameters with the "num_" prefix.
+        The pointers are then set to the freshly allocated memory.
+        The memory is owned by the Contacts instance which is returned by this method.
+
+        Returns:
+            Contacts: The object owning the allocated memory.
+        """
+
+        name = " " * name_size
+        contacts = np.empty(self.num_contacts * 2, dtype=np.int)
+        mesh_from_name = " " * name_size
+        mesh_to_name = " " * name_size
+        contact_type = np.empty(self.num_contacts, dtype=np.int)
+        contact_name_id = " " * self.num_contacts * name_size
+        contact_name_long = " " * self.num_contacts * name_long_size
+
+        self.name = c_char_p(name.encode("utf-8"))
+        self.contacts = numpy_array_to_ctypes(contacts)
+        self.contact_type = numpy_array_to_ctypes(contact_type)
+        self.contact_name_id = c_char_p(contact_name_id.encode("utf-8"))
+        self.contact_name_long = c_char_p(contact_name_long.encode("utf-8"))
+        self.mesh_from_name = c_char_p(mesh_from_name.encode("utf-8"))
+        self.mesh_to_name = c_char_p(mesh_to_name.encode("utf-8"))
+
+        return Contacts(name=name,
+                        contacts=contacts,
+                        mesh_from_name=mesh_from_name,
+                        mesh_to_name=mesh_to_name,
+                        contact_type=contact_type,
+                        contact_name_id=contact_name_id,
+                        contact_name_long=contact_name_long)
