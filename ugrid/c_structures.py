@@ -1,27 +1,30 @@
 from __future__ import annotations
 
-from ctypes import POINTER, Structure, c_double, c_int, c_char_p
+from ctypes import POINTER, Structure, c_char_p, c_double, c_int
 
 import numpy as np
 from numpy.ctypeslib import as_ctypes
 
-from ugrid.py_structures import Network1D, Mesh1D, Mesh2D, Contacts
+from ugrid.py_structures import Contacts, Mesh1D, Mesh2D, Network1D
 
 
 def decode_byte_vector_to_string(byte_vector: bytes, ncolumns: int) -> str:
+    """From byte vector to string"""
     return byte_vector[:ncolumns].decode("UTF-8").strip()
 
 
 def decode_byte_vector_to_list_of_strings(
-        byte_vector: bytes, nrows: int, str_size: int
+    byte_vector: bytes, nrows: int, str_size: int
 ) -> list:
+    """From byte vector to a vector of strings"""
     return [
-        byte_vector[str_size * r: str_size * (r + 1)].decode("UTF-8").strip()
+        byte_vector[str_size * r : str_size * (r + 1)].decode("UTF-8").strip()
         for r in range(nrows)
     ]
 
 
 def pad_and_join_list_of_strings(string_list: list, str_size: int):
+    """Pad each entry  to a defined size and join the padded entries into one string"""
     for i in range(len(string_list)):
         string_list[i] = string_list[i].ljust(str_size)
     result = "".join(string_list)
@@ -29,6 +32,7 @@ def pad_and_join_list_of_strings(string_list: list, str_size: int):
 
 
 def numpy_array_to_ctypes(arr):
+    """Cast an array to ctypes only if its len is not 0"""
     if len(arr) == 0:
         return None
     return as_ctypes(arr)
@@ -41,6 +45,23 @@ class CNetwork1D(Structure):
     Used for communicating with the UGrid dll.
 
     Attributes:
+        name (c_char_p): The network name.
+        node_x (POINTER(c_double)): The x-coordinates of the network node.
+        node_y (POINTER(c_double)): The y-coordinates of the network node.
+        node_name_id (c_char_p): The node names ids.
+        node_name_long (c_char_p): The node long names.
+        branch_node (POINTER(c_int)): The nodes defining each branch.
+        branch_length (POINTER(c_double)): The edge lengths.
+        branch_order (POINTER(c_int)): The order of the branches.
+        branch_name_id (c_char_p): The name of the branches.
+        branch_name_long (c_char_p): The long name of the branches.
+        geometry_nodes_x (POINTER(c_double)): The geometry nodes x coordinates.
+        geometry_nodes_y (POINTER(c_double)): The geometry nodes y coordinates.
+        num_geometry_nodes (c_int): The number of geometry nodes.
+        num_nodes (c_int): The number of network1d nodes.
+        num_branches (c_int): The number of network1d branches.
+        is_spherical (c_int): 1 if the coordinates are in a spherical system, 0 otherwise .
+        start_index (c_int): The start index used in arrays using indices, such as in the branch_node array.
     """
 
     _fields_ = [
@@ -65,7 +86,7 @@ class CNetwork1D(Structure):
 
     @staticmethod
     def from_py_structure(
-            network1D: Network1D, name_size: int, name_long_size: int
+        network1D: Network1D, name_size: int, name_long_size: int
     ) -> CNetwork1D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
@@ -169,6 +190,25 @@ class CMesh1D(Structure):
     Used for communicating with the UGrid dll.
 
     Attributes:
+        name (c_char_p): The mesh name.
+        network_name (c_char_p): The x-coordinates of the network node.
+        node_x (POINTER(c_double)):  The node x coordinate.
+        node_y (POINTER(c_double)):  The node y coordinate.
+        edge_node (POINTER(c_int)): The edge node connectivity.
+        branch_id (POINTER(c_int)):  The network branch id where every node lies.
+        branch_offset (POINTER(c_double)): The offset of each node on the network branch
+        node_name_id (POINTER(c_int)): The node name.
+        node_name_long (c_char_p): The node long name.
+        edge_edge_id (c_char_p): The network edge id where every edge lies.
+        edge_edge_offset (POINTER(c_double)): The offset of each edge on the network branch.
+        edge_x (POINTER(c_double)): The edge x coordinate.
+        edge_y (c_int): The edge y coordinate.
+        num_nodes (c_int): The number of nodes.
+        num_edges (c_int): The number of edges.
+        is_spherical (c_int): 1 if coordinates are in a spherical system, 0 otherwise.
+        start_index (c_int): The start index used in arrays using indices, such as in the branch_node array.
+        double_fill_value (c_double): The fill value for array of doubles.
+        int_fill_value (c_int): The fill value for array of integers.
     """
 
     _fields_ = [
@@ -195,7 +235,7 @@ class CMesh1D(Structure):
 
     @staticmethod
     def from_py_structure(
-            mesh1d: Mesh1D, name_size: int, name_long_size: int
+        mesh1d: Mesh1D, name_size: int, name_long_size: int
     ) -> CNetwork1D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
@@ -301,6 +341,35 @@ class CMesh2D(Structure):
     Used for communicating with the UGrid dll.
 
     Attributes:
+        name (c_char_p): The mesh name.
+        edge_nodes (POINTER(c_int)): The nodes composing each mesh 2d edge.
+        face_nodes (POINTER(c_int)): The nodes composing each mesh 2d face.
+        nodes_per_face (POINTER(c_int)): The nodes composing each mesh 2d face.
+        node_x (POINTER(c_double)): The x-coordinates of the nodes.
+        node_y (POINTER(c_double)): The y-coordinates of the nodes.
+        edge_x (POINTER(c_double)): The x-coordinates of the mesh edges' middle points.
+        edge_y (POINTER(c_double)): The x-coordinates of the mesh edges' middle points.
+        face_x (POINTER(c_double)): The x-coordinates of the mesh faces' mass centers.
+        face_y (POINTER(c_double)): The y-coordinates of the mesh faces' mass centers.
+        edge_face (POINTER(c_int)): The edges composing each face.
+        face_edge (POINTER(c_int)): For each face, the edges composing it.
+        face_face (POINTER(c_int)): For each face, the neighboring faces.
+        node_z (POINTER(c_double)): The node z coordinates.
+        edge_z (POINTER(c_double)): The edge z coordinates.
+        face_z (POINTER(c_double)): The face z coordinates.
+        layer_zs (POINTER(c_double)): The z coordinates of a layer.
+        interface_zs (POINTER(c_double)): The z coordinates of a layer interface.
+        boundary_node_connectivity (POINTER(c_double)): To be detailed.
+        volume_coordinates (POINTER(c_double)): To be detailed.
+        num_nodes (c_int): The number of mesh nodes.
+        num_edges (c_int): The number of edges.
+        num_faces (c_int): The number of faces.
+        num_layers (c_int): The number of layers.
+        start_index (c_int): The start index used in arrays using indices, such as in the branch_node array.
+        num_face_nodes_max (c_int): 1 if coordinates are in a spherical system, 0 otherwise.
+        is_spherical (c_int): 1 if coordinates are in a spherical system, 0 otherwise.
+        double_fill_value (c_double): The fill value for array of doubles.
+        int_fill_value (c_int): The fill value for array of integers.
     """
 
     _fields_ = [
@@ -438,7 +507,9 @@ class CMesh2D(Structure):
         self.face_z = numpy_array_to_ctypes(face_z)
 
         self.layer_zs = numpy_array_to_ctypes(layer_zs)
-        self.boundary_node_connectivity = numpy_array_to_ctypes(boundary_node_connectivity)
+        self.boundary_node_connectivity = numpy_array_to_ctypes(
+            boundary_node_connectivity
+        )
         self.volume_coordinates = numpy_array_to_ctypes(volume_coordinates)
 
         if self.num_layers > 1:
@@ -495,7 +566,7 @@ class CContacts(Structure):
 
     @staticmethod
     def from_py_structure(
-            contacts: Contacts, name_size: int, name_long_size: int
+        contacts: Contacts, name_size: int, name_long_size: int
     ) -> CContacts:
         """Creates a new CContacts instance from a given Contacts instance.
 
@@ -513,8 +584,12 @@ class CContacts(Structure):
         mesh_from_name_padded = contacts.mesh_from_name.ljust(name_size)
         mesh_to_name_padded = contacts.mesh_to_name.ljust(name_size)
 
-        contact_name_id_padded = pad_and_join_list_of_strings(contacts.contact_name_id, name_size)
-        contact_name_long_padded = pad_and_join_list_of_strings(contacts.contact_name_long, name_long_size)
+        contact_name_id_padded = pad_and_join_list_of_strings(
+            contacts.contact_name_id, name_size
+        )
+        contact_name_long_padded = pad_and_join_list_of_strings(
+            contacts.contact_name_long, name_long_size
+        )
 
         c_contacts.name = c_char_p(contacts_name_padded.encode("utf-8"))
         c_contacts.contacts = numpy_array_to_ctypes(contacts.contacts)
@@ -522,7 +597,9 @@ class CContacts(Structure):
         c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("utf-8"))
         c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("utf-8"))
         c_contacts.contact_name_id = c_char_p(contact_name_id_padded.encode("utf-8"))
-        c_contacts.contact_name_long = c_char_p(contact_name_long_padded.encode("utf-8"))
+        c_contacts.contact_name_long = c_char_p(
+            contact_name_long_padded.encode("utf-8")
+        )
         c_contacts.mesh_from_location = contacts.mesh_from_location
         c_contacts.mesh_to_location = contacts.mesh_to_location
 
@@ -556,10 +633,12 @@ class CContacts(Structure):
         self.mesh_from_name = c_char_p(mesh_from_name.encode("utf-8"))
         self.mesh_to_name = c_char_p(mesh_to_name.encode("utf-8"))
 
-        return Contacts(name=name,
-                        contacts=contacts,
-                        mesh_from_name=mesh_from_name,
-                        mesh_to_name=mesh_to_name,
-                        contact_type=contact_type,
-                        contact_name_id=contact_name_id,
-                        contact_name_long=contact_name_long)
+        return Contacts(
+            name=name,
+            contacts=contacts,
+            mesh_from_name=mesh_from_name,
+            mesh_to_name=mesh_to_name,
+            contact_type=contact_type,
+            contact_name_id=contact_name_id,
+            contact_name_long=contact_name_long,
+        )
