@@ -105,7 +105,7 @@ setup(
     platforms="Windows, Linux",
     install_requires=["numpy"],
     extras_require={
-        "tests": ["pytest", "pytest-cov", "nbval", "matplotlib"],
+        "tests": ["pytest", "pytest-cov", "nbval"],
         "lint": [
             "flake8",
             "black==21.4b1",
