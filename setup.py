@@ -95,7 +95,7 @@ long_description = read("README.md")
 
 setup(
     name="UGrid",
-    description="`UGrid` is a library which can be used to write and read UGrid files.",
+    description="`UGrid` is a library to write and read UGrid files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author=__author__,
@@ -103,7 +103,7 @@ setup(
     url="https://github.com/Deltares/UGridPy",
     license="MIT",
     platforms="Windows, Linux",
-    install_requires=["numpy"],
+    install_requires=["numpy", "meshkernel"],
     extras_require={
         "tests": ["pytest", "pytest-cov", "nbval"],
         "lint": [
