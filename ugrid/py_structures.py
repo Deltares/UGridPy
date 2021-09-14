@@ -212,12 +212,12 @@ class Contacts:
 
     Attributes:
         name (str): The name of the contact entity.
-        contacts (POINTER(c_int)): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
-        contact_type (POINTER(c_int)): For each contact its type.
-        contact_name_id (c_char_p): The name of each contact.
-        contact_name_long (c_char_p): The long name of each contact.
-        mesh_from_name (c_char_p): The name of the mesh where the contacts start.
-        mesh_to_name (c_char_p): The name of the mesh where the contacts ends.
+        contacts (ndarray): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
+        contact_type (ndarray): For each contact its type.
+        contact_name_id (list): The name of each contact.
+        contact_name_long (list): The long name of each contact.
+        mesh_from_name (str): The name of the mesh where the contacts start.
+        mesh_to_name (str): The name of the mesh where the contacts ends.
         mesh_from_location (c_int): The location type (node, edge or face) at the contact start.
         mesh_to_location (c_int): The location type (node, edge or face) at the contact end.
         num_contacts (c_int): The number of contacts.
@@ -230,8 +230,8 @@ class Contacts:
         mesh_from_name,
         mesh_to_name,
         contact_type=array([]),
-        contact_name_id=array([]),
-        contact_name_long=array([]),
+        contact_name_id=list,
+        contact_name_long=list,
         mesh_from_location=0,
         mesh_to_location=0,
     ):
