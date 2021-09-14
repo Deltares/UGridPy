@@ -45,7 +45,7 @@ def get_version(rel_path: str) -> str:
     raise RuntimeError("Unable to find version string.")
 
 
-def get_meshkernel_name() -> str:
+def get_ugrid_name() -> str:
     """Get the filename of the MeshKernel library
 
     Raises:
@@ -95,7 +95,7 @@ long_description = read("README.md")
 
 setup(
     name="UGrid",
-    description="`UGrid` is a library which can be used to write\read UGrid files.",
+    description="`UGrid` is a library which can be used to write and read UGrid files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author=__author__,
@@ -116,7 +116,7 @@ setup(
     python_requires=">=3.8",
     packages=["ugrid"],
     package_data={
-        "ugrid": [get_meshkernel_name()],
+        "ugrid": [get_ugrid_name()],
     },
     cmdclass={"bdist_wheel": bdist_wheel},
     version=get_version("ugrid/version.py"),
