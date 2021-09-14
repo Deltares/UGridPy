@@ -1,29 +1,40 @@
 from __future__ import annotations
 
-from numpy import ndarray, array
+from numpy import array, ndarray
 
 
 class Network1D:
     """This class is used for define/put/inquire/get Network1D data
 
-    Attributes: TODO
-
+    Attributes:
+        name (str): The network name.
+        node_x (ndarray): The x-coordinates of the network node.
+        node_y (ndarray): The y-coordinates of the network node.
+        node_name_id (str): The node names ids.
+        node_name_long (str): The node long names.
+        branch_node (ndarray): The nodes defining each branch.
+        branch_length (ndarray): The edge lengths.
+        branch_order (ndarray): The order of the branches.
+        branch_name_id (list): The name of the branches.
+        branch_name_long (list): The long name of the branches.
+        geometry_nodes_x (ndarray): The geometry nodes x coordinates.
+        geometry_nodes_y (ndarray): The geometry nodes y coordinates.
     """
 
     def __init__(
-            self,
-            name,
-            node_x,
-            node_y,
-            branch_node,
-            branch_length,
-            geometry_nodes_x,
-            geometry_nodes_y,
-            branch_order=array([]),
-            node_name_id=[],
-            node_name_long=[],
-            branch_name_id=[],
-            branch_name_long=[]
+        self,
+        name,
+        node_x,
+        node_y,
+        branch_node,
+        branch_length,
+        geometry_nodes_x,
+        geometry_nodes_y,
+        branch_order=array([]),
+        node_name_id=[],
+        node_name_long=[],
+        branch_name_id=[],
+        branch_name_long=[],
     ):
         self.name: str = name
         self.node_x: ndarray = node_x
@@ -44,27 +55,41 @@ class Network1D:
 class Mesh1D:
     """This class is used for define/put/inquire/get Mesh1D data
 
-    Attributes: TODO
-
+    Attributes:
+        name (c_char_p): The mesh name.
+        network_name (c_char_p): The x-coordinates of the network node.
+        node_x (ndarray):  The node x coordinate.
+        node_y (ndarray):  The node y coordinate.
+        edge_node (ndarray): The edge node connectivity.
+        branch_id (ndarray):  The network branch id where every node lies.
+        branch_offset (ndarray): The offset of each node on the network branch
+        node_name_id (list): A list of node names ids.
+        node_name_long (c_char_p): A list of node long names.
+        edge_edge_id (ndarray): The network edge id where every edge lies.
+        edge_edge_offset (ndarray): The offset of each edge on the network branch.
+        edge_x (ndarray): The edge x coordinate.
+        edge_y (ndarray): The edge y coordinate.
+        double_fill_value (c_double): The fill value for array of doubles.
+        int_fill_value (c_int): The fill value for array of integers.
     """
 
     def __init__(
-            self,
-            name,
-            network_name,
-            branch_id,
-            branch_offset,
-            node_x=array([]),
-            node_y=array([]),
-            edge_node=array([]),
-            edge_edge_id=array([]),
-            edge_edge_offset=array([]),
-            edge_x=array([]),
-            edge_y=array([]),
-            node_name_id=array([]),
-            node_name_long=array([]),
-            double_fill_value=-999.0,
-            int_fill_value=-999,
+        self,
+        name,
+        network_name,
+        branch_id,
+        branch_offset,
+        node_x=array([]),
+        node_y=array([]),
+        edge_node=array([]),
+        edge_edge_id=array([]),
+        edge_edge_offset=array([]),
+        edge_x=array([]),
+        edge_y=array([]),
+        node_name_id=[],
+        node_name_long=[],
+        double_fill_value=-999.0,
+        int_fill_value=-999,
     ):
         self.name: str = name
         self.network_name: str = network_name
@@ -73,8 +98,8 @@ class Mesh1D:
         self.edge_node: ndarray = edge_node
         self.branch_id: ndarray = branch_id
         self.branch_offset: ndarray = branch_offset
-        self.node_name_id: ndarray = node_name_id
-        self.node_name_long: ndarray = node_name_long
+        self.node_name_id: list = node_name_id
+        self.node_name_long: list = node_name_long
         self.edge_edge_id: ndarray = edge_edge_id
         self.edge_edge_offset: ndarray = edge_edge_offset
         self.edge_x: ndarray = edge_x
@@ -86,44 +111,72 @@ class Mesh1D:
 
 
 class Mesh2D:
-    """This class is used for define/put/inquire/get Mesh1D data
+    """This class is used for define/put/inquire/get Mesh2D data
 
-    Attributes: TODO
-
+    Attributes:
+        name (str): The mesh name.
+        edge_nodes (ndarray): The nodes composing each mesh 2d edge.
+        face_nodes (ndarray): The nodes composing each mesh 2d face.
+        nodes_per_face (ndarray): The nodes composing each mesh 2d face.
+        node_x (ndarray): The x-coordinates of the nodes.
+        node_y (ndarray): The y-coordinates of the nodes.
+        edge_x (ndarray): The x-coordinates of the mesh edges' middle points.
+        edge_y (ndarray): The x-coordinates of the mesh edges' middle points.
+        face_x (ndarray): The x-coordinates of the mesh faces' mass centers.
+        face_y (ndarray): The y-coordinates of the mesh faces' mass centers.
+        edge_face (ndarray): The edges composing each face.
+        face_edge (ndarray): For each face, the edges composing it.
+        face_face (ndarray): For each face, the neighboring faces.
+        node_z (ndarray): The node z coordinates.
+        edge_z (ndarray): The edge z coordinates.
+        face_z (ndarray): The face z coordinates.
+        layer_zs (ndarray): The z coordinates of a layer.
+        interface_zs (ndarray): The z coordinates of a layer interface.
+        boundary_node_connectivity (ndarray): To be detailed.
+        volume_coordinates (ndarray): To be detailed.
+        num_nodes (int): The number of mesh nodes.
+        num_edges (int): The number of edges.
+        num_faces (int): The number of faces.
+        num_layers (int): The number of layers.
+        start_index (int): The start index used in arrays using indices, such as in the branch_node array.
+        num_face_nodes_max (int): The maximum number of face nodes.
+        is_spherical (c_int): 1 if coordinates are in a spherical system, 0 otherwise.
+        double_fill_value (c_double): The fill value for array of doubles.
+        int_fill_value (c_int): The fill value for array of integers.
     """
 
     def __init__(
-            self,
-            name,
-            node_x,
-            node_y,
-            edge_node,
-            face_node=array([]),
-            edge_x=array([]),
-            edge_y=array([]),
-            face_x=array([]),
-            face_y=array([]),
-            edge_face=array([]),
-            face_edge=array([]),
-            face_face=array([]),
-            node_z=array([]),
-            edge_z=array([]),
-            face_z=array([]),
-            layer_zs=array([]),
-            interface_zs=array([]),
-            boundary_node_connectivity=array([]),
-            volume_coordinates=array([]),
-            num_nodes=0,
-            num_edges=0,
-            num_faces=0,
-            num_layers=0,
-            start_index=0,
-            num_face_nodes_max=4,
-            is_spherical=False,
-            double_fill_value=-999.0,
-            int_fill_value=-999,
+        self,
+        name,
+        node_x,
+        node_y,
+        edge_node,
+        face_node=array([]),
+        edge_x=array([]),
+        edge_y=array([]),
+        face_x=array([]),
+        face_y=array([]),
+        edge_face=array([]),
+        face_edge=array([]),
+        face_face=array([]),
+        node_z=array([]),
+        edge_z=array([]),
+        face_z=array([]),
+        layer_zs=array([]),
+        interface_zs=array([]),
+        boundary_node_connectivity=array([]),
+        volume_coordinates=array([]),
+        num_nodes=0,
+        num_edges=0,
+        num_faces=0,
+        num_layers=0,
+        start_index=0,
+        num_face_nodes_max=4,
+        is_spherical=False,
+        double_fill_value=-999.0,
+        int_fill_value=-999,
     ):
-        self.name : str = name
+        self.name: str = name
         self.edge_node: ndarray = edge_node
         self.node_x: ndarray = node_x
         self.node_y: ndarray = node_y
@@ -157,21 +210,30 @@ class Mesh2D:
 class Contacts:
     """This class is used for define/put/inquire/get Contacts data
 
-    Attributes: TODO
-
+    Attributes:
+        name (str): The name of the contact entity.
+        contacts (POINTER(c_int)): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
+        contact_type (POINTER(c_int)): For each contact its type.
+        contact_name_id (c_char_p): The name of each contact.
+        contact_name_long (c_char_p): The long name of each contact.
+        mesh_from_name (c_char_p): The name of the mesh where the contacts start.
+        mesh_to_name (c_char_p): The name of the mesh where the contacts ends.
+        mesh_from_location (c_int): The location type (node, edge or face) at the contact start.
+        mesh_to_location (c_int): The location type (node, edge or face) at the contact end.
+        num_contacts (c_int): The number of contacts.
     """
 
     def __init__(
-            self,
-            name,
-            contacts,
-            mesh_from_name,
-            mesh_to_name,
-            contact_type=array([]),
-            contact_name_id=array([]),
-            contact_name_long=array([]),
-            mesh_from_location=0,
-            mesh_to_location=0,
+        self,
+        name,
+        contacts,
+        mesh_from_name,
+        mesh_to_name,
+        contact_type=array([]),
+        contact_name_id=array([]),
+        contact_name_long=array([]),
+        mesh_from_location=0,
+        mesh_to_location=0,
     ):
         self.name: str = name
         self.contacts: ndarray = contacts

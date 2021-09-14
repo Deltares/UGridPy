@@ -6,15 +6,15 @@ from pathlib import Path
 from typing import Callable
 
 from ugrid.c_structures import (
-    CNetwork1D,
+    CContacts,
     CMesh1D,
     CMesh2D,
-    CContacts,
+    CNetwork1D,
     decode_byte_vector_to_list_of_strings,
     decode_byte_vector_to_string,
 )
 from ugrid.errors import UGridError
-from ugrid.py_structures import Network1D, Mesh1D, Mesh2D, Contacts
+from ugrid.py_structures import Contacts, Mesh1D, Mesh2D, Network1D
 from ugrid.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -61,13 +61,14 @@ class UGrid:
         if error_message:
             raise UGridError(error_message)
 
-    def _open(self, file_path, method) -> None:
-        """Description
+    def _open(self, file_path: str, method: str) -> None:
+        """Opens a NetCDF file containing a UGrid entities
 
         Comment
 
         Args:
-
+            file_path (bool): The path of the file to open
+            method (bool): The opening method ("r" for read, "w" for write, and "w+" for replace)
         """
 
         if method == "r":
@@ -90,13 +91,10 @@ class UGrid:
         )
 
     def network1d_get_num_topologies(self) -> int:
-        """Description
-
-        Gets the number of network topologies contained in the file.
+        """Gets the number of network topologies contained in the file.
 
         Returns:
             int: The number of network topologies contained in the file.
-
         """
 
         topology_enum = self.lib.ug_topology_get_network1d_enum()
@@ -115,7 +113,6 @@ class UGrid:
 
         Returns:
             CNetwork1D: The network1d dimensions.
-
         """
 
         c_network1d = CNetwork1D()
@@ -195,11 +192,11 @@ class UGrid:
         return c_topology_id.value
 
     def network1d_put(self, topology_id: int, network1d: Network1D) -> None:
-        """Writes a new network1d in a UGrid file.
+        """Writes a new network1d to UGrid file.
 
         Args:
             topology_id (int): The index of the network1d topology to write.
-            network1d (Network1D): A network1d (dimensions and data)
+            network1d (Network1D): An instance of Network1D (with dimensions and data)
         """
 
         name_size = self.lib.ug_name_get_length()
@@ -215,13 +212,10 @@ class UGrid:
         )
 
     def mesh1d_get_num_topologies(self) -> int:
-        """Description
-
-        Gets the number of mesh1d topologies contained in the file.
+        """Gets the number of mesh1d topologies contained in the file.
 
         Returns:
             int: The number of mesh1d topologies contained in the file.
-
         """
 
         topology_enum = self.lib.ug_topology_get_mesh1d_enum()
@@ -317,11 +311,11 @@ class UGrid:
         return c_topology_id.value
 
     def mesh1d_put(self, topology_id: int, mesh1d: Mesh1D) -> None:
-        """Writes a new mesh1d in a UGrid file.
+        """Writes a new mesh1d to UGrid file.
 
         Args:
             topology_id (int): The index of the mesh1d topology to write.
-            mesh1d (Mesh1D): A mesh1d (dimensions and data)
+            mesh1d (Mesh1D): An instance of mesh1d (with dimensions and data)
         """
 
         name_size = self.lib.ug_name_get_length()
@@ -499,11 +493,19 @@ class UGrid:
         )
 
         contacts.name = decode_byte_vector_to_string(c_contacts.name, name_size)
-        contacts.contact_name_id = decode_byte_vector_to_list_of_strings(c_contacts.contact_name_id, c_contacts.num_contacts, name_size)
-        contacts.contact_name_long = decode_byte_vector_to_list_of_strings(c_contacts.contact_name_long, c_contacts.num_contacts, name_long_size)
+        contacts.contact_name_id = decode_byte_vector_to_list_of_strings(
+            c_contacts.contact_name_id, c_contacts.num_contacts, name_size
+        )
+        contacts.contact_name_long = decode_byte_vector_to_list_of_strings(
+            c_contacts.contact_name_long, c_contacts.num_contacts, name_long_size
+        )
 
-        contacts.mesh_from_name = decode_byte_vector_to_string(c_contacts.mesh_from_name, name_size)
-        contacts.mesh_to_name = decode_byte_vector_to_string(c_contacts.mesh_to_name, name_size)
+        contacts.mesh_from_name = decode_byte_vector_to_string(
+            c_contacts.mesh_from_name, name_size
+        )
+        contacts.mesh_to_name = decode_byte_vector_to_string(
+            c_contacts.mesh_to_name, name_size
+        )
 
         return contacts
 
@@ -525,7 +527,10 @@ class UGrid:
         c_topology_id = c_int(-1)
 
         self._execute_function(
-            self.lib.ug_contacts_def, self._file_id, byref(c_contacts), byref(c_topology_id)
+            self.lib.ug_contacts_def,
+            self._file_id,
+            byref(c_contacts),
+            byref(c_topology_id),
         )
 
         return c_topology_id.value
@@ -544,7 +549,10 @@ class UGrid:
         c_contacts = CContacts.from_py_structure(contacts, name_size, name_long_size)
 
         self._execute_function(
-            self.lib.ug_contacts_put, self._file_id, c_int(topology_id), byref(c_contacts)
+            self.lib.ug_contacts_put,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_contacts),
         )
 
     def _get_error(self) -> str:
