@@ -3,7 +3,7 @@ from __future__ import annotations
 from numpy import array, ndarray
 
 
-class Network1D:
+class UGridNetwork1D:
     """This class is used for define/put/inquire/get Network1D data
 
     Attributes:
@@ -52,7 +52,7 @@ class Network1D:
         self.start_index: int = 0
 
 
-class Mesh1D:
+class UGridMesh1D:
     """This class is used for define/put/inquire/get Mesh1D data
 
     Attributes:
@@ -110,7 +110,7 @@ class Mesh1D:
         self.int_fill_value: int = int_fill_value
 
 
-class Mesh2D:
+class UGridMesh2D:
     """This class is used for define/put/inquire/get Mesh2D data
 
     Attributes:
@@ -134,10 +134,6 @@ class Mesh2D:
         interface_zs (ndarray): The z coordinates of a layer interface.
         boundary_node_connectivity (ndarray): To be detailed.
         volume_coordinates (ndarray): To be detailed.
-        num_nodes (int): The number of mesh nodes.
-        num_edges (int): The number of edges.
-        num_faces (int): The number of faces.
-        num_layers (int): The number of layers.
         start_index (int): The start index used in arrays using indices, such as in the branch_node array.
         num_face_nodes_max (int): The maximum number of face nodes.
         is_spherical (c_int): 1 if coordinates are in a spherical system, 0 otherwise.
@@ -166,10 +162,6 @@ class Mesh2D:
         interface_zs=array([]),
         boundary_node_connectivity=array([]),
         volume_coordinates=array([]),
-        num_nodes=0,
-        num_edges=0,
-        num_faces=0,
-        num_layers=0,
         start_index=0,
         num_face_nodes_max=4,
         is_spherical=False,
@@ -196,10 +188,6 @@ class Mesh2D:
         self.interface_zs: ndarray = interface_zs
         self.boundary_node_connectivity: ndarray = boundary_node_connectivity
         self.volume_coordinates: ndarray = volume_coordinates
-        self.num_nodes: int = num_nodes
-        self.num_edges: int = num_edges
-        self.num_faces: int = num_faces
-        self.num_layers: int = num_layers
         self.start_index: int = start_index
         self.num_face_nodes_max: int = num_face_nodes_max
         self.is_spherical: int = is_spherical
@@ -207,7 +195,7 @@ class Mesh2D:
         self.int_fill_value: int = int_fill_value
 
 
-class Contacts:
+class UGridContacts:
     """This class is used for define/put/inquire/get Contacts data
 
     Attributes:

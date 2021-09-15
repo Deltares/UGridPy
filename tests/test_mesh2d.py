@@ -1,10 +1,11 @@
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from ugrid import UGrid, Mesh2D
+from ugrid import UGrid, UGridMesh2D
+from meshkernel import Mesh2d
 
 
-def create_mesh2d():
+def create_ugrid_mesh2d():
     r"""Create a mesh2d"""
 
     name = "mesh2d"
@@ -108,7 +109,7 @@ def create_mesh2d():
         dtype=np.int,
     )
 
-    mesh2d = Mesh2D(
+    ugrid_mesh2d = UGridMesh2D(
         name=name,
         node_x=node_x,
         node_y=node_y,
@@ -117,34 +118,59 @@ def create_mesh2d():
         face_y=face_y,
         face_node=face_node,
     )
-    return mesh2d
+    return ugrid_mesh2d
 
 
-def test_mesh2d_get():
-    r"""Tests `mesh2d_get_num_topologies` and `network1d_get` to read a network1d from file."""
+def test_ugrid_mesh2d_get():
+    r"""Tests `mesh2d_get_num_topologies` and `mesh2d_get` to read a mesh2d from file."""
 
     with UGrid("./data/OneMesh2D.nc", "r") as ug:
         num_mesh2d_topologies = ug.mesh2d_get_num_topologies()
-        mesh2d = ug.mesh2d_get(num_mesh2d_topologies - 1)
+        ugrid_mesh2d = ug.mesh2d_get(num_mesh2d_topologies - 1)
 
-        expected_mesh2d = create_mesh2d()
+        expected_ugrid_mesh2d = create_ugrid_mesh2d()
 
-        assert expected_mesh2d.name == mesh2d.name
+        assert expected_ugrid_mesh2d.name == ugrid_mesh2d.name
 
-        assert_array_equal(mesh2d.node_x, expected_mesh2d.node_x)
-        assert_array_equal(mesh2d.node_y, expected_mesh2d.node_y)
-        assert_array_equal(mesh2d.edge_node, expected_mesh2d.edge_node)
+        assert_array_equal(ugrid_mesh2d.node_x, expected_ugrid_mesh2d.node_x)
+        assert_array_equal(ugrid_mesh2d.node_y, expected_ugrid_mesh2d.node_y)
+        assert_array_equal(ugrid_mesh2d.edge_node, expected_ugrid_mesh2d.edge_node)
 
-        assert_array_equal(mesh2d.face_x, expected_mesh2d.face_x)
-        assert_array_equal(mesh2d.face_y, expected_mesh2d.face_y)
-        assert_array_equal(mesh2d.face_node, expected_mesh2d.face_node)
+        assert_array_equal(ugrid_mesh2d.face_x, expected_ugrid_mesh2d.face_x)
+        assert_array_equal(ugrid_mesh2d.face_y, expected_ugrid_mesh2d.face_y)
+        assert_array_equal(ugrid_mesh2d.face_node, expected_ugrid_mesh2d.face_node)
 
 
-def test_mesh2d_define_and_put():
+def test_ugrid_mesh2d_define_and_put():
     r"""Tests `mesh2d_define` and `mesh2d_put` to define and write a mesh2d to file."""
 
     with UGrid("./data/written_files/Mesh2DWrite.nc", "w+") as ug:
-        mesh2d = create_mesh2d()
-        topology_id = ug.mesh2d_define(mesh2d)
+        ugrid_mesh2d = create_ugrid_mesh2d()
+        topology_id = ug.mesh2d_define(ugrid_mesh2d)
         assert topology_id == 0
-        ug.mesh2d_put(topology_id, mesh2d)
+        ug.mesh2d_put(topology_id, ugrid_mesh2d)
+
+
+def test_mesh2d_meshkernel_define_and_put():
+    node_x = np.array([0.0, 1.0, 1.0, 0.0], dtype=np.double)
+    node_y = np.array([0.0, 0.0, 1.0, 1.0], dtype=np.double)
+
+    edge_nodes = np.array([0, 1,
+                           1, 2,
+                           2, 3,
+                           2, 0], dtype=np.int)
+
+    face_nodes = np.array([0, 1, 2, 3], dtype=np.int)
+    nodes_per_face = np.array([4], dtype=np.int)
+
+    mesh2d = Mesh2d(node_x=node_x,
+                    node_y=node_y,
+                    edge_nodes=edge_nodes,
+                    face_nodes=face_nodes,
+                    nodes_per_face=nodes_per_face)
+
+    ugrid_mesh2d = UGrid.from_meshkernel_mesh2d_to_ugrid_mesh2d(mesh2d=mesh2d, name='mesh2d', is_spherical=False)
+    with UGrid("./data/written_files/Mesh2DMesKernelWrite.nc", "w+") as ug:
+        topology_id = ug.mesh2d_define(ugrid_mesh2d)
+        assert topology_id == 0
+        ug.mesh2d_put(topology_id, ugrid_mesh2d)

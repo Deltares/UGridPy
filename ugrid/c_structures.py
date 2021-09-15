@@ -5,7 +5,7 @@ from ctypes import POINTER, Structure, c_char_p, c_double, c_int
 import numpy as np
 from numpy.ctypeslib import as_ctypes
 
-from ugrid.py_structures import Contacts, Mesh1D, Mesh2D, Network1D
+from ugrid.py_structures import UGridContacts, UGridMesh1D, UGridMesh2D, UGridNetwork1D
 
 
 def decode_byte_vector_to_string(byte_vector: bytes, ncolumns: int) -> str:
@@ -38,7 +38,7 @@ def numpy_array_to_ctypes(arr):
     return as_ctypes(arr)
 
 
-class CNetwork1D(Structure):
+class CUGridNetwork1D(Structure):
     """C-structure intended for internal use only.
     It represents a Network1d struct as described by the UGrid API.
 
@@ -86,63 +86,73 @@ class CNetwork1D(Structure):
 
     @staticmethod
     def from_py_structure(
-        network1D: Network1D, name_size: int, name_long_size: int
-    ) -> CNetwork1D:
+        ugrid_network1D: UGridNetwork1D, name_size: int, name_long_size: int
+    ) -> CUGridNetwork1D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
-            network1D (Network1D): Class of numpy instances owning the state.
+            ugrid_network1D (UGridNetwork1D): Class of numpy instances owning the state.
 
         Returns:
             CMesh2d: The created CMesh2d instance.
         """
 
-        name_padded = network1D.name.ljust(name_size)
+        name_padded = ugrid_network1D.name.ljust(name_size)
 
-        node_name_id = pad_and_join_list_of_strings(network1D.node_name_id, name_size)
+        node_name_id = pad_and_join_list_of_strings(
+            ugrid_network1D.node_name_id, name_size
+        )
         node_name_long = pad_and_join_list_of_strings(
-            network1D.node_name_long, name_long_size
+            ugrid_network1D.node_name_long, name_long_size
         )
 
         branch_name_id = pad_and_join_list_of_strings(
-            network1D.branch_name_id, name_size
+            ugrid_network1D.branch_name_id, name_size
         )
         branch_name_long = pad_and_join_list_of_strings(
-            network1D.branch_name_long, name_long_size
+            ugrid_network1D.branch_name_long, name_long_size
         )
 
-        c_network1d = CNetwork1D()
+        c_ugrid_network = CUGridNetwork1D()
 
         # Set the pointers
-        c_network1d.name = c_char_p(name_padded.encode("utf-8"))
-        c_network1d.node_x = numpy_array_to_ctypes(network1D.node_x)
-        c_network1d.node_y = numpy_array_to_ctypes(network1D.node_y)
-        c_network1d.node_name_id = c_char_p(node_name_id.encode("utf-8"))
-        c_network1d.node_name_long = c_char_p(node_name_long.encode("utf-8"))
-        c_network1d.branch_node = numpy_array_to_ctypes(network1D.branch_node)
-        c_network1d.branch_length = numpy_array_to_ctypes(network1D.branch_length)
-        c_network1d.branch_order = numpy_array_to_ctypes(network1D.branch_order)
-        c_network1d.branch_name_id = c_char_p(branch_name_id.encode("utf-8"))
-        c_network1d.branch_name_long = c_char_p(branch_name_long.encode("utf-8"))
-        c_network1d.geometry_nodes_x = numpy_array_to_ctypes(network1D.geometry_nodes_x)
-        c_network1d.geometry_nodes_y = numpy_array_to_ctypes(network1D.geometry_nodes_y)
+        c_ugrid_network.name = c_char_p(name_padded.encode("utf-8"))
+        c_ugrid_network.node_x = numpy_array_to_ctypes(ugrid_network1D.node_x)
+        c_ugrid_network.node_y = numpy_array_to_ctypes(ugrid_network1D.node_y)
+        c_ugrid_network.node_name_id = c_char_p(node_name_id.encode("utf-8"))
+        c_ugrid_network.node_name_long = c_char_p(node_name_long.encode("utf-8"))
+        c_ugrid_network.branch_node = numpy_array_to_ctypes(ugrid_network1D.branch_node)
+        c_ugrid_network.branch_length = numpy_array_to_ctypes(
+            ugrid_network1D.branch_length
+        )
+        c_ugrid_network.branch_order = numpy_array_to_ctypes(
+            ugrid_network1D.branch_order
+        )
+        c_ugrid_network.branch_name_id = c_char_p(branch_name_id.encode("utf-8"))
+        c_ugrid_network.branch_name_long = c_char_p(branch_name_long.encode("utf-8"))
+        c_ugrid_network.geometry_nodes_x = numpy_array_to_ctypes(
+            ugrid_network1D.geometry_nodes_x
+        )
+        c_ugrid_network.geometry_nodes_y = numpy_array_to_ctypes(
+            ugrid_network1D.geometry_nodes_y
+        )
 
         # Set the sizes
-        c_network1d.num_geometry_nodes = network1D.geometry_nodes_x.size
-        c_network1d.num_nodes = network1D.node_x.size
-        c_network1d.num_branches = network1D.branch_node.size // 2
-        c_network1d.is_spherical = network1D.is_spherical
-        c_network1d.start_index = network1D.start_index
+        c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
+        c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
+        c_ugrid_network.num_branches = ugrid_network1D.branch_node.size // 2
+        c_ugrid_network.is_spherical = ugrid_network1D.is_spherical
+        c_ugrid_network.start_index = ugrid_network1D.start_index
 
-        return c_network1d
+        return c_ugrid_network
 
-    def allocate_memory(self, name_size: int, name_long_size: int) -> Network1D:
+    def allocate_memory(self, name_size: int, name_long_size: int) -> UGridNetwork1D:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Network1D instance which is returned by this method.
 
         Returns:
-            Network1D: The object owning the allocated memory.
+            UGridNetwork1D: The object owning the allocated memory.
         """
 
         name = " " * name_size
@@ -171,7 +181,7 @@ class CNetwork1D(Structure):
         self.geometry_nodes_x = numpy_array_to_ctypes(geometry_nodes_x)
         self.geometry_nodes_y = numpy_array_to_ctypes(geometry_nodes_y)
 
-        return Network1D(
+        return UGridNetwork1D(
             name=name,
             node_x=node_x,
             node_y=node_y,
@@ -183,7 +193,7 @@ class CNetwork1D(Structure):
         )
 
 
-class CMesh1D(Structure):
+class CUGridMesh1D(Structure):
     """C-structure intended for internal use only.
     It represents a Mesh1d struct as described by the UGrid API.
 
@@ -235,18 +245,18 @@ class CMesh1D(Structure):
 
     @staticmethod
     def from_py_structure(
-        mesh1d: Mesh1D, name_size: int, name_long_size: int
-    ) -> CMesh1D:
+        mesh1d: UGridMesh1D, name_size: int, name_long_size: int
+    ) -> CUGridMesh1D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
-            mesh1d (Mesh1D): Class of numpy instances owning the state.
+            mesh1d (UGridMesh1D): Class of numpy instances owning the state.
 
         Returns:
             CMesh2d: The created CMesh2d instance.
         """
 
-        c_mesh1d = CMesh1D()
+        c_mesh1d = CUGridMesh1D()
 
         # Set the pointers
         mesh1d_name_padded = mesh1d.name.ljust(name_size)
@@ -280,13 +290,13 @@ class CMesh1D(Structure):
 
         return c_mesh1d
 
-    def allocate_memory(self, name_size: int, name_long_size: int) -> Mesh1D:
+    def allocate_memory(self, name_size: int, name_long_size: int) -> UGridMesh1D:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Mesh1d instance which is returned by this method.
 
         Returns:
-            Mesh1D: The object owning the allocated memory.
+            UGridMesh1D: The object owning the allocated memory.
         """
 
         name = " " * name_size
@@ -317,7 +327,7 @@ class CMesh1D(Structure):
         self.edge_x = numpy_array_to_ctypes(edge_x)
         self.edge_y = numpy_array_to_ctypes(edge_y)
 
-        return Mesh1D(
+        return UGridMesh1D(
             name=name,
             network_name=network_name,
             branch_id=branch_id,
@@ -334,7 +344,7 @@ class CMesh1D(Structure):
         )
 
 
-class CMesh2D(Structure):
+class CUGridMesh2D(Structure):
     """C-structure intended for internal use only.
     It represents a Mesh2D struct as described by the UGrid API.
 
@@ -404,17 +414,17 @@ class CMesh2D(Structure):
     ]
 
     @staticmethod
-    def from_py_structure(mesh2d: Mesh2D, name_size: int) -> CMesh2D:
+    def from_py_structure(mesh2d: UGridMesh2D, name_size: int) -> CUGridMesh2D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
-            mesh2d (Mesh2D): Class of numpy instances owning the state.
+            mesh2d (UGridMesh2D): Class of numpy instances owning the state.
 
         Returns:
             CMesh2d: The created CMesh2d instance.
         """
 
-        c_mesh2d = CMesh2D()
+        c_mesh2d = CUGridMesh2D()
 
         # Required arrays
         mesh2d_name_padded = mesh2d.name.ljust(name_size)
@@ -447,8 +457,8 @@ class CMesh2D(Structure):
         # Set the sizes
         c_mesh2d.num_nodes = mesh2d.node_x.size
         c_mesh2d.num_edges = mesh2d.edge_node.size // 2
-        c_mesh2d.num_faces = mesh2d.num_faces
-        c_mesh2d.num_layers = mesh2d.num_layers
+        c_mesh2d.num_faces = mesh2d.face_x.size
+        c_mesh2d.num_layers = mesh2d.layer_zs.size
 
         # Set other properties
         c_mesh2d.start_index = mesh2d.start_index
@@ -459,13 +469,13 @@ class CMesh2D(Structure):
 
         return c_mesh2d
 
-    def allocate_memory(self, name_size: int) -> Mesh2D:
+    def allocate_memory(self, name_size: int) -> UGridMesh2D:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Mesh2D instance which is returned by this method.
 
         Returns:
-            Mesh2D: The object owning the allocated memory.
+            UGridMesh2D: The object owning the allocated memory.
         """
 
         name = " " * name_size
@@ -519,7 +529,7 @@ class CMesh2D(Structure):
             interface_zs = None
             self.interface_zs = None
 
-        return Mesh2D(
+        return UGridMesh2D(
             name=name,
             node_x=node_x,
             node_y=node_y,
@@ -542,7 +552,7 @@ class CMesh2D(Structure):
         )
 
 
-class CContacts(Structure):
+class CUGridContacts(Structure):
     """C-structure intended for internal use only.
     It represents a Contacts struct as described by the UGrid API.
 
@@ -577,18 +587,18 @@ class CContacts(Structure):
 
     @staticmethod
     def from_py_structure(
-        contacts: Contacts, name_size: int, name_long_size: int
-    ) -> CContacts:
+        contacts: UGridContacts, name_size: int, name_long_size: int
+    ) -> CUGridContacts:
         """Creates a new CContacts instance from a given Contacts instance.
 
         Args:
-            contacts (Contacts): Class of numpy instances owning the state.
+            contacts (UGridContacts): Class of numpy instances owning the state.
 
         Returns:
-            CContacts: The created CContacts instance.
+            CUGridContacts: The created CContacts instance.
         """
 
-        c_contacts = CContacts()
+        c_contacts = CUGridContacts()
 
         # Set the pointers
         contacts_name_padded = contacts.name.ljust(name_size)
@@ -619,13 +629,13 @@ class CContacts(Structure):
 
         return c_contacts
 
-    def allocate_memory(self, name_size: int, name_long_size: int) -> Contacts:
+    def allocate_memory(self, name_size: int, name_long_size: int) -> UGridContacts:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Contacts instance which is returned by this method.
 
         Returns:
-            Contacts: The object owning the allocated memory.
+            UGridContacts: The object owning the allocated memory.
         """
 
         name = " " * name_size
@@ -644,7 +654,7 @@ class CContacts(Structure):
         self.mesh_from_name = c_char_p(mesh_from_name.encode("utf-8"))
         self.mesh_to_name = c_char_p(mesh_to_name.encode("utf-8"))
 
-        return Contacts(
+        return UGridContacts(
             name=name,
             edges=edges,
             mesh_from_name=mesh_from_name,

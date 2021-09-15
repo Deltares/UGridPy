@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from ugrid import UGrid, Contacts
+from ugrid import UGrid, UGridContacts
 
 
 def create_contacts():
@@ -71,7 +71,7 @@ def create_contacts():
     contact_name_id = ["linkid" for _ in range(edges.size // 2)]
     contact_name_long = ["linklongname" for _ in range(edges.size // 2)]
 
-    edges = Contacts(
+    edges = UGridContacts(
         name=name,
         edges=edges,
         contact_type=contact_type,

@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from ugrid import Mesh1D, UGrid
+from ugrid import UGrid, UGridMesh1D
 
 
 def create_mesh1d():
@@ -106,7 +106,7 @@ def create_mesh1d():
     node_name_id = ["meshnodeids" for _ in range(branch_id.size)]
     node_name_long = ["meshnodelongnames" for _ in range(branch_id.size)]
 
-    mesh1d = Mesh1D(
+    mesh1d = UGridMesh1D(
         name=name,
         network_name=network_name,
         branch_id=branch_id,

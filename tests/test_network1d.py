@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from ugrid import UGrid, Network1D
+from ugrid import UGrid, UGridNetwork1D
 
 
 def create_network1d():
@@ -75,7 +75,7 @@ def create_network1d():
         dtype=np.double,
     )
 
-    network1d = Network1D(
+    network1d = UGridNetwork1D(
         name="network",
         node_x=node_x,
         node_y=node_y,
