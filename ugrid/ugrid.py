@@ -178,14 +178,14 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_network1D = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
+        c_network = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
 
         c_topology_id = c_int(-1)
 
         self._execute_function(
             self.lib.ug_network1d_def,
             self._file_id,
-            byref(c_network1D),
+            byref(c_network),
             byref(c_topology_id),
         )
 
@@ -202,13 +202,13 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_network1D = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
+        c_network = CNetwork1D.from_py_structure(network1d, name_size, name_long_size)
 
         self._execute_function(
             self.lib.ug_network1d_put,
             self._file_id,
             c_int(topology_id),
-            byref(c_network1D),
+            byref(c_network),
         )
 
     def mesh1d_get_num_topologies(self) -> int:
