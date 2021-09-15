@@ -550,7 +550,8 @@ class CContacts(Structure):
 
     Attributes:
         name (c_char_p): The name of the contact entity.
-        contacts (POINTER(c_int)): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
+        edges (POINTER(c_int)): The actual contacts, expressed as pair of indices from a mesh index
+        to another mesh index.
         contact_type (POINTER(c_int)): For each contact its type.
         contact_name_id (c_char_p): The name of each contact.
         contact_name_long (c_char_p): The long name of each contact.
