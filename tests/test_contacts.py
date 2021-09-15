@@ -8,7 +8,7 @@ def create_contacts():
     r"""Create a contacts"""
 
     name = "2d1dlinks"
-    contacts = np.array(
+    edges = np.array(
         [
             13,
             1,
@@ -68,12 +68,12 @@ def create_contacts():
     mesh_to_name = "1dmesh"
     mesh_from_location = 0
     mesh_to_location = 0
-    contact_name_id = ["linkid" for _ in range(contacts.size // 2)]
-    contact_name_long = ["linklongname" for _ in range(contacts.size // 2)]
+    contact_name_id = ["linkid" for _ in range(edges.size // 2)]
+    contact_name_long = ["linklongname" for _ in range(edges.size // 2)]
 
-    contacts = Contacts(
+    edges = Contacts(
         name=name,
-        contacts=contacts,
+        edges=edges,
         contact_type=contact_type,
         mesh_from_name=mesh_from_name,
         mesh_to_name=mesh_to_name,
@@ -82,7 +82,7 @@ def create_contacts():
         contact_name_id=contact_name_id,
         contact_name_long=contact_name_long,
     )
-    return contacts
+    return edges
 
 
 def test_contacts_get():
@@ -103,7 +103,7 @@ def test_contacts_get():
         assert expected_contacts.num_contacts == contacts.num_contacts
 
         assert_array_equal(contacts.contact_type, expected_contacts.contact_type)
-        assert_array_equal(contacts.contacts, expected_contacts.contacts)
+        assert_array_equal(contacts.edges, expected_contacts.edges)
 
 
 def test_contacts_define_and_put():

@@ -212,7 +212,7 @@ class Contacts:
 
     Attributes:
         name (str): The name of the contact entity.
-        contacts (ndarray): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
+        edges (ndarray): The actual contacts, expressed as pair of indices from a mesh index to another mesh index.
         contact_type (ndarray): For each contact its type.
         contact_name_id (list): The name of each contact.
         contact_name_long (list): The long name of each contact.
@@ -226,7 +226,7 @@ class Contacts:
     def __init__(
         self,
         name,
-        contacts,
+        edges,
         mesh_from_name,
         mesh_to_name,
         contact_type=array([]),
@@ -236,7 +236,7 @@ class Contacts:
         mesh_to_location=0,
     ):
         self.name: str = name
-        self.contacts: ndarray = contacts
+        self.edges: ndarray = edges
         self.mesh_from_name: str = mesh_from_name
         self.mesh_to_name: str = mesh_to_name
 
@@ -245,4 +245,4 @@ class Contacts:
         self.contact_name_long: list = contact_name_long
         self.mesh_from_location: int = mesh_from_location
         self.mesh_to_location: int = mesh_to_location
-        self.num_contacts: int = contacts.size // 2
+        self.num_contacts: int = edges.size // 2

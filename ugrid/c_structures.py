@@ -236,7 +236,7 @@ class CMesh1D(Structure):
     @staticmethod
     def from_py_structure(
         mesh1d: Mesh1D, name_size: int, name_long_size: int
-    ) -> CNetwork1D:
+    ) -> CMesh1D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
@@ -563,7 +563,7 @@ class CContacts(Structure):
 
     _fields_ = [
         ("name", c_char_p),
-        ("contacts", POINTER(c_int)),
+        ("edges", POINTER(c_int)),
         ("contact_type", POINTER(c_int)),
         ("contact_name_id", c_char_p),
         ("contact_name_long", c_char_p),
@@ -602,7 +602,7 @@ class CContacts(Structure):
         )
 
         c_contacts.name = c_char_p(contacts_name_padded.encode("utf-8"))
-        c_contacts.contacts = numpy_array_to_ctypes(contacts.contacts)
+        c_contacts.edges = numpy_array_to_ctypes(contacts.edges)
         c_contacts.contact_type = numpy_array_to_ctypes(contacts.contact_type)
         c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("utf-8"))
         c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("utf-8"))
@@ -628,7 +628,7 @@ class CContacts(Structure):
         """
 
         name = " " * name_size
-        contacts = np.empty(self.num_contacts * 2, dtype=np.int)
+        edges = np.empty(self.num_contacts * 2, dtype=np.int)
         mesh_from_name = " " * name_size
         mesh_to_name = " " * name_size
         contact_type = np.empty(self.num_contacts, dtype=np.int)
@@ -636,7 +636,7 @@ class CContacts(Structure):
         contact_name_long = " " * self.num_contacts * name_long_size
 
         self.name = c_char_p(name.encode("utf-8"))
-        self.contacts = numpy_array_to_ctypes(contacts)
+        self.edges = numpy_array_to_ctypes(edges)
         self.contact_type = numpy_array_to_ctypes(contact_type)
         self.contact_name_id = c_char_p(contact_name_id.encode("utf-8"))
         self.contact_name_long = c_char_p(contact_name_long.encode("utf-8"))
@@ -645,7 +645,7 @@ class CContacts(Structure):
 
         return Contacts(
             name=name,
-            contacts=contacts,
+            edges=edges,
             mesh_from_name=mesh_from_name,
             mesh_to_name=mesh_to_name,
             contact_type=contact_type,
