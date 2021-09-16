@@ -5,7 +5,7 @@ from ugrid import UGrid, UGridNetwork1D
 
 
 def create_network1d():
-    r"""Create a network1d with dimensions and data"""
+    r"""Creates an instance of UGridNetwork1D to be used for testing"""
 
     node_x = np.array([293.78, 538.89], dtype=np.double)
     node_y = np.array([27.48, 956.75], dtype=np.double)

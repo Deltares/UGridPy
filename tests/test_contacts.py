@@ -1,11 +1,12 @@
 import numpy as np
+from meshkernel import Contacts
 from numpy.testing import assert_array_equal
 
 from ugrid import UGrid, UGridContacts
 
 
-def create_contacts():
-    r"""Create a contacts"""
+def create_contacts() -> UGridContacts:
+    r"""Creates an instance of UGridContacts to be used for testing"""
 
     name = "2d1dlinks"
     edges = np.array(
@@ -71,7 +72,7 @@ def create_contacts():
     contact_name_id = ["linkid" for _ in range(edges.size // 2)]
     contact_name_long = ["linklongname" for _ in range(edges.size // 2)]
 
-    edges = UGridContacts(
+    ugrid_contacts = UGridContacts(
         name=name,
         edges=edges,
         contact_type=contact_type,
@@ -82,7 +83,7 @@ def create_contacts():
         contact_name_id=contact_name_id,
         contact_name_long=contact_name_long,
     )
-    return edges
+    return ugrid_contacts
 
 
 def test_contacts_get():
@@ -90,27 +91,54 @@ def test_contacts_get():
 
     with UGrid("./data/AllUGridEntities.nc", "r") as ug:
         num_contacts_topologies = ug.contacts_get_num_topologies()
-        contacts = ug.contacts_get(num_contacts_topologies - 1)
+        ugrid_contacts = ug.contacts_get(num_contacts_topologies - 1)
 
         expected_contacts = create_contacts()
 
-        assert expected_contacts.name == contacts.name
-        assert expected_contacts.mesh_from_name == contacts.mesh_from_name
-        assert expected_contacts.mesh_to_name == contacts.mesh_to_name
+        assert expected_contacts.name == ugrid_contacts.name
+        assert expected_contacts.mesh_from_name == ugrid_contacts.mesh_from_name
+        assert expected_contacts.mesh_to_name == ugrid_contacts.mesh_to_name
 
-        assert expected_contacts.mesh_from_location == contacts.mesh_from_location
-        assert expected_contacts.mesh_to_location == contacts.mesh_to_location
-        assert expected_contacts.num_contacts == contacts.num_contacts
+        assert expected_contacts.mesh_from_location == ugrid_contacts.mesh_from_location
+        assert expected_contacts.mesh_to_location == ugrid_contacts.mesh_to_location
 
-        assert_array_equal(contacts.contact_type, expected_contacts.contact_type)
-        assert_array_equal(contacts.edges, expected_contacts.edges)
+        assert_array_equal(ugrid_contacts.contact_type, expected_contacts.contact_type)
+        assert_array_equal(ugrid_contacts.edges, expected_contacts.edges)
 
 
 def test_contacts_define_and_put():
     r"""Tests `contacts_define` and `contacts_put` to define and write a contacts to file."""
 
     with UGrid("./data/written_files/ContactsWrite.nc", "w+") as ug:
-        contacts = create_contacts()
-        topology_id = ug.contacts_define(contacts)
+        ugrid_contacts = create_contacts()
+        topology_id = ug.contacts_define(ugrid_contacts)
         assert topology_id == 0
-        ug.contacts_put(topology_id, contacts)
+        ug.contacts_put(topology_id, ugrid_contacts)
+
+
+def test_contacts_meshkernel_define_and_put():
+    r"""Tests a meshkernel contacts is correctly converted to UGridContacts and written to file."""
+    mesh1d_indices = np.array([0, 1, 2], dtype=np.int)
+    mesh2d_indices = np.array([0, 1, 2], dtype=np.int)
+
+    contacts = Contacts(mesh1d_indices=mesh1d_indices, mesh2d_indices=mesh2d_indices)
+
+    contact_type = np.array([3, 3, 3], dtype=np.int)
+    contact_name_id = ["linkid" for _ in range(mesh1d_indices.size)]
+    contact_name_long = ["linklongname" for _ in range(mesh1d_indices.size)]
+
+    ugrid_contacts = UGrid.from_meshkernel_contacts_to_ugrid_contacts(
+        contacts=contacts,
+        name="contacts",
+        contact_type=contact_type,
+        contact_name_id=contact_name_id,
+        contact_name_long=contact_name_long,
+        mesh_from_name="mesh2d",
+        mesh_to_name="mesh1d",
+        mesh_from_location=0,
+        mesh_to_location=0,
+    )
+    with UGrid("./data/written_files/Mesh2DMesKernelWrite.nc", "w+") as ug:
+        topology_id = ug.contacts_define(ugrid_contacts)
+        assert topology_id == 0
+        ug.contacts_put(topology_id, ugrid_contacts)

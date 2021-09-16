@@ -625,7 +625,7 @@ class CUGridContacts(Structure):
         c_contacts.mesh_to_location = contacts.mesh_to_location
 
         # Set the size
-        c_contacts.num_contacts = contacts.num_contacts
+        c_contacts.num_contacts = contacts.edges.size // 2
 
         return c_contacts
 

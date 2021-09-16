@@ -4,7 +4,9 @@ from ctypes import CDLL, byref, c_char_p, c_int
 from enum import IntEnum, unique
 from pathlib import Path
 from typing import Callable
+
 import numpy as np
+from meshkernel import Contacts, Mesh1d, Mesh2d
 
 from ugrid.c_structures import (
     CUGridContacts,
@@ -16,7 +18,6 @@ from ugrid.c_structures import (
 )
 from ugrid.errors import UGridError
 from ugrid.py_structures import UGridContacts, UGridMesh1D, UGridMesh2D, UGridNetwork1D
-from meshkernel import Mesh2d, Mesh1d
 from ugrid.version import __version__
 
 logger = logging.getLogger(__name__)
@@ -117,14 +118,14 @@ class UGrid:
             CUGridNetwork1D: The network1d dimensions.
         """
 
-        c_network1d = CUGridNetwork1D()
+        c_ugrid_network1d = CUGridNetwork1D()
         self._execute_function(
             self.lib.ug_network1d_inq,
             self._file_id,
             c_int(topology_id),
-            byref(c_network1d),
+            byref(c_ugrid_network1d),
         )
-        return c_network1d
+        return c_ugrid_network1d
 
     def network1d_get(self, topology_id) -> UGridNetwork1D:
         """Gets the network1d data.
@@ -136,36 +137,42 @@ class UGrid:
             UGridNetwork1D: The network1d (dimensions and data)
         """
 
-        c_network1d = self._network1d_inquire(topology_id)
+        c_ugrid_network1d = self._network1d_inquire(topology_id)
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        network1d = c_network1d.allocate_memory(name_size, name_long_size)
+        ugrid_network1d = c_ugrid_network1d.allocate_memory(name_size, name_long_size)
         self._execute_function(
             self.lib.ug_network1d_get,
             self._file_id,
             c_int(topology_id),
-            byref(c_network1d),
+            byref(c_ugrid_network1d),
         )
 
-        network1d.is_spherical = bool(c_network1d.is_spherical)
-        network1d.start_index = c_network1d.start_index
-        network1d.name = decode_byte_vector_to_string(c_network1d.name, name_size)
-        network1d.node_name_id = decode_byte_vector_to_list_of_strings(
-            c_network1d.node_name_id, c_network1d.num_nodes, name_size
+        ugrid_network1d.is_spherical = bool(c_ugrid_network1d.is_spherical)
+        ugrid_network1d.start_index = c_ugrid_network1d.start_index
+        ugrid_network1d.name = decode_byte_vector_to_string(
+            c_ugrid_network1d.name, name_size
         )
-        network1d.node_name_long = decode_byte_vector_to_list_of_strings(
-            c_network1d.node_name_long, c_network1d.num_nodes, name_long_size
+        ugrid_network1d.node_name_id = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.node_name_id, c_ugrid_network1d.num_nodes, name_size
         )
-
-        network1d.branch_name_id = decode_byte_vector_to_list_of_strings(
-            c_network1d.branch_name_id, c_network1d.num_branches, name_size
-        )
-        network1d.branch_name_long = decode_byte_vector_to_list_of_strings(
-            c_network1d.branch_name_long, c_network1d.num_branches, name_long_size
+        ugrid_network1d.node_name_long = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.node_name_long,
+            c_ugrid_network1d.num_nodes,
+            name_long_size,
         )
 
-        return network1d
+        ugrid_network1d.branch_name_id = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.branch_name_id, c_ugrid_network1d.num_branches, name_size
+        )
+        ugrid_network1d.branch_name_long = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.branch_name_long,
+            c_ugrid_network1d.num_branches,
+            name_long_size,
+        )
+
+        return ugrid_network1d
 
     def network1d_define(self, network1d: UGridNetwork1D) -> int:
         """Defines a new network1d in a UGrid file.
@@ -180,7 +187,7 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_network = CUGridNetwork1D.from_py_structure(
+        c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
         )
 
@@ -189,7 +196,7 @@ class UGrid:
         self._execute_function(
             self.lib.ug_network1d_def,
             self._file_id,
-            byref(c_network),
+            byref(c_ugrid_network),
             byref(c_topology_id),
         )
 
@@ -206,7 +213,7 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_network = CUGridNetwork1D.from_py_structure(
+        c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
         )
 
@@ -214,7 +221,7 @@ class UGrid:
             self.lib.ug_network1d_put,
             self._file_id,
             c_int(topology_id),
-            byref(c_network),
+            byref(c_ugrid_network),
         )
 
     def mesh1d_get_num_topologies(self) -> int:
@@ -243,14 +250,14 @@ class UGrid:
 
         """
 
-        c_mesh1d = CUGridMesh1D()
+        c_ugrid_mesh1d = CUGridMesh1D()
         self._execute_function(
             self.lib.ug_mesh1d_inq,
             self._file_id,
             c_int(topology_id),
-            byref(c_mesh1d),
+            byref(c_ugrid_mesh1d),
         )
-        return c_mesh1d
+        return c_ugrid_mesh1d
 
     def mesh1d_get(self, topology_id) -> UGridMesh1D:
         """Gets the mesh1d data.
@@ -266,7 +273,7 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        mesh1d = c_mesh1d.allocate_memory(name_size, name_long_size)
+        ugrid_mesh1d = c_mesh1d.allocate_memory(name_size, name_long_size)
         self._execute_function(
             self.lib.ug_mesh1d_get,
             self._file_id,
@@ -274,24 +281,24 @@ class UGrid:
             byref(c_mesh1d),
         )
 
-        mesh1d.is_spherical = bool(c_mesh1d.is_spherical)
-        mesh1d.start_index = c_mesh1d.start_index
-        mesh1d.double_fill_value = c_mesh1d.double_fill_value
-        mesh1d.int_fill_value = c_mesh1d.int_fill_value
+        ugrid_mesh1d.is_spherical = bool(c_mesh1d.is_spherical)
+        ugrid_mesh1d.start_index = c_mesh1d.start_index
+        ugrid_mesh1d.double_fill_value = c_mesh1d.double_fill_value
+        ugrid_mesh1d.int_fill_value = c_mesh1d.int_fill_value
 
-        mesh1d.name = decode_byte_vector_to_string(c_mesh1d.name, name_size)
-        mesh1d.network_name = decode_byte_vector_to_string(
+        ugrid_mesh1d.name = decode_byte_vector_to_string(c_mesh1d.name, name_size)
+        ugrid_mesh1d.network_name = decode_byte_vector_to_string(
             c_mesh1d.network_name, name_size
         )
 
-        mesh1d.node_name_id = decode_byte_vector_to_list_of_strings(
+        ugrid_mesh1d.node_name_id = decode_byte_vector_to_list_of_strings(
             c_mesh1d.node_name_id, c_mesh1d.num_nodes, name_size
         )
-        mesh1d.node_name_long = decode_byte_vector_to_list_of_strings(
+        ugrid_mesh1d.node_name_long = decode_byte_vector_to_list_of_strings(
             c_mesh1d.node_name_long, c_mesh1d.num_nodes, name_long_size
         )
 
-        return mesh1d
+        return ugrid_mesh1d
 
     def mesh1d_define(self, mesh1d: UGridMesh1D) -> int:
         """Defines a new mesh1d in a UGrid file.
@@ -306,12 +313,17 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_mesh1d = CUGridMesh1D.from_py_structure(mesh1d, name_size, name_long_size)
+        c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
+            mesh1d, name_size, name_long_size
+        )
 
         c_topology_id = c_int(-1)
 
         self._execute_function(
-            self.lib.ug_mesh1d_def, self._file_id, byref(c_mesh1d), byref(c_topology_id)
+            self.lib.ug_mesh1d_def,
+            self._file_id,
+            byref(c_ugrid_mesh1d),
+            byref(c_topology_id),
         )
 
         return c_topology_id.value
@@ -327,10 +339,15 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_mesh1d = CUGridMesh1D.from_py_structure(mesh1d, name_size, name_long_size)
+        c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
+            mesh1d, name_size, name_long_size
+        )
 
         self._execute_function(
-            self.lib.ug_mesh1d_put, self._file_id, c_int(topology_id), byref(c_mesh1d)
+            self.lib.ug_mesh1d_put,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_ugrid_mesh1d),
         )
 
     def mesh2d_get_num_topologies(self) -> int:
@@ -413,12 +430,15 @@ class UGrid:
 
         name_size = self.lib.ug_name_get_length()
 
-        c_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
+        c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
 
         c_topology_id = c_int(-1)
 
         self._execute_function(
-            self.lib.ug_mesh2d_def, self._file_id, byref(c_mesh2d), byref(c_topology_id)
+            self.lib.ug_mesh2d_def,
+            self._file_id,
+            byref(c_ugrid_mesh2d),
+            byref(c_topology_id),
         )
 
         return c_topology_id.value
@@ -432,14 +452,19 @@ class UGrid:
         """
 
         name_size = self.lib.ug_name_get_length()
-        c_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
+        c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
 
         self._execute_function(
-            self.lib.ug_mesh2d_put, self._file_id, c_int(topology_id), byref(c_mesh2d)
+            self.lib.ug_mesh2d_put,
+            self._file_id,
+            c_int(topology_id),
+            byref(c_ugrid_mesh2d),
         )
 
     @staticmethod
-    def from_meshkernel_mesh2d_to_ugrid_mesh2d(mesh2d: Mesh2d, name: str, is_spherical: bool) -> UGridMesh2D:
+    def from_meshkernel_mesh2d_to_ugrid_mesh2d(
+        mesh2d: Mesh2d, name: str, is_spherical: bool
+    ) -> UGridMesh2D:
         """Converts a meshkernel mesh2d to ugrid mesh2d
 
         Args:
@@ -450,9 +475,15 @@ class UGrid:
 
         num_faces = len(mesh2d.nodes_per_face)
         num_face_nodes_max = np.max(mesh2d.nodes_per_face)
-        face_nodes_array = np.full(num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1)
-        for index, (face_nodes, nodes_per_face) in enumerate(zip(mesh2d.face_nodes, mesh2d.nodes_per_face)):
-            face_nodes_array[index * num_face_nodes_max : index * num_face_nodes_max + nodes_per_face] = face_nodes
+        face_nodes_array = np.full(
+            num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1
+        )
+        for index, (face_nodes, nodes_per_face) in enumerate(
+            zip(mesh2d.face_nodes, mesh2d.nodes_per_face)
+        ):
+            face_nodes_array[
+                index * num_face_nodes_max : index * num_face_nodes_max + nodes_per_face
+            ] = face_nodes
 
         return UGridMesh2D(
             name=name,
@@ -471,21 +502,21 @@ class UGrid:
         )
 
     @staticmethod
-    def from_meshkernel_mesh1d_to_ugrid_mesh1d(mesh1d: Mesh1d,
-                                               name: str,
-                                               network_name: str,
-                                               branch_id: np.ndarray,
-                                               branch_offset: np.ndarray,
-                                               node_name_id: list,
-                                               node_name_long: list,
-                                               edge_edge_id: np.ndarray,
-                                               edge_edge_offset: np.ndarray,
-                                               edge_x: np.ndarray,
-                                               edge_y: np.ndarray,
-                                               is_spherical: bool,
-                                               start_index:int,
-                                               double_fill_value: float,
-                                               int_fill_value: int) -> UGridMesh1D:
+    def from_meshkernel_mesh1d_to_ugrid_mesh1d(
+        mesh1d: Mesh1d,
+        name: str,
+        network_name: str,
+        branch_id: np.ndarray,
+        branch_offset: np.ndarray,
+        node_name_id: list,
+        node_name_long: list,
+        edge_edge_id: np.ndarray,
+        edge_edge_offset: np.ndarray,
+        edge_x: np.ndarray,
+        edge_y: np.ndarray,
+        double_fill_value: float,
+        int_fill_value: int,
+    ) -> UGridMesh1D:
         """Converts a meshkernel mesh1d to a ugrid mesh1d
 
         Args:
@@ -501,31 +532,77 @@ class UGrid:
             edge_edge_offset (ndarray): The offset of each edge on the network branch.
             edge_x (ndarray): The edge x coordinate.
             edge_y (ndarray): The edge y coordinate.
-            is_spherical (bool): Spherical or cartesian coordinate system
-            start_index (int): The start index used in arrays using indices, such as in the branch_node array.
             double_fill_value (c_double): The fill value for array of doubles.
             int_fill_value (c_int): The fill value for array of integers.
         """
 
-        ugrid_mesh1d = UGridMesh1D(name = name,
-                                   network_name = network_name,
-                                   node_x = mesh1d.node_x,
-                                   node_y = mesh1d.node_y,
-                                   edge_node = mesh1d.edge_nodes,
-                                   branch_id=branch_id,
-                                   branch_offset=branch_offset,
-                                   node_name_id=node_name_id,
-                                   node_name_long=node_name_long,
-                                   edge_edge_id=edge_edge_id,
-                                   edge_edge_offset=edge_edge_offset,
-                                   edge_x=edge_x,
-                                   edge_y=edge_y,
-                                   is_spherical=is_spherical,
-                                   start_index=start_index,
-                                   double_fill_value=double_fill_value,
-                                   int_fill_value=int_fill_value)
+        ugrid_mesh1d = UGridMesh1D(
+            name=name,
+            network_name=network_name,
+            node_x=mesh1d.node_x,
+            node_y=mesh1d.node_y,
+            edge_node=mesh1d.edge_nodes,
+            branch_id=branch_id,
+            branch_offset=branch_offset,
+            node_name_id=node_name_id,
+            node_name_long=node_name_long,
+            edge_edge_id=edge_edge_id,
+            edge_edge_offset=edge_edge_offset,
+            edge_x=edge_x,
+            edge_y=edge_y,
+            double_fill_value=double_fill_value,
+            int_fill_value=int_fill_value,
+        )
 
         return ugrid_mesh1d
+
+    @staticmethod
+    def from_meshkernel_contacts_to_ugrid_contacts(
+        contacts: Contacts,
+        name: str,
+        contact_type: np.ndarray,
+        contact_name_id: str,
+        contact_name_long: str,
+        mesh_from_name: str,
+        mesh_to_name: str,
+        mesh_from_location: int,
+        mesh_to_location: int,
+    ) -> UGridContacts:
+        """Converts a meshkernel mesh1d to a ugrid mesh1d
+
+        Args:
+            contacts (Contacts): An instance of a meshkernel contacts entity
+            name (str): The name of the contact entity.
+            contact_type (ndarray): For each contact its type.
+            contact_name_id (list): The name of each contact.
+            contact_name_long (list): The long name of each contact.
+            mesh_from_name (str): The name of the mesh where the contacts start.
+            mesh_to_name (str): The name of the mesh where the contacts ends.
+            mesh_from_location (c_int): The location type (node, edge or face) at the contact start.
+            mesh_to_location (c_int): The location type (node, edge or face) at the contact end.
+        """
+
+        num_edges = len(contacts.mesh1d_indices)
+        edges_array = np.full(num_edges * 2, dtype=np.int, fill_value=-1)
+        for index, (mesh1d_indices, mesh2d_indices) in enumerate(
+            zip(contacts.mesh1d_indices, contacts.mesh2d_indices)
+        ):
+            edges_array[index * 2] = mesh1d_indices
+            edges_array[index * 2 + 1] = mesh2d_indices
+
+        ugrid_contacts = UGridContacts(
+            name=name,
+            edges=edges_array,
+            mesh_from_name=mesh_from_name,
+            mesh_to_name=mesh_to_name,
+            contact_type=contact_type,
+            contact_name_id=contact_name_id,
+            contact_name_long=contact_name_long,
+            mesh_from_location=mesh_from_location,
+            mesh_to_location=mesh_to_location,
+        )
+
+        return ugrid_contacts
 
     def contacts_get_num_topologies(self) -> int:
         """Description
@@ -556,14 +633,14 @@ class UGrid:
 
         """
 
-        c_contacts = CUGridContacts()
+        c_ugrid_contacts = CUGridContacts()
         self._execute_function(
             self.lib.ug_contacts_inq,
             self._file_id,
             c_int(topology_id),
-            byref(c_contacts),
+            byref(c_ugrid_contacts),
         )
-        return c_contacts
+        return c_ugrid_contacts
 
     def contacts_get(self, topology_id) -> UGridContacts:
         """Gets the contacts data.
@@ -575,34 +652,38 @@ class UGrid:
             UGridContacts: The contacts (dimensions and data)
         """
 
-        c_contacts = self._contacts_inquire(topology_id)
+        c_ugrid_contacts = self._contacts_inquire(topology_id)
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        contacts = c_contacts.allocate_memory(name_size, name_long_size)
+        ugrid_contacts = c_ugrid_contacts.allocate_memory(name_size, name_long_size)
         self._execute_function(
             self.lib.ug_contacts_get,
             self._file_id,
             c_int(topology_id),
-            byref(c_contacts),
+            byref(c_ugrid_contacts),
         )
 
-        contacts.name = decode_byte_vector_to_string(c_contacts.name, name_size)
-        contacts.contact_name_id = decode_byte_vector_to_list_of_strings(
-            c_contacts.contact_name_id, c_contacts.num_contacts, name_size
+        ugrid_contacts.name = decode_byte_vector_to_string(
+            c_ugrid_contacts.name, name_size
         )
-        contacts.contact_name_long = decode_byte_vector_to_list_of_strings(
-            c_contacts.contact_name_long, c_contacts.num_contacts, name_long_size
+        ugrid_contacts.contact_name_id = decode_byte_vector_to_list_of_strings(
+            c_ugrid_contacts.contact_name_id, c_ugrid_contacts.num_contacts, name_size
         )
-
-        contacts.mesh_from_name = decode_byte_vector_to_string(
-            c_contacts.mesh_from_name, name_size
-        )
-        contacts.mesh_to_name = decode_byte_vector_to_string(
-            c_contacts.mesh_to_name, name_size
+        ugrid_contacts.contact_name_long = decode_byte_vector_to_list_of_strings(
+            c_ugrid_contacts.contact_name_long,
+            c_ugrid_contacts.num_contacts,
+            name_long_size,
         )
 
-        return contacts
+        ugrid_contacts.mesh_from_name = decode_byte_vector_to_string(
+            c_ugrid_contacts.mesh_from_name, name_size
+        )
+        ugrid_contacts.mesh_to_name = decode_byte_vector_to_string(
+            c_ugrid_contacts.mesh_to_name, name_size
+        )
+
+        return ugrid_contacts
 
     def contacts_define(self, contacts: UGridContacts) -> int:
         """Defines a new contacts in a UGrid file.
@@ -617,14 +698,16 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_contacts = CUGridContacts.from_py_structure(contacts, name_size, name_long_size)
+        c_ugrid_contacts = CUGridContacts.from_py_structure(
+            contacts, name_size, name_long_size
+        )
 
         c_topology_id = c_int(-1)
 
         self._execute_function(
             self.lib.ug_contacts_def,
             self._file_id,
-            byref(c_contacts),
+            byref(c_ugrid_contacts),
             byref(c_topology_id),
         )
 
@@ -641,13 +724,15 @@ class UGrid:
         name_size = self.lib.ug_name_get_length()
         name_long_size = self.lib.ug_name_get_long_length()
 
-        c_contacts = CUGridContacts.from_py_structure(contacts, name_size, name_long_size)
+        c_ugrid_contacts = CUGridContacts.from_py_structure(
+            contacts, name_size, name_long_size
+        )
 
         self._execute_function(
             self.lib.ug_contacts_put,
             self._file_id,
             c_int(topology_id),
-            byref(c_contacts),
+            byref(c_ugrid_contacts),
         )
 
     def _get_error(self) -> str:

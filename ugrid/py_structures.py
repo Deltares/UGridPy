@@ -233,4 +233,3 @@ class UGridContacts:
         self.contact_name_long: list = contact_name_long
         self.mesh_from_location: int = mesh_from_location
         self.mesh_to_location: int = mesh_to_location
-        self.num_contacts: int = edges.size // 2
