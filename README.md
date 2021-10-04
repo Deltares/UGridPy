@@ -1,8 +1,6 @@
 # UGridPy
 
-`UGridPy` is a library for writing/reading ugrid files.
-It supports 1D and 2D unstructured meshes.
-Support for curvilinear meshes is planned.
+`UGridPy` is a library for writing/reading UGrid files. It supports writing 1D networks, 1D mesh, 2D meshes and 1D-2D contacts in UGrid Format.
 The underlying C++ library `UGrid` can be found [here](https://github.com/Deltares/UGrid.git).
 
 # Installation
