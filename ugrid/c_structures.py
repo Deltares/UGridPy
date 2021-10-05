@@ -77,6 +77,7 @@ class CUGridNetwork1D(Structure):
         ("branch_name_long", c_char_p),
         ("geometry_nodes_x", POINTER(c_double)),
         ("geometry_nodes_y", POINTER(c_double)),
+        ("num_branch_geometry_nodes", POINTER(c_int)),
         ("num_geometry_nodes", c_int),
         ("num_nodes", c_int),
         ("num_branches", c_int),
@@ -167,6 +168,7 @@ class CUGridNetwork1D(Structure):
         branch_name_long = " " * self.num_branches * name_long_size
         geometry_nodes_x = np.empty(self.num_geometry_nodes, dtype=np.double)
         geometry_nodes_y = np.empty(self.num_geometry_nodes, dtype=np.double)
+        num_branch_geometry_nodes = np.empty(self.num_branches, dtype=np.int)
 
         self.name = c_char_p(name.encode("utf-8"))
         self.node_x = numpy_array_to_ctypes(node_x)
@@ -180,6 +182,9 @@ class CUGridNetwork1D(Structure):
         self.branch_name_long = c_char_p(branch_name_long.encode("utf-8"))
         self.geometry_nodes_x = numpy_array_to_ctypes(geometry_nodes_x)
         self.geometry_nodes_y = numpy_array_to_ctypes(geometry_nodes_y)
+        self.num_branch_geometry_nodes = numpy_array_to_ctypes(
+            num_branch_geometry_nodes
+        )
 
         return UGridNetwork1D(
             name=name,
@@ -190,6 +195,7 @@ class CUGridNetwork1D(Structure):
             branch_order=branch_order,
             geometry_nodes_x=geometry_nodes_x,
             geometry_nodes_y=geometry_nodes_y,
+            num_branch_geometry_nodes=num_branch_geometry_nodes,
         )
 
 

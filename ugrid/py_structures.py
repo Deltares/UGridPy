@@ -10,15 +10,16 @@ class UGridNetwork1D:
         name (str): The network name.
         node_x (ndarray): The x-coordinates of the network node.
         node_y (ndarray): The y-coordinates of the network node.
-        node_name_id (str): The node names ids.
-        node_name_long (str): The node long names.
         branch_node (ndarray): The nodes defining each branch.
         branch_length (ndarray): The edge lengths.
-        branch_order (ndarray): The order of the branches.
-        branch_name_id (list): The name of the branches.
-        branch_name_long (list): The long name of the branches.
         geometry_nodes_x (ndarray): The geometry nodes x coordinates.
         geometry_nodes_y (ndarray): The geometry nodes y coordinates.
+        num_branch_geometry_nodes (ndarray): The number of geometry node on each branch.
+        branch_order (ndarray): The order of the branches.
+        node_name_id (str): The node names ids.
+        node_name_long (str): The node long names.
+        branch_name_id (list): The name of the branches.
+        branch_name_long (list): The long name of the branches.
     """
 
     def __init__(
@@ -30,6 +31,7 @@ class UGridNetwork1D:
         branch_length,
         geometry_nodes_x,
         geometry_nodes_y,
+        num_branch_geometry_nodes,
         branch_order=array([]),
         node_name_id=[],
         node_name_long=[],
@@ -48,6 +50,7 @@ class UGridNetwork1D:
         self.branch_name_long: list = branch_name_long
         self.geometry_nodes_x: ndarray = geometry_nodes_x
         self.geometry_nodes_y: ndarray = geometry_nodes_y
+        self.num_branch_geometry_nodes = num_branch_geometry_nodes
         self.is_spherical: bool = False
         self.start_index: int = 0
 

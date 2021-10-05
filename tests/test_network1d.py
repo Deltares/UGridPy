@@ -75,6 +75,8 @@ def create_network1d():
         dtype=np.double,
     )
 
+    num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int)
+
     network1d = UGridNetwork1D(
         name="network",
         node_x=node_x,
@@ -84,6 +86,7 @@ def create_network1d():
         branch_order=branch_order,
         geometry_nodes_x=geometry_nodes_x,
         geometry_nodes_y=geometry_nodes_y,
+        num_branch_geometry_nodes=num_branch_geometry_nodes,
     )
 
     network1d.node_name_id = ["nodesids", "nodesids"]
