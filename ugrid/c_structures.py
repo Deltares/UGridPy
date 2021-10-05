@@ -57,6 +57,7 @@ class CUGridNetwork1D(Structure):
         branch_name_long (c_char_p): The long name of the branches.
         geometry_nodes_x (POINTER(c_double)): The geometry nodes x coordinates.
         geometry_nodes_y (POINTER(c_double)): The geometry nodes y coordinates.
+        num_branch_geometry_nodes (POINTER(c_int)): The number of geometry nodes for each branch.
         num_geometry_nodes (c_int): The number of geometry nodes.
         num_nodes (c_int): The number of network1d nodes.
         num_branches (c_int): The number of network1d branches.
