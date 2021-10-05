@@ -120,5 +120,5 @@ setup(
     },
     cmdclass={"bdist_wheel": bdist_wheel},
     version=get_version("ugrid/version.py"),
-    classifiers=["Topic :: NetCDF :: UGrid"],
+    classifiers=["Topic :: Scientific/Engineering :: Mathematics"],
 )
