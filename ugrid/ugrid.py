@@ -74,12 +74,13 @@ class UGrid:
             method (bool): The opening method ("r" for read, "w" for write, and "w+" for replace)
         """
 
+        file_mode = c_int(0)
         if method == "r":
-            file_mode = self.lib.ug_file_read_mode()
+            self._execute_function(self.lib.ug_file_read_mode, byref(file_mode))
         elif method == "w":
-            file_mode = self.lib.ug_file_write_mode()
+            self._execute_function(self.lib.ug_file_write_mode, byref(file_mode))
         elif method == "w+":
-            file_mode = self.lib.ug_file_replace_mode()
+            self._execute_function(self.lib.ug_file_replace_mode, byref(file_mode))
         else:
             raise ValueError("Unsupported file mode")
 
@@ -89,18 +90,20 @@ class UGrid:
         self._execute_function(
             self.lib.ug_file_open,
             file_path_bytes,
-            c_int(file_mode),
+            file_mode,
             byref(self._file_id),
         )
 
     def _get_name_size(self):
+        """Get the size of name strings"""
         name_size = c_int(0)
-        self.lib.ug_name_get_length(byref(name_size))
+        self._execute_function(self.lib.ug_name_get_length, byref(name_size))
         return name_size.value
 
     def _get_name_long_size(self):
+        """Get the size of long name strings"""
         name_long_size = c_int(0)
-        self.lib.ug_name_get_long_length(byref(name_long_size))
+        self._execute_function(self.lib.ug_name_get_long_length, byref(name_long_size))
         return name_long_size.value
 
     def network1d_get_num_topologies(self) -> int:
@@ -110,10 +113,15 @@ class UGrid:
             int: The number of network topologies contained in the file.
         """
         topology_enum = c_int(0)
-        self.lib.ug_topology_get_network1d_enum(byref(topology_enum))
+        self._execute_function(
+            self.lib.ug_topology_get_network1d_enum, byref(topology_enum)
+        )
         topology_count = c_int(0)
-        self.lib.ug_topology_get_count(
-            self._file_id, topology_enum, byref(topology_count)
+        self._execute_function(
+            self.lib.ug_topology_get_count,
+            self._file_id,
+            topology_enum,
+            byref(topology_count),
         )
         return topology_count.value
 
@@ -244,11 +252,16 @@ class UGrid:
             int: The number of mesh1d topologies contained in the file.
         """
         topology_enum = c_int(0)
-        self.lib.ug_topology_get_mesh1d_enum(byref(topology_enum))
+        self._execute_function(
+            self.lib.ug_topology_get_mesh1d_enum, byref(topology_enum)
+        )
 
         topology_count = c_int(0)
-        self.lib.ug_topology_get_count(
-            self._file_id, topology_enum, byref(topology_count)
+        self._execute_function(
+            self.lib.ug_topology_get_count,
+            self._file_id,
+            topology_enum,
+            byref(topology_count),
         )
         return topology_count.value
 
@@ -289,6 +302,7 @@ class UGrid:
         name_long_size = self._get_name_long_size()
 
         ugrid_mesh1d = c_mesh1d.allocate_memory(name_size, name_long_size)
+
         self._execute_function(
             self.lib.ug_mesh1d_get,
             self._file_id,
@@ -375,11 +389,16 @@ class UGrid:
 
         """
         topology_enum = c_int(0)
-        self.lib.ug_topology_get_mesh2d_enum(byref(topology_enum))
+        self._execute_function(
+            self.lib.ug_topology_get_mesh2d_enum, byref(topology_enum)
+        )
 
         topology_count = c_int(0)
-        self.lib.ug_topology_get_count(
-            self._file_id, topology_enum, byref(topology_count)
+        self._execute_function(
+            self.lib.ug_topology_get_count,
+            self._file_id,
+            topology_enum,
+            byref(topology_count),
         )
         return topology_count.value
 
@@ -631,10 +650,15 @@ class UGrid:
 
         """
         topology_enum = c_int(0)
-        self.lib.ug_topology_get_contacts_enum(byref(topology_enum))
+        self._execute_function(
+            self.lib.ug_topology_get_contacts_enum, byref(topology_enum)
+        )
         topology_count = c_int(0)
-        self.lib.ug_topology_get_count(
-            self._file_id, topology_enum, byref(topology_count)
+        self._execute_function(
+            self.lib.ug_topology_get_count,
+            self._file_id,
+            topology_enum,
+            byref(topology_count),
         )
         return topology_count.value
 
@@ -756,7 +780,7 @@ class UGrid:
 
     def _get_error(self) -> str:
         c_error_message = c_char_p()
-        self.lib.ug_error_get(byref(c_error_message))
+        self._execute_function(self.lib.ug_error_get, byref(c_error_message))
         return c_error_message.value.decode("ASCII")
 
     def get_ugrid_version(self) -> str:
@@ -767,7 +791,7 @@ class UGrid:
         """
 
         c_ugrid_version = c_char_p()
-        self.lib.mkernel_get_version(byref(c_ugrid_version))
+        self._execute_function(self.lib.mkernel_get_version, byref(c_ugrid_version))
         return c_ugrid_version.value.decode("ASCII")
 
     def get_ugridpy_version(self) -> str:
@@ -793,3 +817,65 @@ class UGrid:
         if function(*args) != Status.SUCCESS:
             error_message = self._get_error()
             raise UGridError(error_message)
+
+    def entity_get_node_location_enum(self) -> int:
+        """Get the node location enum value
+
+        Returns:
+            int: The node location enum value
+        """
+
+        location = c_int(0)
+        self._execute_function(
+            self.lib.ug_entity_get_node_location_enum, byref(location)
+        )
+        return location.value
+
+    def entity_get_edge_location_enum(self) -> int:
+        """Get the edge location enum value
+
+        Returns:
+            int: The edge location enum value
+        """
+
+        location = c_int(0)
+        self._execute_function(
+            self.lib.ug_entity_get_edge_location_enum, byref(location)
+        )
+        return location.value
+
+    def entity_get_face_location_enum(self) -> int:
+        """Get the face location enum value
+
+        Returns:
+            int: The face location enum value
+        """
+
+        location = c_int(0)
+        self._execute_function(
+            self.lib.ug_entity_get_face_location_enum, byref(location)
+        )
+        return location.value
+
+    def topology_count_attributes(self, topology_id: int, topology_type: int) -> int:
+        """Gets the number of attributes associated to a specific topology
+
+        Args:
+            topology_id (int): The index of the topology type.
+            topology_type (int): The topology type.
+
+        Returns:
+            int: The number of attributes
+        """
+
+        c_topology_type = c_int(topology_type)
+        c_topology_id = c_int(topology_id)
+        attributes_count = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_count_attributes,
+            self._file_id,
+            c_topology_type,
+            c_topology_id,
+            byref(attributes_count),
+        )
+        return attributes_count.value
