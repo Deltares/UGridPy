@@ -93,18 +93,29 @@ class UGrid:
             byref(self._file_id),
         )
 
+    def _get_name_size(self):
+        name_size = c_int(0)
+        self.lib.ug_name_get_length(byref(name_size))
+        return name_size.value
+
+    def _get_name_long_size(self):
+        name_long_size = c_int(0)
+        self.lib.ug_name_get_long_length(byref(name_long_size))
+        return name_long_size.value
+
     def network1d_get_num_topologies(self) -> int:
         """Gets the number of network topologies contained in the file.
 
         Returns:
             int: The number of network topologies contained in the file.
         """
-
-        topology_enum = self.lib.ug_topology_get_network1d_enum()
-        num_topologies = self.lib.ug_topology_get_count(
-            self._file_id, c_int(topology_enum)
+        topology_enum = c_int(0)
+        self.lib.ug_topology_get_network1d_enum(byref(topology_enum))
+        topology_count = c_int(0)
+        self.lib.ug_topology_get_count(
+            self._file_id, topology_enum, byref(topology_count)
         )
-        return num_topologies
+        return topology_count.value
 
     def _network1d_inquire(self, topology_id) -> CUGridNetwork1D:
         """For internal use only.
@@ -138,8 +149,8 @@ class UGrid:
         """
 
         c_ugrid_network1d = self._network1d_inquire(topology_id)
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         ugrid_network1d = c_ugrid_network1d.allocate_memory(name_size, name_long_size)
         self._execute_function(
@@ -164,7 +175,9 @@ class UGrid:
         )
 
         ugrid_network1d.branch_name_id = decode_byte_vector_to_list_of_strings(
-            c_ugrid_network1d.branch_name_id, c_ugrid_network1d.num_branches, name_size
+            c_ugrid_network1d.branch_name_id,
+            c_ugrid_network1d.num_branches,
+            name_size,
         )
         ugrid_network1d.branch_name_long = decode_byte_vector_to_list_of_strings(
             c_ugrid_network1d.branch_name_long,
@@ -184,8 +197,8 @@ class UGrid:
             int: The index of the defined network topology.
         """
 
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
@@ -210,8 +223,8 @@ class UGrid:
             network1d (UGridNetwork1D): An instance of Network1D (with dimensions and data)
         """
 
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
@@ -230,12 +243,14 @@ class UGrid:
         Returns:
             int: The number of mesh1d topologies contained in the file.
         """
+        topology_enum = c_int(0)
+        self.lib.ug_topology_get_mesh1d_enum(byref(topology_enum))
 
-        topology_enum = self.lib.ug_topology_get_mesh1d_enum()
-        num_topologies = self.lib.ug_topology_get_count(
-            self._file_id, c_int(topology_enum)
+        topology_count = c_int(0)
+        self.lib.ug_topology_get_count(
+            self._file_id, topology_enum, byref(topology_count)
         )
-        return num_topologies
+        return topology_count.value
 
     def _mesh1d_inquire(self, topology_id) -> CUGridMesh1D:
         """For internal use only.
@@ -270,8 +285,8 @@ class UGrid:
         """
 
         c_mesh1d = self._mesh1d_inquire(topology_id)
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         ugrid_mesh1d = c_mesh1d.allocate_memory(name_size, name_long_size)
         self._execute_function(
@@ -310,8 +325,8 @@ class UGrid:
             int: The index of the defined mesh1d topology.
         """
 
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
             mesh1d, name_size, name_long_size
@@ -336,8 +351,8 @@ class UGrid:
             mesh1d (UGridMesh1D): An instance of mesh1d (with dimensions and data)
         """
 
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
             mesh1d, name_size, name_long_size
@@ -359,12 +374,14 @@ class UGrid:
             int: The number of mesh2d topologies contained in the file.
 
         """
+        topology_enum = c_int(0)
+        self.lib.ug_topology_get_mesh2d_enum(byref(topology_enum))
 
-        topology_enum = self.lib.ug_topology_get_mesh2d_enum()
-        num_topologies = self.lib.ug_topology_get_count(
-            self._file_id, c_int(topology_enum)
+        topology_count = c_int(0)
+        self.lib.ug_topology_get_count(
+            self._file_id, topology_enum, byref(topology_count)
         )
-        return num_topologies
+        return topology_count.value
 
     def _mesh2d_inquire(self, topology_id) -> CUGridMesh2D:
         """For internal use only.
@@ -399,7 +416,7 @@ class UGrid:
         """
 
         c_ugrid_mesh2d = self._mesh2d_inquire(topology_id)
-        name_size = self.lib.ug_name_get_length()
+        name_size = self._get_name_size()
 
         ugrid_mesh2d = c_ugrid_mesh2d.allocate_memory(name_size)
         self._execute_function(
@@ -428,7 +445,7 @@ class UGrid:
             int: The index of the defined mesh2d topology.
         """
 
-        name_size = self.lib.ug_name_get_length()
+        name_size = self._get_name_size()
 
         c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
 
@@ -451,7 +468,7 @@ class UGrid:
             ugrid_mesh2d (UGridMesh2D): A mesh2d (dimensions and data)
         """
 
-        name_size = self.lib.ug_name_get_length()
+        name_size = self._get_name_size()
         c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
 
         self._execute_function(
@@ -613,12 +630,13 @@ class UGrid:
             int: The number of contacts topologies contained in the file.
 
         """
-
-        topology_enum = self.lib.ug_topology_get_contacts_enum()
-        num_topologies = self.lib.ug_topology_get_count(
-            self._file_id, c_int(topology_enum)
+        topology_enum = c_int(0)
+        self.lib.ug_topology_get_contacts_enum(byref(topology_enum))
+        topology_count = c_int(0)
+        self.lib.ug_topology_get_count(
+            self._file_id, topology_enum, byref(topology_count)
         )
-        return num_topologies
+        return topology_count.value
 
     def _contacts_inquire(self, topology_id) -> CUGridContacts:
         """For internal use only.
@@ -653,8 +671,8 @@ class UGrid:
         """
 
         c_ugrid_contacts = self._contacts_inquire(topology_id)
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         ugrid_contacts = c_ugrid_contacts.allocate_memory(name_size, name_long_size)
         self._execute_function(
@@ -668,7 +686,9 @@ class UGrid:
             c_ugrid_contacts.name, name_size
         )
         ugrid_contacts.contact_name_id = decode_byte_vector_to_list_of_strings(
-            c_ugrid_contacts.contact_name_id, c_ugrid_contacts.num_contacts, name_size
+            c_ugrid_contacts.contact_name_id,
+            c_ugrid_contacts.num_contacts,
+            name_size,
         )
         ugrid_contacts.contact_name_long = decode_byte_vector_to_list_of_strings(
             c_ugrid_contacts.contact_name_long,
@@ -695,8 +715,8 @@ class UGrid:
             int: The index of the defined contacts topology.
         """
 
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_contacts = CUGridContacts.from_py_structure(
             contacts, name_size, name_long_size
@@ -720,9 +740,8 @@ class UGrid:
             topology_id (int): The index of the contacts topology to write.
             contacts (UGridContacts): A contacts (dimensions and data)
         """
-
-        name_size = self.lib.ug_name_get_length()
-        name_long_size = self.lib.ug_name_get_long_length()
+        name_size = self._get_name_size()
+        name_long_size = self._get_name_long_size()
 
         c_ugrid_contacts = CUGridContacts.from_py_structure(
             contacts, name_size, name_long_size
