@@ -112,15 +112,14 @@ class UGrid:
         Returns:
             int: The number of network topologies contained in the file.
         """
-        topology_enum = c_int(0)
-        self._execute_function(
-            self.lib.ug_topology_get_network1d_enum, byref(topology_enum)
-        )
+
+        topology_enum = self.topology_get_network1d_enum()
+
         topology_count = c_int(0)
         self._execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
-            topology_enum,
+            c_int(topology_enum),
             byref(topology_count),
         )
         return topology_count.value
@@ -251,16 +250,14 @@ class UGrid:
         Returns:
             int: The number of mesh1d topologies contained in the file.
         """
-        topology_enum = c_int(0)
-        self._execute_function(
-            self.lib.ug_topology_get_mesh1d_enum, byref(topology_enum)
-        )
+
+        topology_enum = self.topology_get_mesh1d_enum()
 
         topology_count = c_int(0)
         self._execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
-            topology_enum,
+            c_int(topology_enum),
             byref(topology_count),
         )
         return topology_count.value
@@ -388,16 +385,14 @@ class UGrid:
             int: The number of mesh2d topologies contained in the file.
 
         """
-        topology_enum = c_int(0)
-        self._execute_function(
-            self.lib.ug_topology_get_mesh2d_enum, byref(topology_enum)
-        )
+
+        topology_enum = self.topology_get_mesh2d_enum()
 
         topology_count = c_int(0)
         self._execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
-            topology_enum,
+            c_int(topology_enum),
             byref(topology_count),
         )
         return topology_count.value
@@ -649,15 +644,14 @@ class UGrid:
             int: The number of contacts topologies contained in the file.
 
         """
-        topology_enum = c_int(0)
-        self._execute_function(
-            self.lib.ug_topology_get_contacts_enum, byref(topology_enum)
-        )
+
+        topology_enum = self.topology_get_contacts_enum()
+
         topology_count = c_int(0)
         self._execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
-            topology_enum,
+            c_int(topology_enum),
             byref(topology_count),
         )
         return topology_count.value
@@ -857,7 +851,63 @@ class UGrid:
         )
         return location.value
 
-    def topology_count_attributes(self, topology_id: int, topology_type: int) -> int:
+    def topology_get_network1d_enum(self) -> int:
+
+        """Gets the topology enum value associated with network1d.
+
+        Returns:
+            int: the topology enum value associated with network1d.
+        """
+        topology_enum = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_get_network1d_enum, byref(topology_enum)
+        )
+
+        return topology_enum.value
+
+    def topology_get_mesh1d_enum(self) -> int:
+
+        """Gets the topology enum value associated with mesh1d.
+
+        Returns:
+            int: the topology enum value associated with mesh1d.
+        """
+        topology_enum = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_get_mesh1d_enum, byref(topology_enum)
+        )
+
+        return topology_enum.value
+
+    def topology_get_mesh2d_enum(self) -> int:
+
+        """Gets the topology enum value associated with mesh2d.
+
+        Returns:
+            int: the topology enum value associated with mesh2d.
+        """
+        topology_enum = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_get_mesh2d_enum, byref(topology_enum)
+        )
+
+        return topology_enum.value
+
+    def topology_get_contacts_enum(self) -> int:
+
+        """Gets the topology enum value associated with contacts.
+
+        Returns:
+            int: the topology enum value associated with contacts.
+        """
+        topology_enum = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_get_contacts_enum, byref(topology_enum)
+        )
+
+        return topology_enum.value
+
+    def _topology_count_attributes(self, topology_id: int, topology_type: int) -> int:
         """Gets the number of attributes associated to a specific topology
 
         Args:
@@ -879,3 +929,75 @@ class UGrid:
             byref(attributes_count),
         )
         return attributes_count.value
+
+    def topology_get_attributes_names(
+        self, topology_id: int, topology_type: int
+    ) -> list:
+        """Gets the attribute names associated to a specific topology id and type
+
+        Args:
+            topology_id (int): The index of the topology type.
+            topology_type (int): The topology type.
+
+        Returns:
+            list: The list with the attributes names
+        """
+
+        num_topology_attributes = self._topology_count_attributes(
+            topology_id, topology_type
+        )
+        name_long_size = self._get_name_long_size()
+        buffer_size = name_long_size * num_topology_attributes
+        attribute_buffer = " " * buffer_size
+
+        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("UTF-8"))
+        self._execute_function(
+            self.lib.ug_topology_get_attributes_names,
+            self._file_id,
+            c_int(topology_type),
+            c_int(topology_id),
+            attribute_buffer_encoded,
+        )
+
+        attribute_list = decode_byte_vector_to_list_of_strings(
+            attribute_buffer_encoded.value, num_topology_attributes, name_long_size
+        )
+
+        return attribute_list
+
+    def topology_get_attributes_values(
+        self, topology_id: int, topology_type: int
+    ) -> list:
+        """Gets the attribute values associated to a specific topology id and type
+
+        Args:
+            topology_id (int): The index of the topology type.
+            topology_type (int): The list with the attributes values.
+
+        Returns:
+            list: The list with the attributes names
+        """
+
+        c_topology_type = c_int(topology_type)
+        c_topology_id = c_int(topology_id)
+        num_topology_attributes = self._topology_count_attributes(
+            topology_id, topology_type
+        )
+        name_long_size = self._get_name_long_size()
+        buffer_size = name_long_size * num_topology_attributes
+        attribute_buffer = " " * buffer_size
+
+        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("utf-8"))
+        self._execute_function(
+            self.lib.ug_topology_get_attributes_values,
+            self._file_id,
+            c_topology_type,
+            c_topology_id,
+            attribute_buffer_encoded,
+        )
+
+        attribute_list = decode_byte_vector_to_list_of_strings(
+            attribute_buffer_encoded.value, num_topology_attributes, name_long_size
+        )
+
+        return attribute_list
