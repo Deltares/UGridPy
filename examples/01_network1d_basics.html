@@ -149,8 +149,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#network-1d-writing-example">
-   Network 1d writing example
+  <a class="reference internal nav-link" href="#network1d-writing">
+   Network1d writing
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
@@ -218,42 +218,42 @@
 <h3>Print some data<a class="headerlink" href="#print-some-data" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">num_branch_geometry_nodes</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">branch_node</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_y</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_x</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_y</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_id</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_long</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">is_spherical</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D name: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D num branch geometry nodes: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">num_branch_geometry_nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D branch nodes: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">branch_node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D node x: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D node y: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D geometry nodes x: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D geometry nodes y: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D node name id: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D node name long: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_long</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network 1D is spherical: </span><span class="si">{</span><span class="n">network1d</span><span class="o">.</span><span class="n">is_spherical</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>network
-[25]
-[0 1]
-[293.78 538.89]
-[ 27.48 956.75]
-[293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network 1D name: network
+Network 1D num branch geometry nodes: [25]
+Network 1D branch nodes: [0 1]
+Network 1D node x: [293.78 538.89]
+Network 1D node y: [ 27.48 956.75]
+Network 1D geometry nodes x: [293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44
  398.94 445.   490.6  532.84 566.64 589.08 600.72 603.53 599.27 590.05
  577.56 562.97 547.12 530.67 538.89]
-[ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84
+Network 1D geometry nodes y: [ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84
  450.76 469.28 488.89 514.78 550.83 594.93 643.09 692.6  742.02 790.79
  838.83 886.28 933.33 980.17 956.75]
-[&#39;nodesids&#39;, &#39;nodesids&#39;]
-[&#39;nodeslongNames&#39;, &#39;nodeslongNames&#39;]
-False
+Network 1D node name id: [&#39;nodesids&#39;, &#39;nodesids&#39;]
+Network 1D node name long: [&#39;nodeslongNames&#39;, &#39;nodeslongNames&#39;]
+Network 1D is spherical: False
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="section" id="network-1d-writing-example">
-<h2>Network 1d writing example<a class="headerlink" href="#network-1d-writing-example" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="network1d-writing">
+<h2>Network1d writing<a class="headerlink" href="#network1d-writing" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="define-network1d-arrays">
 <h3>Define Network1d arrays<a class="headerlink" href="#define-network1d-arrays" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">

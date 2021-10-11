@@ -74,41 +74,41 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "network\n",
-      "[25]\n",
-      "[0 1]\n",
-      "[293.78 538.89]\n",
-      "[ 27.48 956.75]\n",
-      "[293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44\n",
+      "Network 1D name: network\n",
+      "Network 1D num branch geometry nodes: [25]\n",
+      "Network 1D branch nodes: [0 1]\n",
+      "Network 1D node x: [293.78 538.89]\n",
+      "Network 1D node y: [ 27.48 956.75]\n",
+      "Network 1D geometry nodes x: [293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44\n",
       " 398.94 445.   490.6  532.84 566.64 589.08 600.72 603.53 599.27 590.05\n",
       " 577.56 562.97 547.12 530.67 538.89]\n",
-      "[ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84\n",
+      "Network 1D geometry nodes y: [ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84\n",
       " 450.76 469.28 488.89 514.78 550.83 594.93 643.09 692.6  742.02 790.79\n",
       " 838.83 886.28 933.33 980.17 956.75]\n",
-      "['nodesids', 'nodesids']\n",
-      "['nodeslongNames', 'nodeslongNames']\n",
-      "False\n"
+      "Network 1D node name id: ['nodesids', 'nodesids']\n",
+      "Network 1D node name long: ['nodeslongNames', 'nodeslongNames']\n",
+      "Network 1D is spherical: False\n"
      ]
     }
    ],
    "source": [
-    "print(network1d.name)\n",
-    "print(network1d.num_branch_geometry_nodes)\n",
-    "print(network1d.branch_node)\n",
-    "print(network1d.node_x)\n",
-    "print(network1d.node_y)\n",
-    "print(network1d.geometry_nodes_x)\n",
-    "print(network1d.geometry_nodes_y)\n",
-    "print(network1d.node_name_id)\n",
-    "print(network1d.node_name_long)\n",
-    "print(network1d.is_spherical)"
+    "print(f\"Network 1D name: {network1d.name}\")\n",
+    "print(f\"Network 1D num branch geometry nodes: {network1d.num_branch_geometry_nodes}\")\n",
+    "print(f\"Network 1D branch nodes: {network1d.branch_node}\")\n",
+    "print(f\"Network 1D node x: {network1d.node_x}\")\n",
+    "print(f\"Network 1D node y: {network1d.node_y}\")\n",
+    "print(f\"Network 1D geometry nodes x: {network1d.geometry_nodes_x}\")\n",
+    "print(f\"Network 1D geometry nodes y: {network1d.geometry_nodes_y}\")\n",
+    "print(f\"Network 1D node name id: {network1d.node_name_id}\")\n",
+    "print(f\"Network 1D node name long: {network1d.node_name_long}\")\n",
+    "print(f\"Network 1D is spherical: {network1d.is_spherical}\")"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Network 1d writing example"
+    "## Network1d writing"
    ]
   },
   {
