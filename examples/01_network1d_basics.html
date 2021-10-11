@@ -358,7 +358,6 @@ False
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Network1DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">network1d_define</span><span class="p">(</span><span class="n">network1d</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">topology_id</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">network1d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">network1d</span><span class="p">)</span>
 </pre></div>
 </div>
