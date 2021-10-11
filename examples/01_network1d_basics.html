@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UGrid network1d basics &#8212; UGridPy  documentation</title>
+    <title>UGrid Network1d basics &#8212; UGridPy  documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -154,8 +154,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#define-some-data">
-     Define some data
+    <a class="reference internal nav-link" href="#define-network1d-arrays">
+     Define Network1d arrays
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -182,7 +182,7 @@
               <div>
                 
   <div class="tex2jax_ignore mathjax_ignore section" id="ugrid-network1d-basics">
-<h1>UGrid network1d basics<a class="headerlink" href="#ugrid-network1d-basics" title="Permalink to this headline">¶</a></h1>
+<h1>UGrid Network1d basics<a class="headerlink" href="#ugrid-network1d-basics" title="Permalink to this headline">¶</a></h1>
 <p>This is the basic introduction for using the <code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> library.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> can be used for reading and writing network1d.</p>
 <p>At the very beginning, the necessary libraries have to be imported.</p>
@@ -190,11 +190,6 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ugrid</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ugrid</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.4.0
 </pre></div>
 </div>
 </div>
@@ -256,19 +251,12 @@ False
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Network1d writing example</span>
-</pre></div>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="network-1d-writing-example">
 <h2>Network 1d writing example<a class="headerlink" href="#network-1d-writing-example" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="define-some-data">
-<h3>Define some data<a class="headerlink" href="#define-some-data" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="define-network1d-arrays">
+<h3>Define Network1d arrays<a class="headerlink" href="#define-network1d-arrays" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">node_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">293.78</span><span class="p">,</span> <span class="mf">538.89</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
@@ -360,6 +348,20 @@ False
     <span class="n">geometry_nodes_y</span><span class="o">=</span><span class="n">geometry_nodes_y</span><span class="p">,</span>
     <span class="n">num_branch_geometry_nodes</span><span class="o">=</span><span class="n">num_branch_geometry_nodes</span><span class="p">,</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">c0b56d35b520</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">network1d</span> <span class="o">=</span> <span class="n">ugrid</span><span class="o">.</span><span class="n">UGridNetwork1D</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;network&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">node_x</span><span class="o">=</span><span class="n">node_x</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">node_y</span><span class="o">=</span><span class="n">node_y</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">branch_node</span><span class="o">=</span><span class="n">branch_node</span><span class="p">,</span>
+
+<span class="ne">NameError</span>: name &#39;ugrid&#39; is not defined
 </pre></div>
 </div>
 </div>

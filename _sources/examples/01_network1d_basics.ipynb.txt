@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# UGrid network1d basics\n",
+    "# UGrid Network1d basics\n",
     "\n",
     "This is the basic introduction for using the `ugridpy` library.\n",
     "\n",
@@ -17,15 +17,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "0.4.0\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "import ugrid\n",
     "print(ugrid.__version__)"
@@ -114,15 +106,6 @@
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": 5,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "## Network1d writing example"
-   ]
-  },
-  {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
@@ -133,12 +116,12 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Define some data"
+    "### Define Network1d arrays"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 5,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -222,9 +205,21 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 6,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "ename": "NameError",
+     "evalue": "name 'ugrid' is not defined",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[1;32m<ipython-input-6-c0b56d35b520>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[1;32m----> 1\u001b[1;33m network1d = ugrid.UGridNetwork1D(\n\u001b[0m\u001b[0;32m      2\u001b[0m     \u001b[0mname\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;34m\"network\"\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      3\u001b[0m     \u001b[0mnode_x\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mnode_x\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      4\u001b[0m     \u001b[0mnode_y\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mnode_y\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      5\u001b[0m     \u001b[0mbranch_node\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mbranch_node\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
+      "\u001b[1;31mNameError\u001b[0m: name 'ugrid' is not defined"
+     ]
+    }
+   ],
    "source": [
     "network1d = ugrid.UGridNetwork1D(\n",
     "    name=\"network\",\n",
@@ -248,7 +243,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
+   "execution_count": null,
    "metadata": {},
    "outputs": [],
    "source": [
