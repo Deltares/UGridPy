@@ -45,7 +45,7 @@ def get_version(rel_path: str) -> str:
     raise RuntimeError("Unable to find version string.")
 
 
-def get_ugrid_name() -> str:
+def get_runtime_libraries() -> str:
     """Get the filename of the MeshKernel library
 
     Raises:
@@ -56,11 +56,11 @@ def get_ugrid_name() -> str:
     """
     system = platform.system()
     if system == "Windows":
-        return "UGridApi.dll"
+        return "*.dll"
     elif system == "Linux":
-        return "UGridApi.so"
+        return "*.so"
     elif system == "Darwin":
-        return "UGridApi.dylib"
+        return "*.dylib"
     else:
         raise OSError(f"Unsupported operating system: {system}")
 
@@ -116,7 +116,7 @@ setup(
     python_requires=">=3.8",
     packages=["ugrid"],
     package_data={
-        "ugrid": [get_ugrid_name()],
+        "ugrid": [get_runtime_libraries()],
     },
     cmdclass={"bdist_wheel": bdist_wheel},
     version=get_version("ugrid/version.py"),
