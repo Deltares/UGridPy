@@ -54,20 +54,20 @@ class UGrid:
             raise OSError(f"Unsupported operating system: {system}")
 
         self.lib = CDLL(str(lib_path))
-        self._open(file_path, method)
+        self.__open(file_path, method)
 
     def __enter__(self):
         return self
 
     def __exit__(self, type, value, traceback):
-        self._execute_function(self.lib.ug_file_close, self._file_id)
-        error_message = self._get_error()
+        self.__execute_function(self.lib.ug_file_close, self._file_id)
+        error_message = self.__get_error()
 
         # Raise an exception if an error is present
         if error_message:
             raise UGridError(error_message)
 
-    def _open(self, file_path: str, method: str) -> None:
+    def __open(self, file_path: str, method: str) -> None:
         """Opens a NetCDF file containing a UGrid entities
 
         Comment
@@ -79,34 +79,34 @@ class UGrid:
 
         file_mode = c_int(0)
         if method == "r":
-            self._execute_function(self.lib.ug_file_read_mode, byref(file_mode))
+            self.__execute_function(self.lib.ug_file_read_mode, byref(file_mode))
         elif method == "w":
-            self._execute_function(self.lib.ug_file_write_mode, byref(file_mode))
+            self.__execute_function(self.lib.ug_file_write_mode, byref(file_mode))
         elif method == "w+":
-            self._execute_function(self.lib.ug_file_replace_mode, byref(file_mode))
+            self.__execute_function(self.lib.ug_file_replace_mode, byref(file_mode))
         else:
             raise ValueError("Unsupported file mode")
 
         self._file_id = c_int(-1)
 
         file_path_bytes = bytes(file_path, encoding="utf8")
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_file_open,
             file_path_bytes,
             file_mode,
             byref(self._file_id),
         )
 
-    def _get_name_size(self):
+    def __get_name_size(self):
         """Get the size of name strings"""
         name_size = c_int(0)
-        self._execute_function(self.lib.ug_name_get_length, byref(name_size))
+        self.__execute_function(self.lib.ug_name_get_length, byref(name_size))
         return name_size.value
 
-    def _get_name_long_size(self):
+    def __get_name_long_size(self):
         """Get the size of long name strings"""
         name_long_size = c_int(0)
-        self._execute_function(self.lib.ug_name_get_long_length, byref(name_long_size))
+        self.__execute_function(self.lib.ug_name_get_long_length, byref(name_long_size))
         return name_long_size.value
 
     def network1d_get_num_topologies(self) -> int:
@@ -119,7 +119,7 @@ class UGrid:
         topology_enum = self.topology_get_network1d_enum()
 
         topology_count = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
             c_int(topology_enum),
@@ -127,7 +127,7 @@ class UGrid:
         )
         return topology_count.value
 
-    def _network1d_inquire(self, topology_id) -> CUGridNetwork1D:
+    def __network1d_inquire(self, topology_id) -> CUGridNetwork1D:
         """For internal use only.
 
         Inquires the network1d dimensions and names.
@@ -140,7 +140,7 @@ class UGrid:
         """
 
         c_ugrid_network1d = CUGridNetwork1D()
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_network1d_inq,
             self._file_id,
             c_int(topology_id),
@@ -158,12 +158,12 @@ class UGrid:
             UGridNetwork1D: The network1d (dimensions and data)
         """
 
-        c_ugrid_network1d = self._network1d_inquire(topology_id)
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        c_ugrid_network1d = self.__network1d_inquire(topology_id)
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         ugrid_network1d = c_ugrid_network1d.allocate_memory(name_size, name_long_size)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_network1d_get,
             self._file_id,
             c_int(topology_id),
@@ -207,8 +207,8 @@ class UGrid:
             int: The index of the defined network topology.
         """
 
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
@@ -216,7 +216,7 @@ class UGrid:
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_network1d_def,
             self._file_id,
             byref(c_ugrid_network),
@@ -233,14 +233,14 @@ class UGrid:
             network1d (UGridNetwork1D): An instance of Network1D (with dimensions and data)
         """
 
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_network = CUGridNetwork1D.from_py_structure(
             network1d, name_size, name_long_size
         )
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_network1d_put,
             self._file_id,
             c_int(topology_id),
@@ -257,7 +257,7 @@ class UGrid:
         topology_enum = self.topology_get_mesh1d_enum()
 
         topology_count = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
             c_int(topology_enum),
@@ -265,7 +265,7 @@ class UGrid:
         )
         return topology_count.value
 
-    def _mesh1d_inquire(self, topology_id) -> CUGridMesh1D:
+    def __mesh1d_inquire(self, topology_id) -> CUGridMesh1D:
         """For internal use only.
 
         Inquires the mesh1d dimensions and names.
@@ -279,7 +279,7 @@ class UGrid:
         """
 
         c_ugrid_mesh1d = CUGridMesh1D()
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh1d_inq,
             self._file_id,
             c_int(topology_id),
@@ -297,13 +297,13 @@ class UGrid:
             UGridMesh1D: The mesh1d (dimensions and data)
         """
 
-        c_mesh1d = self._mesh1d_inquire(topology_id)
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        c_mesh1d = self.__mesh1d_inquire(topology_id)
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         ugrid_mesh1d = c_mesh1d.allocate_memory(name_size, name_long_size)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh1d_get,
             self._file_id,
             c_int(topology_id),
@@ -339,8 +339,8 @@ class UGrid:
             int: The index of the defined mesh1d topology.
         """
 
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
             mesh1d, name_size, name_long_size
@@ -348,7 +348,7 @@ class UGrid:
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh1d_def,
             self._file_id,
             byref(c_ugrid_mesh1d),
@@ -365,14 +365,14 @@ class UGrid:
             mesh1d (UGridMesh1D): An instance of mesh1d (with dimensions and data)
         """
 
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_mesh1d = CUGridMesh1D.from_py_structure(
             mesh1d, name_size, name_long_size
         )
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh1d_put,
             self._file_id,
             c_int(topology_id),
@@ -392,7 +392,7 @@ class UGrid:
         topology_enum = self.topology_get_mesh2d_enum()
 
         topology_count = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
             c_int(topology_enum),
@@ -400,7 +400,7 @@ class UGrid:
         )
         return topology_count.value
 
-    def _mesh2d_inquire(self, topology_id) -> CUGridMesh2D:
+    def __mesh2d_inquire(self, topology_id) -> CUGridMesh2D:
         """For internal use only.
 
         Inquires the mesh2d dimensions and names.
@@ -414,7 +414,7 @@ class UGrid:
         """
 
         c_ugrid_mesh2d = CUGridMesh2D()
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh2d_inq,
             self._file_id,
             c_int(topology_id),
@@ -432,11 +432,11 @@ class UGrid:
             UGridMesh2D: The mesh2d (dimensions and data)
         """
 
-        c_ugrid_mesh2d = self._mesh2d_inquire(topology_id)
-        name_size = self._get_name_size()
+        c_ugrid_mesh2d = self.__mesh2d_inquire(topology_id)
+        long_name_size = self.__get_name_long_size()
 
-        ugrid_mesh2d = c_ugrid_mesh2d.allocate_memory(name_size)
-        self._execute_function(
+        ugrid_mesh2d = c_ugrid_mesh2d.allocate_memory(long_name_size)
+        self.__execute_function(
             self.lib.ug_mesh2d_get,
             self._file_id,
             c_int(topology_id),
@@ -448,7 +448,9 @@ class UGrid:
         ugrid_mesh2d.double_fill_value = c_ugrid_mesh2d.double_fill_value
         ugrid_mesh2d.int_fill_value = c_ugrid_mesh2d.int_fill_value
 
-        ugrid_mesh2d.name = decode_byte_vector_to_string(c_ugrid_mesh2d.name, name_size)
+        ugrid_mesh2d.name = decode_byte_vector_to_string(
+            c_ugrid_mesh2d.name, long_name_size
+        )
 
         return ugrid_mesh2d
 
@@ -462,13 +464,13 @@ class UGrid:
             int: The index of the defined mesh2d topology.
         """
 
-        name_size = self._get_name_size()
+        long_name_size = self.__get_name_long_size()
 
-        c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
+        c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, long_name_size)
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh2d_def,
             self._file_id,
             byref(c_ugrid_mesh2d),
@@ -485,10 +487,10 @@ class UGrid:
             ugrid_mesh2d (UGridMesh2D): A mesh2d (dimensions and data)
         """
 
-        name_size = self._get_name_size()
+        name_size = self.__get_name_size()
         c_ugrid_mesh2d = CUGridMesh2D.from_py_structure(ugrid_mesh2d, name_size)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_mesh2d_put,
             self._file_id,
             c_int(topology_id),
@@ -651,7 +653,7 @@ class UGrid:
         topology_enum = self.topology_get_contacts_enum()
 
         topology_count = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_count,
             self._file_id,
             c_int(topology_enum),
@@ -659,7 +661,7 @@ class UGrid:
         )
         return topology_count.value
 
-    def _contacts_inquire(self, topology_id) -> CUGridContacts:
+    def __contacts_inquire(self, topology_id) -> CUGridContacts:
         """For internal use only.
 
         Inquires the contacts dimensions and names.
@@ -673,7 +675,7 @@ class UGrid:
         """
 
         c_ugrid_contacts = CUGridContacts()
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_contacts_inq,
             self._file_id,
             c_int(topology_id),
@@ -691,12 +693,12 @@ class UGrid:
             UGridContacts: The contacts (dimensions and data)
         """
 
-        c_ugrid_contacts = self._contacts_inquire(topology_id)
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        c_ugrid_contacts = self.__contacts_inquire(topology_id)
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         ugrid_contacts = c_ugrid_contacts.allocate_memory(name_size, name_long_size)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_contacts_get,
             self._file_id,
             c_int(topology_id),
@@ -736,8 +738,8 @@ class UGrid:
             int: The index of the defined contacts topology.
         """
 
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_contacts = CUGridContacts.from_py_structure(
             contacts, name_size, name_long_size
@@ -745,7 +747,7 @@ class UGrid:
 
         c_topology_id = c_int(-1)
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_contacts_def,
             self._file_id,
             byref(c_ugrid_contacts),
@@ -761,34 +763,34 @@ class UGrid:
             topology_id (int): The index of the contacts topology to write.
             contacts (UGridContacts): A contacts (dimensions and data)
         """
-        name_size = self._get_name_size()
-        name_long_size = self._get_name_long_size()
+        name_size = self.__get_name_size()
+        name_long_size = self.__get_name_long_size()
 
         c_ugrid_contacts = CUGridContacts.from_py_structure(
             contacts, name_size, name_long_size
         )
 
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_contacts_put,
             self._file_id,
             c_int(topology_id),
             byref(c_ugrid_contacts),
         )
 
-    def _get_error(self) -> str:
+    def __get_error(self) -> str:
         c_error_message = c_char_p()
-        self._execute_function(self.lib.ug_error_get, byref(c_error_message))
+        self.__execute_function(self.lib.ug_error_get, byref(c_error_message))
         return c_error_message.value.decode("ASCII")
 
     def get_ugrid_version(self) -> str:
-        """Get the version of the underlying C++ UGrid library
+        """Get the version of the C++ UGrid library
 
         Returns:
             str: The version string
         """
 
         c_ugrid_version = c_char_p()
-        self._execute_function(self.lib.mkernel_get_version, byref(c_ugrid_version))
+        self.__execute_function(self.lib.mkernel_get_version, byref(c_ugrid_version))
         return c_ugrid_version.value.decode("ASCII")
 
     def get_ugridpy_version(self) -> str:
@@ -800,7 +802,7 @@ class UGrid:
 
         return __version__
 
-    def _execute_function(self, function: Callable, *args):
+    def __execute_function(self, function: Callable, *args):
         """Utility function to execute a C function of UGrid and checks its status.
 
         Args:
@@ -812,7 +814,7 @@ class UGrid:
              if the UGrid library reports an error.
         """
         if function(*args) != Status.SUCCESS:
-            error_message = self._get_error()
+            error_message = self.__get_error()
             raise UGridError(error_message)
 
     def entity_get_node_location_enum(self) -> int:
@@ -823,7 +825,7 @@ class UGrid:
         """
 
         location = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_entity_get_node_location_enum, byref(location)
         )
         return location.value
@@ -836,7 +838,7 @@ class UGrid:
         """
 
         location = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_entity_get_edge_location_enum, byref(location)
         )
         return location.value
@@ -849,7 +851,7 @@ class UGrid:
         """
 
         location = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_entity_get_face_location_enum, byref(location)
         )
         return location.value
@@ -862,7 +864,7 @@ class UGrid:
             int: the topology enum value associated with network1d.
         """
         topology_enum = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_network1d_enum, byref(topology_enum)
         )
 
@@ -876,7 +878,7 @@ class UGrid:
             int: the topology enum value associated with mesh1d.
         """
         topology_enum = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_mesh1d_enum, byref(topology_enum)
         )
 
@@ -890,7 +892,7 @@ class UGrid:
             int: the topology enum value associated with mesh2d.
         """
         topology_enum = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_mesh2d_enum, byref(topology_enum)
         )
 
@@ -904,108 +906,13 @@ class UGrid:
             int: the topology enum value associated with contacts.
         """
         topology_enum = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_get_contacts_enum, byref(topology_enum)
         )
 
         return topology_enum.value
 
-    def _variable_count_attributes(self, topology_id: int, topology_type: int) -> int:
-        """Gets the number of attributes associated to a specific topology
-
-        Args:
-            topology_id (int): The index of the topology type.
-            topology_type (int): The topology type.
-
-        Returns:
-            int: The number of attributes
-        """
-
-        c_topology_type = c_int(topology_type)
-        c_topology_id = c_int(topology_id)
-        attributes_count = c_int(0)
-        self._execute_function(
-            self.lib.ug_variable_count_attributes,
-            self._file_id,
-            c_topology_type,
-            c_topology_id,
-            byref(attributes_count),
-        )
-        return attributes_count.value
-
-    def variable_get_attributes_names(
-        self, topology_id: int, topology_type: int
-    ) -> list:
-        """Gets the attribute names associated to a specific topology id and type
-
-        Args:
-            topology_id (int): The index of the topology type.
-            topology_type (int): The topology type.
-
-        Returns:
-            list: The list with the attributes names
-        """
-
-        num_topology_attributes = self._variable_count_attributes(
-            topology_id, topology_type
-        )
-        name_long_size = self._get_name_long_size()
-        buffer_size = name_long_size * num_topology_attributes
-        attribute_buffer = " " * buffer_size
-
-        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("ASCII"))
-        self._execute_function(
-            self.lib.ug_variable_get_attributes_names,
-            self._file_id,
-            c_int(topology_type),
-            c_int(topology_id),
-            attribute_buffer_encoded,
-        )
-
-        attribute_list = decode_byte_vector_to_list_of_strings(
-            attribute_buffer_encoded.value, num_topology_attributes, name_long_size
-        )
-
-        return attribute_list
-
-    def variable_get_attributes_values(
-        self, topology_id: int, topology_type: int
-    ) -> list:
-        """Gets the attribute values associated to a specific topology id and type
-
-        Args:
-            topology_id (int): The index of the topology type.
-            topology_type (int): The list with the attributes values.
-
-        Returns:
-            list: The list with the attributes names
-        """
-
-        c_topology_type = c_int(topology_type)
-        c_topology_id = c_int(topology_id)
-        num_topology_attributes = self._variable_count_attributes(
-            topology_id, topology_type
-        )
-        name_long_size = self._get_name_long_size()
-        buffer_size = name_long_size * num_topology_attributes
-        string_buffer = " " * buffer_size
-
-        string_buffer_encoded = c_char_p(string_buffer.encode("ASCII"))
-        self._execute_function(
-            self.lib.ug_variable_get_attributes_values,
-            self._file_id,
-            c_topology_type,
-            c_topology_id,
-            string_buffer_encoded,
-        )
-
-        attribute_list = decode_byte_vector_to_list_of_strings(
-            string_buffer_encoded.value, num_topology_attributes, name_long_size
-        )
-
-        return attribute_list
-
-    def _topology_count_data_variables(
+    def __topology_count_data_variables(
         self, topology_id: int, topology_type: int, location: int
     ) -> int:
         """Gets the data variable names
@@ -1020,7 +927,7 @@ class UGrid:
         """
 
         data_variable_count = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_count_data_variables,
             self._file_id,
             c_int(topology_type),
@@ -1045,16 +952,16 @@ class UGrid:
             list: The list of data variables
         """
 
-        num_data_variables = self._topology_count_data_variables(
+        num_data_variables = self.__topology_count_data_variables(
             topology_id, topology_type, location
         )
-        name_long_size = self._get_name_long_size()
+        name_long_size = self.__get_name_long_size()
 
         buffer_size = name_long_size * num_data_variables
         string_buffer = " " * buffer_size
 
         string_buffer_encoded = c_char_p(string_buffer.encode("ASCII"))
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_topology_count_data_variables,
             self._file_id,
             c_int(topology_type),
@@ -1069,82 +976,176 @@ class UGrid:
 
         return attribute_list.value
 
-    def _variable_get_dimensions(self, data_variable_name) -> np.ndarray:
-        """Gets the dimensions of a data variable
+    def __adjust_name(self, name: str) -> str:
+        long_name = self.__get_name_long_size()
+        name_long = name.ljust(long_name)
+        return name_long
+
+    def __variable_count_attributes(self, variable_name: str) -> int:
+        """Counts the number of variable attributes.
+
+        Args:
+            variable_name (str): The variable name.
+
+        Returns:
+            int: The number of attributes
+        """
+
+        attributes_count = c_int(0)
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+        self.__execute_function(
+            self.lib.ug_variable_count_attributes,
+            self._file_id,
+            c_variable_name_encoded,
+            byref(attributes_count),
+        )
+        return attributes_count.value
+
+    def variable_get_attributes_names(self, variable_name: str) -> list:
+        """Gets the variable attribute names.
+
+        Args:
+            variable_name (str): The variable name.
+
+        Returns:
+            list: A list containing the variable attribute names.
+        """
+
+        num_attributes = self.__variable_count_attributes(variable_name)
+
+        name_long_size = self.__get_name_long_size()
+        buffer_size = name_long_size * num_attributes
+        attribute_buffer = " " * buffer_size
+        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("ASCII"))
+
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+
+        self.__execute_function(
+            self.lib.ug_variable_get_attributes_names,
+            self._file_id,
+            c_variable_name_encoded,
+            attribute_buffer_encoded,
+        )
+
+        attribute_list = decode_byte_vector_to_list_of_strings(
+            attribute_buffer_encoded.value, num_attributes, name_long_size
+        )
+
+        return attribute_list
+
+    def variable_get_attributes_values(self, variable_name: str) -> list:
+        """Gets the variable attribute values.
+
+        Args:
+            variable_name (str): The variable name.
+
+        Returns:
+            list: A list containing the variable attribute values.
+        """
+
+        num_attributes = self.__variable_count_attributes(variable_name)
+        name_long_size = self.__get_name_long_size()
+
+        buffer_size = name_long_size * num_attributes
+        string_buffer = " " * buffer_size
+        string_buffer_encoded = c_char_p(string_buffer.encode("ASCII"))
+
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+
+        self.__execute_function(
+            self.lib.ug_variable_get_attributes_values,
+            self._file_id,
+            c_variable_name_encoded,
+            string_buffer_encoded,
+        )
+
+        attribute_list = decode_byte_vector_to_list_of_strings(
+            string_buffer_encoded.value, num_attributes, name_long_size
+        )
+
+        return attribute_list
+
+    def __variable_get_dimensions(self, variable_name) -> np.ndarray:
+        """Gets the variable dimensions
 
         Args:
             data_variable_name (str): The data variable name.
 
         Returns:
-            np.ndarray: The dimensions of the data variable
+            np.ndarray: An array with the dimension values
         """
 
-        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
         c_num_dimensions = c_int(0)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_variable_count_dimensions,
             self._file_id,
-            c_data_variable_name,
+            c_variable_name_encoded,
             byref(c_num_dimensions),
         )
 
         dimension_vec = np.empty(c_num_dimensions.value, dtype=np.int)
         dimension_vec_ptr = as_ctypes(dimension_vec)
-        self._execute_function(
+        self.__execute_function(
             self.lib.ug_variable_get_data_dimensions,
             self._file_id,
-            c_data_variable_name,
+            c_variable_name_encoded,
             dimension_vec_ptr,
         )
         return dimension_vec
 
-    def variable_get_data_double(self, data_variable_name: str) -> np.ndarray:
-        """Gets the data variable values as an array of doubles
+    def variable_get_data_double(self, variable_name: str) -> np.ndarray:
+        """Gets the variable data as a flat array of double
 
         Args:
-            data_variable_name (str): The variable name.
+            variable_name (str): The variable name.
 
         Returns:
             np.ndarray: A numpy array with the variable data
         """
 
-        dimension_vec = self._variable_get_dimensions(data_variable_name)
-
+        dimension_vec = self.__variable_get_dimensions(variable_name)
         data_vec_dimension = functools.reduce(operator.mul, dimension_vec)
 
         data_vec = np.empty(data_vec_dimension, dtype=np.double)
         data_vec_ptr = as_ctypes(data_vec)
-        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
-        self._execute_function(
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+        self.__execute_function(
             self.lib.ug_variable_get_data_double,
             self._file_id,
-            c_data_variable_name,
+            c_variable_name_encoded,
             data_vec_ptr,
         )
 
         return data_vec
 
-    def variable_get_data_int(self, data_variable_name: str) -> np.ndarray:
-        """Gets the data variable values as an array of doubles
+    def variable_get_data_int(self, variable_name: str) -> np.ndarray:
+        """Gets the variable data as a flat array of strings
 
         Args:
-            data_variable_name (str): The variable name.
+            variable_name (str): The variable name.
 
         Returns:
             np.ndarray: A numpy array with the variable data
         """
 
-        dimension_vec = self._variable_get_dimensions(data_variable_name)
+        dimension_vec = self.__variable_get_dimensions(variable_name)
 
         data_vec_dimension = functools.reduce(operator.mul, dimension_vec)
 
         data_vec = np.empty(data_vec_dimension, dtype=np.int)
         data_vec_ptr = as_ctypes(data_vec)
-        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
-        self._execute_function(
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+        self.__execute_function(
             self.lib.ug_variable_get_data_int,
             self._file_id,
-            c_data_variable_name,
+            c_variable_name_encoded,
             data_vec_ptr,
         )
 

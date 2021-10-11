@@ -99,7 +99,7 @@ class CUGridNetwork1D(Structure):
             CMesh2d: The created CMesh2d instance.
         """
 
-        name_padded = ugrid_network1D.name.ljust(name_size)
+        name_padded = ugrid_network1D.name.ljust(name_long_size)
 
         node_name_id = pad_and_join_list_of_strings(
             ugrid_network1D.node_name_id, name_size
@@ -153,11 +153,15 @@ class CUGridNetwork1D(Structure):
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Network1D instance which is returned by this method.
 
+        Args:
+            name_size (int): The size of the names.
+            name_long_size (int): The size of the long names.
+
         Returns:
             UGridNetwork1D: The object owning the allocated memory.
         """
 
-        name = " " * name_size
+        name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
         node_name_id = " " * self.num_nodes * name_size
@@ -257,6 +261,8 @@ class CUGridMesh1D(Structure):
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
+            name_size (int): The size of the names.
+            name_long_size (int): The size of the long names.
             mesh1d (UGridMesh1D): Class of numpy instances owning the state.
 
         Returns:
@@ -266,8 +272,8 @@ class CUGridMesh1D(Structure):
         c_mesh1d = CUGridMesh1D()
 
         # Set the pointers
-        mesh1d_name_padded = mesh1d.name.ljust(name_size)
-        network1d_name_padded = mesh1d.network_name.ljust(name_size)
+        mesh1d_name_padded = mesh1d.name.ljust(name_long_size)
+        network1d_name_padded = mesh1d.network_name.ljust(name_long_size)
         node_name_id = pad_and_join_list_of_strings(mesh1d.node_name_id, name_size)
         node_name_long = pad_and_join_list_of_strings(
             mesh1d.node_name_long, name_long_size
@@ -302,12 +308,16 @@ class CUGridMesh1D(Structure):
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Mesh1d instance which is returned by this method.
 
+        Args:
+            name_size (int): The size of the names.
+            name_long_size (int): The size of the long names.
+
         Returns:
             UGridMesh1D: The object owning the allocated memory.
         """
 
-        name = " " * name_size
-        network_name = " " * name_size
+        name = " " * name_long_size
+        network_name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
         edge_node = np.empty(self.num_edges * 2, dtype=np.int)
@@ -421,11 +431,12 @@ class CUGridMesh2D(Structure):
     ]
 
     @staticmethod
-    def from_py_structure(mesh2d: UGridMesh2D, name_size: int) -> CUGridMesh2D:
+    def from_py_structure(mesh2d: UGridMesh2D, name_long_size: int) -> CUGridMesh2D:
         """Creates a new CMesh instance from a given Mesh2d instance.
 
         Args:
             mesh2d (UGridMesh2D): Class of numpy instances owning the state.
+            name_long_size (int): The size of the long names.
 
         Returns:
             CMesh2d: The created CMesh2d instance.
@@ -434,7 +445,7 @@ class CUGridMesh2D(Structure):
         c_mesh2d = CUGridMesh2D()
 
         # Required arrays
-        mesh2d_name_padded = mesh2d.name.ljust(name_size)
+        mesh2d_name_padded = mesh2d.name.ljust(name_long_size)
         c_mesh2d.name = c_char_p(mesh2d_name_padded.encode("ASCII"))
         c_mesh2d.edge_node = numpy_array_to_ctypes(mesh2d.edge_node)
         c_mesh2d.node_x = numpy_array_to_ctypes(mesh2d.node_x)
@@ -476,16 +487,19 @@ class CUGridMesh2D(Structure):
 
         return c_mesh2d
 
-    def allocate_memory(self, name_size: int) -> UGridMesh2D:
+    def allocate_memory(self, name_long_size: int) -> UGridMesh2D:
         """Allocate data according to the parameters with the "num_" prefix.
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Mesh2D instance which is returned by this method.
+
+        Args:
+            name_long_size (int): The size of the long names.
 
         Returns:
             UGridMesh2D: The object owning the allocated memory.
         """
 
-        name = " " * name_size
+        name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
         edge_node = np.empty(self.num_edges * 2, dtype=np.int)
@@ -608,9 +622,9 @@ class CUGridContacts(Structure):
         c_contacts = CUGridContacts()
 
         # Set the pointers
-        contacts_name_padded = contacts.name.ljust(name_size)
-        mesh_from_name_padded = contacts.mesh_from_name.ljust(name_size)
-        mesh_to_name_padded = contacts.mesh_to_name.ljust(name_size)
+        contacts_name_padded = contacts.name.ljust(name_long_size)
+        mesh_from_name_padded = contacts.mesh_from_name.ljust(name_long_size)
+        mesh_to_name_padded = contacts.mesh_to_name.ljust(name_long_size)
 
         contact_name_id_padded = pad_and_join_list_of_strings(
             contacts.contact_name_id, name_size
@@ -641,14 +655,17 @@ class CUGridContacts(Structure):
         The pointers are then set to the freshly allocated memory.
         The memory is owned by the Contacts instance which is returned by this method.
 
+        Args:
+            name_long_size (int): The size of the long names.
+
         Returns:
             UGridContacts: The object owning the allocated memory.
         """
 
-        name = " " * name_size
+        name = " " * name_long_size
+        mesh_from_name = " " * name_long_size
+        mesh_to_name = " " * name_long_size
         edges = np.empty(self.num_contacts * 2, dtype=np.int)
-        mesh_from_name = " " * name_size
-        mesh_to_name = " " * name_size
         contact_type = np.empty(self.num_contacts, dtype=np.int)
         contact_name_id = " " * self.num_contacts * name_size
         contact_name_long = " " * self.num_contacts * name_long_size

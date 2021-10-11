@@ -9,10 +9,10 @@ def test_get_topology_attributes_names_and_values():
     values of a mesh2d topology."""
 
     with UGrid("./data/OneMesh2D.nc", "r") as ug:
-        topology_type = ug.topology_get_mesh2d_enum()
-        topology_id = 0
-        attribute_names = ug.variable_get_attributes_names(topology_id, topology_type)
-        attribute_values = ug.variable_get_attributes_values(topology_id, topology_type)
+        # Get the first mesh of the file
+        ugrid_mesh2d = ug.mesh2d_get(0)
+        attribute_names = ug.variable_get_attributes_names(ugrid_mesh2d.name)
+        attribute_values = ug.variable_get_attributes_values(ugrid_mesh2d.name)
         assert_array_equal(
             attribute_names,
             [
@@ -53,10 +53,7 @@ def test_get_data_double():
     r"""Tests `variable_get_data_double` gets double data."""
 
     with UGrid("./data/ResultFile.nc", "r") as ug:
-        var_name = "mesh1d_s0"
-        long_name = ug._get_name_long_size()
-        var_name = var_name.ljust(long_name)
-        data_variable = ug.variable_get_data_double(var_name)
+        data_variable = ug.variable_get_data_double("mesh1d_s0")
         assert_array_equal(data_variable[:5], [-5.0, -5.0, -5.0, -5.0, -5.0])
 
 
@@ -64,8 +61,5 @@ def test_get_data_int():
     r"""Tests `variable_get_data_double` gets int data."""
 
     with UGrid("./data/ResultFile.nc", "r") as ug:
-        var_name = "mesh1d_edge_nodes"
-        long_name = ug._get_name_long_size()
-        var_name = var_name.ljust(long_name)
-        data_variable = ug.variable_get_data_int(var_name)
+        data_variable = ug.variable_get_data_int("mesh1d_edge_nodes")
         assert_array_equal(data_variable[:5], [1, 2, 1, 3, 4])
