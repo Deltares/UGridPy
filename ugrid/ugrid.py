@@ -915,7 +915,7 @@ class UGrid:
     def __topology_count_data_variables(
         self, topology_id: int, topology_type: int, location: int
     ) -> int:
-        """Gets the data variable names
+        """Gets the number of data variables for a specific topology at a specific location
 
         Args:
             topology_id (int): The index of the topology type.
@@ -941,7 +941,7 @@ class UGrid:
     def topology_get_data_variables(
         self, topology_id: int, topology_type: int, location: int
     ) -> list:
-        """Gets the data variable names
+        """Gets the data variables for a specific topology at a specific location
 
         Args:
             topology_id (int): The index of the topology type.

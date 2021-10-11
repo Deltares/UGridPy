@@ -46,7 +46,7 @@ def get_version(rel_path: str) -> str:
 
 
 def get_runtime_libraries() -> str:
-    """Get the filename of the MeshKernel library
+    """Get the UGrid runtime libraries
 
     Raises:
         OSError: If the operating system is not supported
