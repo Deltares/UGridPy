@@ -10,7 +10,7 @@ from ugrid.py_structures import UGridContacts, UGridMesh1D, UGridMesh2D, UGridNe
 
 def decode_byte_vector_to_string(byte_vector: bytes, ncolumns: int) -> str:
     """From byte vector to string"""
-    return byte_vector[:ncolumns].decode("UTF-8").strip()
+    return byte_vector[:ncolumns].decode("ASCII").strip()
 
 
 def decode_byte_vector_to_list_of_strings(
@@ -18,7 +18,7 @@ def decode_byte_vector_to_list_of_strings(
 ) -> list:
     """From byte vector to a vector of strings"""
     return [
-        byte_vector[str_size * r : str_size * (r + 1)].decode("UTF-8").strip()
+        byte_vector[str_size * r : str_size * (r + 1)].decode("ASCII").strip()
         for r in range(nrows)
     ]
 
@@ -118,11 +118,11 @@ class CUGridNetwork1D(Structure):
         c_ugrid_network = CUGridNetwork1D()
 
         # Set the pointers
-        c_ugrid_network.name = c_char_p(name_padded.encode("utf-8"))
+        c_ugrid_network.name = c_char_p(name_padded.encode("ASCII"))
         c_ugrid_network.node_x = numpy_array_to_ctypes(ugrid_network1D.node_x)
         c_ugrid_network.node_y = numpy_array_to_ctypes(ugrid_network1D.node_y)
-        c_ugrid_network.node_name_id = c_char_p(node_name_id.encode("utf-8"))
-        c_ugrid_network.node_name_long = c_char_p(node_name_long.encode("utf-8"))
+        c_ugrid_network.node_name_id = c_char_p(node_name_id.encode("ASCII"))
+        c_ugrid_network.node_name_long = c_char_p(node_name_long.encode("ASCII"))
         c_ugrid_network.branch_node = numpy_array_to_ctypes(ugrid_network1D.branch_node)
         c_ugrid_network.branch_length = numpy_array_to_ctypes(
             ugrid_network1D.branch_length
@@ -130,8 +130,8 @@ class CUGridNetwork1D(Structure):
         c_ugrid_network.branch_order = numpy_array_to_ctypes(
             ugrid_network1D.branch_order
         )
-        c_ugrid_network.branch_name_id = c_char_p(branch_name_id.encode("utf-8"))
-        c_ugrid_network.branch_name_long = c_char_p(branch_name_long.encode("utf-8"))
+        c_ugrid_network.branch_name_id = c_char_p(branch_name_id.encode("ASCII"))
+        c_ugrid_network.branch_name_long = c_char_p(branch_name_long.encode("ASCII"))
         c_ugrid_network.geometry_nodes_x = numpy_array_to_ctypes(
             ugrid_network1D.geometry_nodes_x
         )
@@ -171,16 +171,16 @@ class CUGridNetwork1D(Structure):
         geometry_nodes_y = np.empty(self.num_geometry_nodes, dtype=np.double)
         num_branch_geometry_nodes = np.empty(self.num_branches, dtype=np.int)
 
-        self.name = c_char_p(name.encode("utf-8"))
+        self.name = c_char_p(name.encode("ASCII"))
         self.node_x = numpy_array_to_ctypes(node_x)
         self.node_y = numpy_array_to_ctypes(node_y)
-        self.node_name_id = c_char_p(node_name_id.encode("utf-8"))
-        self.node_name_long = c_char_p(node_name_long.encode("utf-8"))
+        self.node_name_id = c_char_p(node_name_id.encode("ASCII"))
+        self.node_name_long = c_char_p(node_name_long.encode("ASCII"))
         self.branch_node = numpy_array_to_ctypes(branch_node)
         self.branch_length = numpy_array_to_ctypes(branch_length)
         self.branch_order = numpy_array_to_ctypes(branch_order)
-        self.branch_name_id = c_char_p(branch_name_id.encode("utf-8"))
-        self.branch_name_long = c_char_p(branch_name_long.encode("utf-8"))
+        self.branch_name_id = c_char_p(branch_name_id.encode("ASCII"))
+        self.branch_name_long = c_char_p(branch_name_long.encode("ASCII"))
         self.geometry_nodes_x = numpy_array_to_ctypes(geometry_nodes_x)
         self.geometry_nodes_y = numpy_array_to_ctypes(geometry_nodes_y)
         self.num_branch_geometry_nodes = numpy_array_to_ctypes(
@@ -273,15 +273,15 @@ class CUGridMesh1D(Structure):
             mesh1d.node_name_long, name_long_size
         )
 
-        c_mesh1d.name = c_char_p(mesh1d_name_padded.encode("utf-8"))
-        c_mesh1d.network_name = c_char_p(network1d_name_padded.encode("utf-8"))
+        c_mesh1d.name = c_char_p(mesh1d_name_padded.encode("ASCII"))
+        c_mesh1d.network_name = c_char_p(network1d_name_padded.encode("ASCII"))
         c_mesh1d.node_x = numpy_array_to_ctypes(mesh1d.node_x)
         c_mesh1d.node_y = numpy_array_to_ctypes(mesh1d.node_y)
         c_mesh1d.edge_node = numpy_array_to_ctypes(mesh1d.edge_node)
         c_mesh1d.branch_id = numpy_array_to_ctypes(mesh1d.branch_id)
         c_mesh1d.branch_offset = numpy_array_to_ctypes(mesh1d.branch_offset)
-        c_mesh1d.node_name_id = c_char_p(node_name_id.encode("utf-8"))
-        c_mesh1d.node_name_long = c_char_p(node_name_long.encode("utf-8"))
+        c_mesh1d.node_name_id = c_char_p(node_name_id.encode("ASCII"))
+        c_mesh1d.node_name_long = c_char_p(node_name_long.encode("ASCII"))
         c_mesh1d.edge_edge_id = numpy_array_to_ctypes(mesh1d.edge_edge_id)
         c_mesh1d.edge_edge_offset = numpy_array_to_ctypes(mesh1d.edge_edge_offset)
         c_mesh1d.edge_x = numpy_array_to_ctypes(mesh1d.edge_x)
@@ -320,15 +320,15 @@ class CUGridMesh1D(Structure):
         edge_x = np.empty(self.num_edges, dtype=np.double)
         edge_y = np.empty(self.num_edges, dtype=np.double)
 
-        self.name = c_char_p(name.encode("utf-8"))
-        self.network_name = c_char_p(network_name.encode("utf-8"))
+        self.name = c_char_p(name.encode("ASCII"))
+        self.network_name = c_char_p(network_name.encode("ASCII"))
         self.node_x = numpy_array_to_ctypes(node_x)
         self.node_y = numpy_array_to_ctypes(node_y)
         self.edge_node = numpy_array_to_ctypes(edge_node)
         self.branch_id = numpy_array_to_ctypes(branch_id)
         self.branch_offset = numpy_array_to_ctypes(branch_offset)
-        self.node_name_id = c_char_p(node_name_id.encode("utf-8"))
-        self.node_name_long = c_char_p(node_name_long.encode("utf-8"))
+        self.node_name_id = c_char_p(node_name_id.encode("ASCII"))
+        self.node_name_long = c_char_p(node_name_long.encode("ASCII"))
         self.edge_edge_id = numpy_array_to_ctypes(edge_edge_id)
         self.edge_edge_offset = numpy_array_to_ctypes(edge_edge_offset)
         self.edge_x = numpy_array_to_ctypes(edge_x)
@@ -435,7 +435,7 @@ class CUGridMesh2D(Structure):
 
         # Required arrays
         mesh2d_name_padded = mesh2d.name.ljust(name_size)
-        c_mesh2d.name = c_char_p(mesh2d_name_padded.encode("utf-8"))
+        c_mesh2d.name = c_char_p(mesh2d_name_padded.encode("ASCII"))
         c_mesh2d.edge_node = numpy_array_to_ctypes(mesh2d.edge_node)
         c_mesh2d.node_x = numpy_array_to_ctypes(mesh2d.node_x)
         c_mesh2d.node_y = numpy_array_to_ctypes(mesh2d.node_y)
@@ -507,7 +507,7 @@ class CUGridMesh2D(Structure):
         boundary_node_connectivity = np.empty(self.num_nodes, dtype=np.double)
         volume_coordinates = np.empty(self.num_faces, dtype=np.int)
 
-        self.name = c_char_p(name.encode("utf-8"))
+        self.name = c_char_p(name.encode("ASCII"))
         self.edge_node = numpy_array_to_ctypes(edge_node)
         self.face_node = numpy_array_to_ctypes(face_node)
         self.node_x = numpy_array_to_ctypes(node_x)
@@ -619,14 +619,14 @@ class CUGridContacts(Structure):
             contacts.contact_name_long, name_long_size
         )
 
-        c_contacts.name = c_char_p(contacts_name_padded.encode("utf-8"))
+        c_contacts.name = c_char_p(contacts_name_padded.encode("ASCII"))
         c_contacts.edges = numpy_array_to_ctypes(contacts.edges)
         c_contacts.contact_type = numpy_array_to_ctypes(contacts.contact_type)
-        c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("utf-8"))
-        c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("utf-8"))
-        c_contacts.contact_name_id = c_char_p(contact_name_id_padded.encode("utf-8"))
+        c_contacts.mesh_from_name = c_char_p(mesh_from_name_padded.encode("ASCII"))
+        c_contacts.mesh_to_name = c_char_p(mesh_to_name_padded.encode("ASCII"))
+        c_contacts.contact_name_id = c_char_p(contact_name_id_padded.encode("ASCII"))
         c_contacts.contact_name_long = c_char_p(
-            contact_name_long_padded.encode("utf-8")
+            contact_name_long_padded.encode("ASCII")
         )
         c_contacts.mesh_from_location = contacts.mesh_from_location
         c_contacts.mesh_to_location = contacts.mesh_to_location
@@ -653,13 +653,13 @@ class CUGridContacts(Structure):
         contact_name_id = " " * self.num_contacts * name_size
         contact_name_long = " " * self.num_contacts * name_long_size
 
-        self.name = c_char_p(name.encode("utf-8"))
+        self.name = c_char_p(name.encode("ASCII"))
         self.edges = numpy_array_to_ctypes(edges)
         self.contact_type = numpy_array_to_ctypes(contact_type)
-        self.contact_name_id = c_char_p(contact_name_id.encode("utf-8"))
-        self.contact_name_long = c_char_p(contact_name_long.encode("utf-8"))
-        self.mesh_from_name = c_char_p(mesh_from_name.encode("utf-8"))
-        self.mesh_to_name = c_char_p(mesh_to_name.encode("utf-8"))
+        self.contact_name_id = c_char_p(contact_name_id.encode("ASCII"))
+        self.contact_name_long = c_char_p(contact_name_long.encode("ASCII"))
+        self.mesh_from_name = c_char_p(mesh_from_name.encode("ASCII"))
+        self.mesh_to_name = c_char_p(mesh_to_name.encode("ASCII"))
 
         return UGridContacts(
             name=name,

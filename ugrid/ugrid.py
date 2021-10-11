@@ -1,4 +1,6 @@
+import functools
 import logging
+import operator
 import platform
 from ctypes import CDLL, byref, c_char_p, c_int
 from enum import IntEnum, unique
@@ -7,6 +9,7 @@ from typing import Callable
 
 import numpy as np
 from meshkernel import Contacts, Mesh1d, Mesh2d
+from numpy.ctypeslib import as_ctypes
 
 from ugrid.c_structures import (
     CUGridContacts,
@@ -907,7 +910,7 @@ class UGrid:
 
         return topology_enum.value
 
-    def _topology_count_attributes(self, topology_id: int, topology_type: int) -> int:
+    def _variable_count_attributes(self, topology_id: int, topology_type: int) -> int:
         """Gets the number of attributes associated to a specific topology
 
         Args:
@@ -922,7 +925,7 @@ class UGrid:
         c_topology_id = c_int(topology_id)
         attributes_count = c_int(0)
         self._execute_function(
-            self.lib.ug_topology_count_attributes,
+            self.lib.ug_variable_count_attributes,
             self._file_id,
             c_topology_type,
             c_topology_id,
@@ -930,7 +933,7 @@ class UGrid:
         )
         return attributes_count.value
 
-    def topology_get_attributes_names(
+    def variable_get_attributes_names(
         self, topology_id: int, topology_type: int
     ) -> list:
         """Gets the attribute names associated to a specific topology id and type
@@ -943,16 +946,16 @@ class UGrid:
             list: The list with the attributes names
         """
 
-        num_topology_attributes = self._topology_count_attributes(
+        num_topology_attributes = self._variable_count_attributes(
             topology_id, topology_type
         )
         name_long_size = self._get_name_long_size()
         buffer_size = name_long_size * num_topology_attributes
         attribute_buffer = " " * buffer_size
 
-        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("UTF-8"))
+        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("ASCII"))
         self._execute_function(
-            self.lib.ug_topology_get_attributes_names,
+            self.lib.ug_variable_get_attributes_names,
             self._file_id,
             c_int(topology_type),
             c_int(topology_id),
@@ -965,7 +968,7 @@ class UGrid:
 
         return attribute_list
 
-    def topology_get_attributes_values(
+    def variable_get_attributes_values(
         self, topology_id: int, topology_type: int
     ) -> list:
         """Gets the attribute values associated to a specific topology id and type
@@ -980,24 +983,169 @@ class UGrid:
 
         c_topology_type = c_int(topology_type)
         c_topology_id = c_int(topology_id)
-        num_topology_attributes = self._topology_count_attributes(
+        num_topology_attributes = self._variable_count_attributes(
             topology_id, topology_type
         )
         name_long_size = self._get_name_long_size()
         buffer_size = name_long_size * num_topology_attributes
-        attribute_buffer = " " * buffer_size
+        string_buffer = " " * buffer_size
 
-        attribute_buffer_encoded = c_char_p(attribute_buffer.encode("utf-8"))
+        string_buffer_encoded = c_char_p(string_buffer.encode("ASCII"))
         self._execute_function(
-            self.lib.ug_topology_get_attributes_values,
+            self.lib.ug_variable_get_attributes_values,
             self._file_id,
             c_topology_type,
             c_topology_id,
-            attribute_buffer_encoded,
+            string_buffer_encoded,
         )
 
         attribute_list = decode_byte_vector_to_list_of_strings(
-            attribute_buffer_encoded.value, num_topology_attributes, name_long_size
+            string_buffer_encoded.value, num_topology_attributes, name_long_size
         )
 
         return attribute_list
+
+    def _topology_count_data_variables(
+        self, topology_id: int, topology_type: int, location: int
+    ) -> int:
+        """Gets the data variable names
+
+        Args:
+            topology_id (int): The index of the topology type.
+            topology_type (int): The list with the attributes values.
+            location (int): The location type
+
+        Returns:
+            int: The number of data
+        """
+
+        data_variable_count = c_int(0)
+        self._execute_function(
+            self.lib.ug_topology_count_data_variables,
+            self._file_id,
+            c_int(topology_type),
+            c_int(topology_id),
+            c_int(location),
+            byref(data_variable_count),
+        )
+
+        return data_variable_count.value
+
+    def topology_get_data_variables(
+        self, topology_id: int, topology_type: int, location: int
+    ) -> list:
+        """Gets the data variable names
+
+        Args:
+            topology_id (int): The index of the topology type.
+            topology_type (int): The list with the attributes values.
+            location (int): The location type
+
+        Returns:
+            list: The list of data variables
+        """
+
+        num_data_variables = self._topology_count_data_variables(
+            topology_id, topology_type, location
+        )
+        name_long_size = self._get_name_long_size()
+
+        buffer_size = name_long_size * num_data_variables
+        string_buffer = " " * buffer_size
+
+        string_buffer_encoded = c_char_p(string_buffer.encode("ASCII"))
+        self._execute_function(
+            self.lib.ug_topology_count_data_variables,
+            self._file_id,
+            c_int(topology_type),
+            c_int(topology_id),
+            c_int(location),
+            string_buffer_encoded,
+        )
+
+        attribute_list = decode_byte_vector_to_list_of_strings(
+            string_buffer_encoded.value, num_data_variables, name_long_size
+        )
+
+        return attribute_list.value
+
+    def _variable_get_dimensions(self, data_variable_name) -> np.ndarray:
+        """Gets the dimensions of a data variable
+
+        Args:
+            data_variable_name (str): The data variable name.
+
+        Returns:
+            np.ndarray: The dimensions of the data variable
+        """
+
+        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
+        c_num_dimensions = c_int(0)
+        self._execute_function(
+            self.lib.ug_variable_count_dimensions,
+            self._file_id,
+            c_data_variable_name,
+            byref(c_num_dimensions),
+        )
+
+        dimension_vec = np.empty(c_num_dimensions.value, dtype=np.int)
+        dimension_vec_ptr = as_ctypes(dimension_vec)
+        self._execute_function(
+            self.lib.ug_variable_get_data_dimensions,
+            self._file_id,
+            c_data_variable_name,
+            dimension_vec_ptr,
+        )
+        return dimension_vec
+
+    def variable_get_data_double(self, data_variable_name: str) -> np.ndarray:
+        """Gets the data variable values as an array of doubles
+
+        Args:
+            data_variable_name (str): The variable name.
+
+        Returns:
+            np.ndarray: A numpy array with the variable data
+        """
+
+        dimension_vec = self._variable_get_dimensions(data_variable_name)
+
+        data_vec_dimension = functools.reduce(operator.mul, dimension_vec)
+
+        data_vec = np.empty(data_vec_dimension, dtype=np.double)
+        data_vec_ptr = as_ctypes(data_vec)
+        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
+        self._execute_function(
+            self.lib.ug_variable_get_data_double,
+            self._file_id,
+            c_data_variable_name,
+            data_vec_ptr,
+        )
+
+        return data_vec
+
+    def variable_get_data_int(self, data_variable_name: str) -> np.ndarray:
+        """Gets the data variable values as an array of doubles
+
+        Args:
+            data_variable_name (str): The variable name.
+
+        Returns:
+            np.ndarray: A numpy array with the variable data
+        """
+
+        dimension_vec = self._variable_get_dimensions(data_variable_name)
+
+        data_vec_dimension = functools.reduce(operator.mul, dimension_vec)
+
+        data_vec = np.empty(data_vec_dimension, dtype=np.int)
+        data_vec_ptr = as_ctypes(data_vec)
+        c_data_variable_name = c_char_p(data_variable_name.encode("ASCII"))
+        self._execute_function(
+            self.lib.ug_variable_get_data_int,
+            self._file_id,
+            c_data_variable_name,
+            data_vec_ptr,
+        )
+
+        return data_vec
