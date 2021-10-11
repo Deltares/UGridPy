@@ -19,8 +19,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "import ugrid\n",
-    "print(ugrid.__version__)"
+    "from ugrid import UGrid, UGridNetwork1D"
    ]
   },
   {
@@ -52,7 +51,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "with ugrid.UGrid(\"./data_examples/AllUGridEntities.nc\", \"r\") as ug:\n",
+    "with UGrid(\"./data_examples/AllUGridEntities.nc\", \"r\") as ug:\n",
     "    # 1. Count the number of network topologies\n",
     "    num_network_topologies = ug.network1d_get_num_topologies()\n",
     "    # 2. Get the data of the last network in the list\n",
@@ -207,21 +206,9 @@
    "cell_type": "code",
    "execution_count": 6,
    "metadata": {},
-   "outputs": [
-    {
-     "ename": "NameError",
-     "evalue": "name 'ugrid' is not defined",
-     "output_type": "error",
-     "traceback": [
-      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
-      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
-      "\u001b[1;32m<ipython-input-6-c0b56d35b520>\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[1;32m----> 1\u001b[1;33m network1d = ugrid.UGridNetwork1D(\n\u001b[0m\u001b[0;32m      2\u001b[0m     \u001b[0mname\u001b[0m\u001b[1;33m=\u001b[0m\u001b[1;34m\"network\"\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      3\u001b[0m     \u001b[0mnode_x\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mnode_x\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      4\u001b[0m     \u001b[0mnode_y\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mnode_y\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      5\u001b[0m     \u001b[0mbranch_node\u001b[0m\u001b[1;33m=\u001b[0m\u001b[0mbranch_node\u001b[0m\u001b[1;33m,\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
-      "\u001b[1;31mNameError\u001b[0m: name 'ugrid' is not defined"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
-    "network1d = ugrid.UGridNetwork1D(\n",
+    "network1d = UGridNetwork1D(\n",
     "    name=\"network\",\n",
     "    node_x=node_x,\n",
     "    node_y=node_y,\n",
@@ -243,11 +230,11 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
-    "with ugrid.UGrid(\"Network1DWrite.nc\", \"w+\") as ug:\n",
+    "with UGrid(\"Network1DWrite.nc\", \"w+\") as ug:\n",
     "    topology_id = ug.network1d_define(network1d)\n",
     "    assert topology_id == 0\n",
     "    ug.network1d_put(topology_id, network1d)"
