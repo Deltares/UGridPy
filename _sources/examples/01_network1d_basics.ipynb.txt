@@ -8,7 +8,7 @@
     "\n",
     "This is the basic introduction for using the `ugridpy` library.\n",
     "\n",
-    "`ugridpy` can be used for reading and writing network1d structures. \n",
+    "`ugridpy` can be used for reading and writing network1d. \n",
     "\n",
     "At the very beginning, the necessary libraries have to be imported."
    ]
@@ -17,16 +17,25 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.4.0\n"
+     ]
+    }
+   ],
    "source": [
-    "from ugrid import UGrid, UGridContacts"
+    "import ugrid\n",
+    "print(ugrid.__version__)"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Network1d reading example"
+    "Other imports"
    ]
   },
   {
@@ -35,12 +44,226 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "with UGrid(\"./data_examples/AllUGridEntities.nc\", \"r\") as ug:\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Network1d reading"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with ugrid.UGrid(\"./data_examples/AllUGridEntities.nc\", \"r\") as ug:\n",
     "    # 1. Count the number of network topologies\n",
     "    num_network_topologies = ug.network1d_get_num_topologies()\n",
-    "    # 2. Get the network1d data\n",
+    "    # 2. Get the data of the last network in the list\n",
     "    network1d = ug.network1d_get(num_network_topologies - 1)"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Print some data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "network\n",
+      "[25]\n",
+      "[0 1]\n",
+      "[293.78 538.89]\n",
+      "[ 27.48 956.75]\n",
+      "[293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44\n",
+      " 398.94 445.   490.6  532.84 566.64 589.08 600.72 603.53 599.27 590.05\n",
+      " 577.56 562.97 547.12 530.67 538.89]\n",
+      "[ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84\n",
+      " 450.76 469.28 488.89 514.78 550.83 594.93 643.09 692.6  742.02 790.79\n",
+      " 838.83 886.28 933.33 980.17 956.75]\n",
+      "['nodesids', 'nodesids']\n",
+      "['nodeslongNames', 'nodeslongNames']\n",
+      "False\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(network1d.name)\n",
+    "print(network1d.num_branch_geometry_nodes)\n",
+    "print(network1d.branch_node)\n",
+    "print(network1d.node_x)\n",
+    "print(network1d.node_y)\n",
+    "print(network1d.geometry_nodes_x)\n",
+    "print(network1d.geometry_nodes_y)\n",
+    "print(network1d.node_name_id)\n",
+    "print(network1d.node_name_long)\n",
+    "print(network1d.is_spherical)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## Network1d writing example"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Network 1d writing example"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Define some data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "node_x = np.array([293.78, 538.89], dtype=np.double)\n",
+    "node_y = np.array([27.48, 956.75], dtype=np.double)\n",
+    "branch_node = np.array([0, 1], dtype=np.int)\n",
+    "branch_length = np.array([1165.29], dtype=np.double)\n",
+    "branch_order = np.array([0], dtype=np.int)\n",
+    "\n",
+    "geometry_nodes_x = np.array(\n",
+    "    [\n",
+    "        293.78,\n",
+    "        278.97,\n",
+    "        265.31,\n",
+    "        254.17,\n",
+    "        247.44,\n",
+    "        248.3,\n",
+    "        259.58,\n",
+    "        282.24,\n",
+    "        314.61,\n",
+    "        354.44,\n",
+    "        398.94,\n",
+    "        445,\n",
+    "        490.6,\n",
+    "        532.84,\n",
+    "        566.64,\n",
+    "        589.08,\n",
+    "        600.72,\n",
+    "        603.53,\n",
+    "        599.27,\n",
+    "        590.05,\n",
+    "        577.56,\n",
+    "        562.97,\n",
+    "        547.12,\n",
+    "        530.67,\n",
+    "        538.89,\n",
+    "    ],\n",
+    "    dtype=np.double,\n",
+    ")\n",
+    "\n",
+    "geometry_nodes_y = np.array(\n",
+    "    [\n",
+    "        27.48,\n",
+    "        74.87,\n",
+    "        122.59,\n",
+    "        170.96,\n",
+    "        220.12,\n",
+    "        269.67,\n",
+    "        317.89,\n",
+    "        361.93,\n",
+    "        399.39,\n",
+    "        428.84,\n",
+    "        450.76,\n",
+    "        469.28,\n",
+    "        488.89,\n",
+    "        514.78,\n",
+    "        550.83,\n",
+    "        594.93,\n",
+    "        643.09,\n",
+    "        692.6,\n",
+    "        742.02,\n",
+    "        790.79,\n",
+    "        838.83,\n",
+    "        886.28,\n",
+    "        933.33,\n",
+    "        980.17,\n",
+    "        956.75,\n",
+    "    ],\n",
+    "    dtype=np.double,\n",
+    ")\n",
+    "\n",
+    "num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Instantiate UGridNetwork1D class"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "network1d = ugrid.UGridNetwork1D(\n",
+    "    name=\"network\",\n",
+    "    node_x=node_x,\n",
+    "    node_y=node_y,\n",
+    "    branch_node=branch_node,\n",
+    "    branch_length=branch_length,\n",
+    "    branch_order=branch_order,\n",
+    "    geometry_nodes_x=geometry_nodes_x,\n",
+    "    geometry_nodes_y=geometry_nodes_y,\n",
+    "    num_branch_geometry_nodes=num_branch_geometry_nodes,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Write the UGridNetwork1D instance to file"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with ugrid.UGrid(\"Network1DWrite.nc\", \"w+\") as ug:\n",
+    "    topology_id = ug.network1d_define(network1d)\n",
+    "    assert topology_id == 0\n",
+    "    ug.network1d_put(topology_id, network1d)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
   }
  ],
  "metadata": {

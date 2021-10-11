@@ -137,9 +137,38 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#network1d-reading-example">
-   Network1d reading example
+  <a class="reference internal nav-link" href="#network1d-reading">
+   Network1d reading
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#print-some-data">
+     Print some data
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#network-1d-writing-example">
+   Network 1d writing example
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#define-some-data">
+     Define some data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#instantiate-ugridnetwork1d-class">
+     Instantiate UGridNetwork1D class
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#write-the-ugridnetwork1d-instance-to-file">
+     Write the UGridNetwork1D instance to file
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -155,25 +184,197 @@
   <div class="tex2jax_ignore mathjax_ignore section" id="ugrid-network1d-basics">
 <h1>UGrid network1d basics<a class="headerlink" href="#ugrid-network1d-basics" title="Permalink to this headline">¶</a></h1>
 <p>This is the basic introduction for using the <code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> library.</p>
-<p><code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> can be used for reading and writing network1d structures.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> can be used for reading and writing network1d.</p>
 <p>At the very beginning, the necessary libraries have to be imported.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridContacts</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ugrid</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ugrid</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.4.0
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="network1d-reading-example">
-<h2>Network1d reading example<a class="headerlink" href="#network1d-reading-example" title="Permalink to this headline">¶</a></h2>
+<p>Other imports</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/AllUGridEntities.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="network1d-reading">
+<h2>Network1d reading<a class="headerlink" href="#network1d-reading" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ugrid</span><span class="o">.</span><span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/AllUGridEntities.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
     <span class="c1"># 1. Count the number of network topologies</span>
     <span class="n">num_network_topologies</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">network1d_get_num_topologies</span><span class="p">()</span>
-    <span class="c1"># 2. Get the network1d data</span>
+    <span class="c1"># 2. Get the data of the last network in the list</span>
     <span class="n">network1d</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">network1d_get</span><span class="p">(</span><span class="n">num_network_topologies</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="print-some-data">
+<h3>Print some data<a class="headerlink" href="#print-some-data" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">num_branch_geometry_nodes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">branch_node</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">geometry_nodes_y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_id</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">node_name_long</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">network1d</span><span class="o">.</span><span class="n">is_spherical</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>network
+[25]
+[0 1]
+[293.78 538.89]
+[ 27.48 956.75]
+[293.78 278.97 265.31 254.17 247.44 248.3  259.58 282.24 314.61 354.44
+ 398.94 445.   490.6  532.84 566.64 589.08 600.72 603.53 599.27 590.05
+ 577.56 562.97 547.12 530.67 538.89]
+[ 27.48  74.87 122.59 170.96 220.12 269.67 317.89 361.93 399.39 428.84
+ 450.76 469.28 488.89 514.78 550.83 594.93 643.09 692.6  742.02 790.79
+ 838.83 886.28 933.33 980.17 956.75]
+[&#39;nodesids&#39;, &#39;nodesids&#39;]
+[&#39;nodeslongNames&#39;, &#39;nodeslongNames&#39;]
+False
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Network1d writing example</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="network-1d-writing-example">
+<h2>Network 1d writing example<a class="headerlink" href="#network-1d-writing-example" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="define-some-data">
+<h3>Define some data<a class="headerlink" href="#define-some-data" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">node_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">293.78</span><span class="p">,</span> <span class="mf">538.89</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">node_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">27.48</span><span class="p">,</span> <span class="mf">956.75</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">branch_node</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+<span class="n">branch_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1165.29</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">branch_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+<span class="n">geometry_nodes_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">293.78</span><span class="p">,</span>
+        <span class="mf">278.97</span><span class="p">,</span>
+        <span class="mf">265.31</span><span class="p">,</span>
+        <span class="mf">254.17</span><span class="p">,</span>
+        <span class="mf">247.44</span><span class="p">,</span>
+        <span class="mf">248.3</span><span class="p">,</span>
+        <span class="mf">259.58</span><span class="p">,</span>
+        <span class="mf">282.24</span><span class="p">,</span>
+        <span class="mf">314.61</span><span class="p">,</span>
+        <span class="mf">354.44</span><span class="p">,</span>
+        <span class="mf">398.94</span><span class="p">,</span>
+        <span class="mi">445</span><span class="p">,</span>
+        <span class="mf">490.6</span><span class="p">,</span>
+        <span class="mf">532.84</span><span class="p">,</span>
+        <span class="mf">566.64</span><span class="p">,</span>
+        <span class="mf">589.08</span><span class="p">,</span>
+        <span class="mf">600.72</span><span class="p">,</span>
+        <span class="mf">603.53</span><span class="p">,</span>
+        <span class="mf">599.27</span><span class="p">,</span>
+        <span class="mf">590.05</span><span class="p">,</span>
+        <span class="mf">577.56</span><span class="p">,</span>
+        <span class="mf">562.97</span><span class="p">,</span>
+        <span class="mf">547.12</span><span class="p">,</span>
+        <span class="mf">530.67</span><span class="p">,</span>
+        <span class="mf">538.89</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">geometry_nodes_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">27.48</span><span class="p">,</span>
+        <span class="mf">74.87</span><span class="p">,</span>
+        <span class="mf">122.59</span><span class="p">,</span>
+        <span class="mf">170.96</span><span class="p">,</span>
+        <span class="mf">220.12</span><span class="p">,</span>
+        <span class="mf">269.67</span><span class="p">,</span>
+        <span class="mf">317.89</span><span class="p">,</span>
+        <span class="mf">361.93</span><span class="p">,</span>
+        <span class="mf">399.39</span><span class="p">,</span>
+        <span class="mf">428.84</span><span class="p">,</span>
+        <span class="mf">450.76</span><span class="p">,</span>
+        <span class="mf">469.28</span><span class="p">,</span>
+        <span class="mf">488.89</span><span class="p">,</span>
+        <span class="mf">514.78</span><span class="p">,</span>
+        <span class="mf">550.83</span><span class="p">,</span>
+        <span class="mf">594.93</span><span class="p">,</span>
+        <span class="mf">643.09</span><span class="p">,</span>
+        <span class="mf">692.6</span><span class="p">,</span>
+        <span class="mf">742.02</span><span class="p">,</span>
+        <span class="mf">790.79</span><span class="p">,</span>
+        <span class="mf">838.83</span><span class="p">,</span>
+        <span class="mf">886.28</span><span class="p">,</span>
+        <span class="mf">933.33</span><span class="p">,</span>
+        <span class="mf">980.17</span><span class="p">,</span>
+        <span class="mf">956.75</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">num_branch_geometry_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry_nodes_x</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="instantiate-ugridnetwork1d-class">
+<h3>Instantiate UGridNetwork1D class<a class="headerlink" href="#instantiate-ugridnetwork1d-class" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">network1d</span> <span class="o">=</span> <span class="n">ugrid</span><span class="o">.</span><span class="n">UGridNetwork1D</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;network&quot;</span><span class="p">,</span>
+    <span class="n">node_x</span><span class="o">=</span><span class="n">node_x</span><span class="p">,</span>
+    <span class="n">node_y</span><span class="o">=</span><span class="n">node_y</span><span class="p">,</span>
+    <span class="n">branch_node</span><span class="o">=</span><span class="n">branch_node</span><span class="p">,</span>
+    <span class="n">branch_length</span><span class="o">=</span><span class="n">branch_length</span><span class="p">,</span>
+    <span class="n">branch_order</span><span class="o">=</span><span class="n">branch_order</span><span class="p">,</span>
+    <span class="n">geometry_nodes_x</span><span class="o">=</span><span class="n">geometry_nodes_x</span><span class="p">,</span>
+    <span class="n">geometry_nodes_y</span><span class="o">=</span><span class="n">geometry_nodes_y</span><span class="p">,</span>
+    <span class="n">num_branch_geometry_nodes</span><span class="o">=</span><span class="n">num_branch_geometry_nodes</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="write-the-ugridnetwork1d-instance-to-file">
+<h3>Write the UGridNetwork1D instance to file<a class="headerlink" href="#write-the-ugridnetwork1d-instance-to-file" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ugrid</span><span class="o">.</span><span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Network1DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">network1d_define</span><span class="p">(</span><span class="n">network1d</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">topology_id</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">network1d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">network1d</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
