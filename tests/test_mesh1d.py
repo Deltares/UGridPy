@@ -144,6 +144,8 @@ def test_mesh1d_get():
         assert_array_equal(mesh1d.node_name_id, expected_mesh1d.node_name_id)
         assert_array_equal(mesh1d.node_name_long, expected_mesh1d.node_name_long)
 
+        mesh1d
+
 
 def test_mesh1d_define_and_put():
     r"""Tests `mesh1d_define` and `mesh1d_put` to define and write a mesh1d to file."""
