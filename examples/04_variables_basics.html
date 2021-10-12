@@ -152,6 +152,13 @@
   <a class="reference internal nav-link" href="#reading-another-variable-attribute-s-names-and-values">
    Reading another variable attribute’s names and values
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#in-this-case-the-attribute-flag-values-contains-multiple-values">
+     In this case the attribute flag_values contains multiple values
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -172,6 +179,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridMesh1D</span>
+<span class="kn">from</span> <span class="nn">ugrid.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.6.0&#39;
 </pre></div>
 </div>
 </div>
@@ -203,8 +217,8 @@
 <h3>Create a dictionary of topology attributes names and values. This dictionary can be used for reading the file content with other libraries (xarray)<a class="headerlink" href="#create-a-dictionary-of-topology-attributes-names-and-values-this-dictionary-can-be-used-for-reading-the-file-content-with-other-libraries-xarray" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">topology_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">,</span><span class="n">attribute_values</span><span class="p">)</span> <span class="p">}</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">topology_attributes</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variable_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">,</span><span class="n">attribute_values</span><span class="p">)</span> <span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">variable_attributes</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -218,11 +232,13 @@
 </div>
 <div class="section" id="reading-another-variable-attribute-s-names-and-values">
 <h2>Reading another variable attribute’s names and values<a class="headerlink" href="#reading-another-variable-attribute-s-names-and-values" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="in-this-case-the-attribute-flag-values-contains-multiple-values">
+<h3>In this case the attribute flag_values contains multiple values<a class="headerlink" href="#in-this-case-the-attribute-flag-values-contains-multiple-values" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/OneMesh2D.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
     <span class="c1"># 1. Get the mesh2d name. This is also the name of a variable </span>
-    <span class="n">variable_name</span> <span class="o">=</span> <span class="s2">&quot;mesh2d_edge_x&quot;</span>
+    <span class="n">variable_name</span> <span class="o">=</span> <span class="s2">&quot;mesh2d_edge_type&quot;</span>
     <span class="c1"># 2. Get the mesh2D attribute names</span>
     <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_attributes_names</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
     <span class="c1"># 3. Get the mesh2D attribute values</span>
@@ -234,13 +250,14 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variable_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">,</span><span class="n">attribute_values</span><span class="p">)</span> <span class="p">}</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">topology_attributes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">variable_attributes</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;cf_role&#39;: &#39;mesh_topology&#39;, &#39;edge_coordinates&#39;: &#39;mesh2d_edge_x mesh2d_edge_y&#39;, &#39;edge_dimension&#39;: &#39;mesh2d_nEdges&#39;, &#39;edge_node_connectivity&#39;: &#39;mesh2d_edge_nodes&#39;, &#39;face_coordinates&#39;: &#39;mesh2d_face_x mesh2d_face_y&#39;, &#39;face_dimension&#39;: &#39;mesh2d_nFaces&#39;, &#39;face_node_connectivity&#39;: &#39;mesh2d_face_nodes&#39;, &#39;long_name&#39;: &#39;Topology data of 2D mesh&#39;, &#39;max_face_nodes_dimension&#39;: &#39;mesh2d_nMax_face_nodes&#39;, &#39;node_coordinates&#39;: &#39;mesh2d_node_x mesh2d_node_y&#39;, &#39;node_dimension&#39;: &#39;mesh2d_nNodes&#39;, &#39;topology_dimension&#39;: &#39;2&#39;}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;_FillValue&#39;: &#39;-999&#39;, &#39;coordinates&#39;: &#39;mesh2d_edge_x mesh2d_edge_y&#39;, &#39;flag_meanings&#39;: &#39;internal_closed internal boundary boundary_closed&#39;, &#39;flag_values&#39;: &#39;0 1 2 3&#39;, &#39;location&#39;: &#39;edge&#39;, &#39;long_name&#39;: &#39;edge type (relation between edge and flow geometry)&#39;, &#39;mesh&#39;: &#39;mesh2d&#39;}
 </pre></div>
+</div>
 </div>
 </div>
 </div>
