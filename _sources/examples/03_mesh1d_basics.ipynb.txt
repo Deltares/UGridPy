@@ -4,11 +4,11 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# UGrid Mesh1d basics\n",
+    "# UGrid Mesh1D basics\n",
     "\n",
     "This is the basic introduction for using the `ugridpy` library.\n",
     "\n",
-    "`ugridpy` can be used for reading and writing mesh1d. \n",
+    "`ugridpy` can be used for reading and writing mesh1D. \n",
     "\n",
     "At the very beginning, the necessary libraries have to be imported."
    ]
@@ -19,7 +19,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from ugrid import UGrid, UGridMesh2D"
+    "from ugrid import UGrid, UGridMesh1D"
    ]
   },
   {
@@ -37,6 +37,227 @@
    "source": [
     "import numpy as np"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Mesh1D reading"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "    with UGrid(\"./data_examples/AllUGridEntities.nc\", \"r\") as ug:\n",
+    "        num_mesh1d_topologies = ug.mesh1d_get_num_topologies()\n",
+    "        mesh1d = ug.mesh1d_get(num_mesh1d_topologies - 1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Print some data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Mesh 1D name: 1dmesh\n",
+      "Mesh 1D network name : network\n",
+      "Mesh 2D first 10 elements of edge_node: [0 1 1 2 2 3 3 4 4 5]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(f\"Mesh 1D name: {mesh1d.name}\")\n",
+    "print(f\"Mesh 1D network name : {mesh1d.network_name}\")\n",
+    "print(f\"Mesh 2D first 10 elements of edge_node: {mesh1d.edge_node[:10]}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Mesh1D writing"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Define Mesh1D arrays"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "name = \"1dmesh\"\n",
+    "network_name = \"network\"\n",
+    "edge_node = np.array(\n",
+    "    [\n",
+    "        0,\n",
+    "        1,\n",
+    "        1,\n",
+    "        2,\n",
+    "        2,\n",
+    "        3,\n",
+    "        3,\n",
+    "        4,\n",
+    "        4,\n",
+    "        5,\n",
+    "        5,\n",
+    "        6,\n",
+    "        6,\n",
+    "        7,\n",
+    "        7,\n",
+    "        8,\n",
+    "        8,\n",
+    "        9,\n",
+    "        9,\n",
+    "        10,\n",
+    "        10,\n",
+    "        11,\n",
+    "        11,\n",
+    "        12,\n",
+    "        12,\n",
+    "        13,\n",
+    "        13,\n",
+    "        14,\n",
+    "        14,\n",
+    "        15,\n",
+    "        15,\n",
+    "        16,\n",
+    "        16,\n",
+    "        17,\n",
+    "        17,\n",
+    "        18,\n",
+    "        18,\n",
+    "        19,\n",
+    "        19,\n",
+    "        20,\n",
+    "        20,\n",
+    "        21,\n",
+    "        21,\n",
+    "        22,\n",
+    "        22,\n",
+    "        23,\n",
+    "        23,\n",
+    "        24,\n",
+    "    ],\n",
+    "    dtype=np.int,\n",
+    ")\n",
+    "branch_id = np.array(\n",
+    "    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n",
+    "    dtype=np.int,\n",
+    ")\n",
+    "branch_offset = np.array(\n",
+    "    [\n",
+    "        0,\n",
+    "        49.65,\n",
+    "        99.29,\n",
+    "        148.92,\n",
+    "        198.54,\n",
+    "        248.09,\n",
+    "        297.62,\n",
+    "        347.15,\n",
+    "        396.66,\n",
+    "        446.19,\n",
+    "        495.8,\n",
+    "        545.44,\n",
+    "        595.08,\n",
+    "        644.63,\n",
+    "        694.04,\n",
+    "        743.52,\n",
+    "        793.07,\n",
+    "        842.65,\n",
+    "        892.26,\n",
+    "        941.89,\n",
+    "        991.53,\n",
+    "        1041.17,\n",
+    "        1090.82,\n",
+    "        1140.46,\n",
+    "        1165.29,\n",
+    "    ],\n",
+    "    dtype=np.double,\n",
+    ")\n",
+    "node_x = np.empty(branch_id.size, dtype=np.double)\n",
+    "node_y = np.empty(branch_id.size, dtype=np.double)\n",
+    "edge_edge_id = np.empty(edge_node.size // 2, dtype=np.int)\n",
+    "edge_edge_offset = np.empty(edge_node.size // 2, dtype=np.double)\n",
+    "edge_x = np.empty(edge_node.size // 2, dtype=np.double)\n",
+    "edge_y = np.empty(edge_node.size // 2, dtype=np.double)\n",
+    "\n",
+    "node_name_id = [\"meshnodeids\" for _ in range(branch_id.size)]\n",
+    "node_name_long = [\"meshnodelongnames\" for _ in range(branch_id.size)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Instantiate UGridMesh1D class"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mesh1d = UGridMesh1D(\n",
+    "    name=name,\n",
+    "    network_name=network_name,\n",
+    "    branch_id=branch_id,\n",
+    "    branch_offset=branch_offset,\n",
+    "    node_x=node_x,\n",
+    "    node_y=node_y,\n",
+    "    edge_node=edge_node,\n",
+    "    edge_edge_id=edge_edge_id,\n",
+    "    edge_edge_offset=edge_edge_offset,\n",
+    "    edge_x=edge_x,\n",
+    "    edge_y=edge_y,\n",
+    "    node_name_id=node_name_id,\n",
+    "    node_name_long=node_name_long,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Write UGridMesh1D instance to file"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with UGrid(\"Mesh1DWrite.nc\", \"w+\") as ug:\n",
+    "    topology_id = ug.mesh1d_define(mesh1d)\n",
+    "    ug.mesh1d_put(topology_id, mesh1d)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
   }
  ],
  "metadata": {
