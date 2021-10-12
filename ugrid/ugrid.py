@@ -510,31 +510,40 @@ class UGrid:
         """
 
         num_faces = len(mesh2d.nodes_per_face)
-        num_face_nodes_max = np.max(mesh2d.nodes_per_face)
-        face_nodes_array = np.full(
-            num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1
-        )
-        for index, (face_nodes, nodes_per_face) in enumerate(
-            zip(mesh2d.face_nodes, mesh2d.nodes_per_face)
-        ):
-            face_nodes_array[
-                index * num_face_nodes_max : index * num_face_nodes_max + nodes_per_face
-            ] = face_nodes
+        if num_faces > 0:
+            num_face_nodes_max = np.max(mesh2d.nodes_per_face)
+            face_nodes_array = np.full(
+                num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1
+            )
+            for index, (face_nodes, nodes_per_face) in enumerate(
+                zip(mesh2d.face_nodes, mesh2d.nodes_per_face)
+            ):
+                face_nodes_array[
+                    index * num_face_nodes_max : index * num_face_nodes_max
+                    + nodes_per_face
+                ] = face_nodes
+
+            return UGridMesh2D(
+                name=name,
+                node_x=mesh2d.node_x,
+                node_y=mesh2d.node_y,
+                edge_node=mesh2d.edge_nodes,
+                face_node=face_nodes_array,
+                edge_x=mesh2d.edge_x,
+                edge_y=mesh2d.edge_y,
+                face_x=mesh2d.face_x,
+                face_y=mesh2d.face_y,
+                num_face_nodes_max=num_face_nodes_max,
+                is_spherical=is_spherical,
+                double_fill_value=-999.0,
+                int_fill_value=-999,
+            )
 
         return UGridMesh2D(
             name=name,
             node_x=mesh2d.node_x,
             node_y=mesh2d.node_y,
             edge_node=mesh2d.edge_nodes,
-            face_node=face_nodes_array,
-            edge_x=mesh2d.edge_x,
-            edge_y=mesh2d.edge_y,
-            face_x=mesh2d.face_x,
-            face_y=mesh2d.face_y,
-            num_face_nodes_max=num_face_nodes_max,
-            is_spherical=is_spherical,
-            double_fill_value=-999.0,
-            int_fill_value=-999,
         )
 
     @staticmethod
