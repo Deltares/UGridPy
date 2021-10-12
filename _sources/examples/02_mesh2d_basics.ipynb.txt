@@ -227,7 +227,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "ugrid_mesh2d = UGridMesh2D(\n",
+    "mesh2d = UGridMesh2D(\n",
     "    name=name,\n",
     "    node_x=node_x,\n",
     "    node_y=node_y,\n",
@@ -242,7 +242,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Write ugrid_mesh2d instance to file"
+    "### Write UGridMesh2D instance to file"
    ]
   },
   {
@@ -252,8 +252,8 @@
    "outputs": [],
    "source": [
     "with UGrid(\"Mesh2DWrite.nc\", \"w+\") as ug:\n",
-    "    topology_id = ug.mesh2d_define(ugrid_mesh2d)\n",
-    "    ug.mesh2d_put(topology_id, ugrid_mesh2d)"
+    "    topology_id = ug.mesh2d_define(mesh2d)\n",
+    "    ug.mesh2d_put(topology_id, mesh2d)"
    ]
   },
   {

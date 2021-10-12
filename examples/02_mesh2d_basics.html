@@ -164,8 +164,8 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#write-ugrid-mesh2d-instance-to-file">
-     Write ugrid_mesh2d instance to file
+    <a class="reference internal nav-link" href="#write-ugridmesh2d-instance-to-file">
+     Write UGridMesh2D instance to file
     </a>
    </li>
   </ul>
@@ -355,7 +355,7 @@ Mesh 2D face_node: [ 79 132  80 ... 451 452 439]
 <h3>Instantiate UGridMesh2D class<a class="headerlink" href="#instantiate-ugridmesh2d-class" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ugrid_mesh2d</span> <span class="o">=</span> <span class="n">UGridMesh2D</span><span class="p">(</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d</span> <span class="o">=</span> <span class="n">UGridMesh2D</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
     <span class="n">node_x</span><span class="o">=</span><span class="n">node_x</span><span class="p">,</span>
     <span class="n">node_y</span><span class="o">=</span><span class="n">node_y</span><span class="p">,</span>
@@ -369,13 +369,13 @@ Mesh 2D face_node: [ 79 132  80 ... 451 452 439]
 </div>
 </div>
 </div>
-<div class="section" id="write-ugrid-mesh2d-instance-to-file">
-<h3>Write ugrid_mesh2d instance to file<a class="headerlink" href="#write-ugrid-mesh2d-instance-to-file" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="write-ugridmesh2d-instance-to-file">
+<h3>Write UGridMesh2D instance to file<a class="headerlink" href="#write-ugridmesh2d-instance-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh2DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
-    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">ugrid_mesh2d</span><span class="p">)</span>
-    <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">ugrid_mesh2d</span><span class="p">)</span>
+    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">mesh2d</span><span class="p">)</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh2d</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
