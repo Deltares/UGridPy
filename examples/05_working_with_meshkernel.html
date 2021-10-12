@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UGrid variable basics &#8212; UGridPy  documentation</title>
+    <title>Writing a meshkernel mesh to UGrid file &#8212; UGridPy  documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -137,33 +137,16 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reading-topology-s-attributes-names-and-values">
-   Reading topology’s attributes names and values
+  <a class="reference internal nav-link" href="#create-a-meshkernel-mesh2d">
+   Create a meshkernel mesh2d
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#create-a-dictionary-of-topology-attributes-names-and-values-this-dictionary-can-be-used-for-reading-the-file-content-with-other-libraries-xarray">
-     Create a dictionary of topology attributes names and values. This dictionary can be used for reading the file content with other libraries (xarray)
+    <a class="reference internal nav-link" href="#write-ugrid-mesh-to-file">
+     Write ugrid mesh to file
     </a>
    </li>
   </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reading-another-variable-attribute-s-names-and-values">
-   Reading another variable attribute’s names and values
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#in-this-case-the-attribute-flag-values-contains-multiple-values">
-     In this case the attribute flag_values contains multiple values
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reading-data-variable-from-a-netcdf-file">
-   Reading data variable from a NetCDF file
-  </a>
  </li>
 </ul>
 
@@ -176,14 +159,13 @@
         
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="ugrid-variable-basics">
-<h1>UGrid variable basics<a class="headerlink" href="#ugrid-variable-basics" title="Permalink to this headline">¶</a></h1>
-<p>This is the basic introduction for using the <code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> library.</p>
-<p><code class="docutils literal notranslate"><span class="pre">ugridpy</span></code> can be used for reading variable information from UGrid files.</p>
-<p>At the very beginning, the necessary libraries have to be imported.</p>
+  <div class="tex2jax_ignore mathjax_ignore section" id="writing-a-meshkernel-mesh-to-ugrid-file">
+<h1>Writing a meshkernel mesh to UGrid file<a class="headerlink" href="#writing-a-meshkernel-mesh-to-ugrid-file" title="Permalink to this headline">¶</a></h1>
+<p>This is a basic introduction for writing a meshkernel mesh2D to file.</p>
+<p>First, UGrid is imported</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridMesh1D</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridMesh2D</span>
 <span class="kn">from</span> <span class="nn">ugrid.version</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="n">__version__</span>
 </pre></div>
@@ -191,6 +173,14 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.6.0&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then meshkernel is imported</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshkernel</span> <span class="kn">import</span> <span class="n">meshkernel</span><span class="p">,</span> <span class="n">Mesh2dFactory</span> 
 </pre></div>
 </div>
 </div>
@@ -203,98 +193,66 @@
 </div>
 </div>
 </div>
-<div class="section" id="reading-topology-s-attributes-names-and-values">
-<h2>Reading topology’s attributes names and values<a class="headerlink" href="#reading-topology-s-attributes-names-and-values" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-a-meshkernel-mesh2d">
+<h2>Create a meshkernel mesh2d<a class="headerlink" href="#create-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/OneMesh2D.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
-    <span class="c1"># 1. Get the mesh2d name. This is also the name of a variable </span>
-    <span class="n">variable_name</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
-    <span class="c1"># 2. Get the mesh2D attribute names</span>
-    <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_attributes_names</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
-    <span class="c1"># 3. Get the mesh2D attribute values</span>
-    <span class="n">attribute_values</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_attributes_values</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_mesh_kernel</span> <span class="o">=</span> <span class="n">Mesh2dFactory</span><span class="o">.</span><span class="n">create_rectilinear_mesh</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">origin_x</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">origin_y</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="create-a-dictionary-of-topology-attributes-names-and-values-this-dictionary-can-be-used-for-reading-the-file-content-with-other-libraries-xarray">
-<h3>Create a dictionary of topology attributes names and values. This dictionary can be used for reading the file content with other libraries (xarray)<a class="headerlink" href="#create-a-dictionary-of-topology-attributes-names-and-values-this-dictionary-can-be-used-for-reading-the-file-content-with-other-libraries-xarray" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variable_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">,</span><span class="n">attribute_values</span><span class="p">)</span> <span class="p">}</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">variable_attributes</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_ugrid</span> <span class="o">=</span> <span class="n">UGrid</span><span class="o">.</span><span class="n">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">=</span><span class="n">mesh2d_mesh_kernel</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh2d&quot;</span><span class="p">,</span> <span class="n">is_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;cf_role&#39;: &#39;mesh_topology&#39;, &#39;edge_coordinates&#39;: &#39;mesh2d_edge_x mesh2d_edge_y&#39;, &#39;edge_dimension&#39;: &#39;mesh2d_nEdges&#39;, &#39;edge_node_connectivity&#39;: &#39;mesh2d_edge_nodes&#39;, &#39;face_coordinates&#39;: &#39;mesh2d_face_x mesh2d_face_y&#39;, &#39;face_dimension&#39;: &#39;mesh2d_nFaces&#39;, &#39;face_node_connectivity&#39;: &#39;mesh2d_face_nodes&#39;, &#39;long_name&#39;: &#39;Topology data of 2D mesh&#39;, &#39;max_face_nodes_dimension&#39;: &#39;mesh2d_nMax_face_nodes&#39;, &#39;node_coordinates&#39;: &#39;mesh2d_node_x mesh2d_node_y&#39;, &#39;node_dimension&#39;: &#39;mesh2d_nNodes&#39;, &#39;topology_dimension&#39;: &#39;2&#39;}
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">e0ffe72c7dd0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">mesh2d_ugrid</span> <span class="o">=</span> <span class="n">UGrid</span><span class="o">.</span><span class="n">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">=</span><span class="n">mesh2d_mesh_kernel</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh2d&quot;</span><span class="p">,</span> <span class="n">is_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nn">d:\apps\python_3_8_6\lib\site-packages\ugrid\ugrid.py</span> in <span class="ni">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="nt">(mesh2d, name, is_spherical)</span>
+<span class="g g-Whitespace">    </span><span class="mi">511</span> 
+<span class="g g-Whitespace">    </span><span class="mi">512</span>         <span class="n">num_faces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">nodes_per_face</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">513</span>         <span class="n">num_face_nodes_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">nodes_per_face</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">514</span>         <span class="n">face_nodes_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">515</span>             <span class="n">num_faces</span> <span class="o">*</span> <span class="n">num_face_nodes_max</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span>
+
+<span class="nn">&lt;__array_function__ internals&gt;</span> in <span class="ni">amax</span><span class="nt">(*args, **kwargs)</span>
+
+<span class="nn">d:\apps\python_3_8_6\lib\site-packages\numpy\core\fromnumeric.py</span> in <span class="ni">amax</span><span class="nt">(a, axis, out, keepdims, initial, where)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2665</span>     <span class="mi">5</span>
+<span class="g g-Whitespace">   </span><span class="mi">2666</span>     <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">2667</span><span class="s2">     return _wrapreduction(a, np.maximum, &#39;max&#39;, axis, None, out,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2668</span><span class="s2">                           keepdims=keepdims, initial=initial, where=where)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2669</span><span class="s2"> </span>
+
+<span class="nn">d:\apps\python_3_8_6\lib\site-packages\numpy\core\fromnumeric.py</span> in <span class="ni">_wrapreduction</span><span class="nt">(obj, ufunc, method, axis, dtype, out, **kwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span><span class="s2">                 return reduction(axis=axis, out=out, **passkwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">89</span><span class="s2"> </span>
+<span class="ne">---&gt; </span><span class="mi">90</span><span class="s2">     return ufunc.reduce(obj, axis, dtype, out, **passkwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">91</span><span class="s2"> </span>
+<span class="g g-Whitespace">     </span><span class="mi">92</span><span class="s2"> </span>
+
+<span class="ne">ValueError</span>: zero-size array to reduction operation maximum which has no identity
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="reading-another-variable-attribute-s-names-and-values">
-<h2>Reading another variable attribute’s names and values<a class="headerlink" href="#reading-another-variable-attribute-s-names-and-values" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="in-this-case-the-attribute-flag-values-contains-multiple-values">
-<h3>In this case the attribute flag_values contains multiple values<a class="headerlink" href="#in-this-case-the-attribute-flag-values-contains-multiple-values" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="write-ugrid-mesh-to-file">
+<h3>Write ugrid mesh to file<a class="headerlink" href="#write-ugrid-mesh-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/OneMesh2D.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
-    <span class="c1"># 1. Get the mesh2d name. This is also the name of a variable </span>
-    <span class="n">variable_name</span> <span class="o">=</span> <span class="s2">&quot;mesh2d_edge_type&quot;</span>
-    <span class="c1"># 2. Get the mesh2D attribute names</span>
-    <span class="n">attribute_names</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_attributes_names</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
-    <span class="c1"># 3. Get the mesh2D attribute values</span>
-    <span class="n">attribute_values</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_attributes_values</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data/written_files/Mesh2DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">ugrid_mesh2d</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">topology_id</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">ugrid_mesh2d</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variable_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">attribute_names</span><span class="p">,</span><span class="n">attribute_values</span><span class="p">)</span> <span class="p">}</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">variable_attributes</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;_FillValue&#39;: &#39;-999&#39;, &#39;coordinates&#39;: &#39;mesh2d_edge_x mesh2d_edge_y&#39;, &#39;flag_meanings&#39;: &#39;internal_closed internal boundary boundary_closed&#39;, &#39;flag_values&#39;: &#39;0 1 2 3&#39;, &#39;location&#39;: &#39;edge&#39;, &#39;long_name&#39;: &#39;edge type (relation between edge and flow geometry)&#39;, &#39;mesh&#39;: &#39;mesh2d&#39;}
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="reading-data-variable-from-a-netcdf-file">
-<h2>Reading data variable from a NetCDF file<a class="headerlink" href="#reading-data-variable-from-a-netcdf-file" title="Permalink to this headline">¶</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data_examples/ADH_SanDiego.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
-    <span class="n">depth</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_data_double</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-    <span class="n">node_x</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_data_double</span><span class="p">(</span><span class="s2">&quot;node_x&quot;</span><span class="p">)</span>
-    <span class="n">node_y</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">variable_get_data_double</span><span class="p">(</span><span class="s2">&quot;node_y&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-  
-<span class="c1"># Plotting scalar field with tricontour</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span><span class="n">node_x</span><span class="p">,</span> <span class="n">node_y</span><span class="p">,</span> <span class="n">depth</span><span class="p">[:</span><span class="mi">9140</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Scalar Field&#39;</span><span class="p">)</span>
-  
-<span class="c1"># Show plot with gird</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/05_working_with_meshkernel_14_0.png" src="../_images/05_working_with_meshkernel_14_0.png" />
 </div>
 </div>
 </div>
