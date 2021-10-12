@@ -9,9 +9,11 @@ def test_get_topology_attributes_names_and_values():
     values of a mesh2d topology."""
 
     with UGrid("./data/OneMesh2D.nc", "r") as ug:
-        # Get the first mesh of the file
+        # 1. Get the first mesh2D
         ugrid_mesh2d = ug.mesh2d_get(0)
+        # 2. Get the mesh2D attribute names
         attribute_names = ug.variable_get_attributes_names(ugrid_mesh2d.name)
+        # 3. Get the mesh2D attribute values
         attribute_values = ug.variable_get_attributes_values(ugrid_mesh2d.name)
         assert_array_equal(
             attribute_names,
