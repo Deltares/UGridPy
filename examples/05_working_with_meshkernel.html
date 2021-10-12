@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Writing a meshkernel mesh to UGrid file &#8212; UGridPy  documentation</title>
+    <title>Writing meshkernel meshes to ugrid file &#8212; UGridPy  documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -137,13 +137,45 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#create-a-meshkernel-mesh2d">
-   Create a meshkernel mesh2d
+  <a class="reference internal nav-link" href="#write-a-meshkernel-mesh2d">
+   Write a meshkernel mesh2d
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#write-ugrid-mesh-to-file">
-     Write ugrid mesh to file
+    <a class="reference internal nav-link" href="#create-a-meshkernel-mesh2d">
+     Create a meshkernel mesh2d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#convert-a-meshkernel-mesh2d-to-an-ugrid-mesh2d">
+     Convert a meshkernel mesh2d to an ugrid mesh2d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#write-ugrid-mesh2d-to-file">
+     Write UGrid mesh2d  to file
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#write-a-meshkernel-mesh1d">
+   Write a meshkernel mesh1d
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-a-meshkernel-mesh1d">
+     Create a meshkernel mesh1d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-data-required-to-instatiate-a-valid-ugrid-mesh1d">
+     Create data required to instatiate a valid ugrid mesh1d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#converts-a-meshkernel-mesh1d-to-an-ugrid-mesh1d-by-adding-the-additional-fields-such-as-network-names-or-branch-offsets">
+     Converts a meshkernel mesh1d to an ugrid mesh1d, by adding the additional fields, such as network names or branch offsets
     </a>
    </li>
   </ul>
@@ -159,9 +191,9 @@
         
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="writing-a-meshkernel-mesh-to-ugrid-file">
-<h1>Writing a meshkernel mesh to UGrid file<a class="headerlink" href="#writing-a-meshkernel-mesh-to-ugrid-file" title="Permalink to this headline">¶</a></h1>
-<p>This is a basic introduction for writing a meshkernel mesh2D to file.</p>
+  <div class="tex2jax_ignore mathjax_ignore section" id="writing-meshkernel-meshes-to-ugrid-file">
+<h1>Writing meshkernel meshes to ugrid file<a class="headerlink" href="#writing-meshkernel-meshes-to-ugrid-file" title="Permalink to this headline">¶</a></h1>
+<p>This is a basic introduction for writing meshkernel meshes to file.</p>
 <p>First, UGrid is imported</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -171,16 +203,11 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.7.0&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <p>Then meshkernel is imported</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshkernel</span> <span class="kn">import</span> <span class="n">meshkernel</span><span class="p">,</span> <span class="n">Mesh2dFactory</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshkernel</span> <span class="kn">import</span> <span class="n">meshkernel</span><span class="p">,</span> <span class="n">Mesh1d</span><span class="p">,</span> <span class="n">Mesh2dFactory</span> 
 </pre></div>
 </div>
 </div>
@@ -193,8 +220,10 @@
 </div>
 </div>
 </div>
+<div class="section" id="write-a-meshkernel-mesh2d">
+<h2>Write a meshkernel mesh2d<a class="headerlink" href="#write-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="create-a-meshkernel-mesh2d">
-<h2>Create a meshkernel mesh2d<a class="headerlink" href="#create-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h2>
+<h3>Create a meshkernel mesh2d<a class="headerlink" href="#create-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_mesh_kernel</span> <span class="o">=</span> <span class="n">Mesh2dFactory</span><span class="o">.</span><span class="n">create_rectilinear_mesh</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">origin_x</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">origin_y</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">)</span>
@@ -202,6 +231,9 @@
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="convert-a-meshkernel-mesh2d-to-an-ugrid-mesh2d">
+<h3>Convert a meshkernel mesh2d to an ugrid mesh2d<a class="headerlink" href="#convert-a-meshkernel-mesh2d-to-an-ugrid-mesh2d" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_ugrid</span> <span class="o">=</span> <span class="n">UGrid</span><span class="o">.</span><span class="n">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">=</span><span class="n">mesh2d_mesh_kernel</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh2d&quot;</span><span class="p">,</span> <span class="n">is_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -209,13 +241,81 @@
 </div>
 </div>
 </div>
-<div class="section" id="write-ugrid-mesh-to-file">
-<h3>Write ugrid mesh to file<a class="headerlink" href="#write-ugrid-mesh-to-file" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="write-ugrid-mesh2d-to-file">
+<h3>Write UGrid mesh2d  to file<a class="headerlink" href="#write-ugrid-mesh2d-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./Mesh2DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">mesh2d_ugrid</span><span class="p">)</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh2d_ugrid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="write-a-meshkernel-mesh1d">
+<h2>Write a meshkernel mesh1d<a class="headerlink" href="#write-a-meshkernel-mesh1d" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-a-meshkernel-mesh1d">
+<h3>Create a meshkernel mesh1d<a class="headerlink" href="#create-a-meshkernel-mesh1d" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a meshkernel mesh1d</span>
+<span class="n">node_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">node_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">edge_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+<span class="n">mesh1d</span> <span class="o">=</span> <span class="n">Mesh1d</span><span class="p">(</span><span class="n">node_x</span><span class="o">=</span><span class="n">node_x</span><span class="p">,</span> <span class="n">node_y</span><span class="o">=</span><span class="n">node_y</span><span class="p">,</span> <span class="n">edge_nodes</span><span class="o">=</span><span class="n">edge_nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="create-data-required-to-instatiate-a-valid-ugrid-mesh1d">
+<h3>Create data required to instatiate a valid ugrid mesh1d<a class="headerlink" href="#create-data-required-to-instatiate-a-valid-ugrid-mesh1d" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">branch_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+<span class="n">branch_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">node_name_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;branchname&quot;</span><span class="p">]</span>
+<span class="n">node_name_long</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;branchnamelong&quot;</span><span class="p">]</span>
+<span class="n">edge_edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+<span class="n">edge_edge_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">edge_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">edge_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="converts-a-meshkernel-mesh1d-to-an-ugrid-mesh1d-by-adding-the-additional-fields-such-as-network-names-or-branch-offsets">
+<h3>Converts a meshkernel mesh1d to an ugrid mesh1d, by adding the additional fields, such as network names or branch offsets<a class="headerlink" href="#converts-a-meshkernel-mesh1d-to-an-ugrid-mesh1d-by-adding-the-additional-fields-such-as-network-names-or-branch-offsets" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh1d_ugrid</span> <span class="o">=</span> <span class="n">UGrid</span><span class="o">.</span><span class="n">from_meshkernel_mesh1d_to_ugrid_mesh1d</span><span class="p">(</span>
+    <span class="n">mesh1d</span><span class="o">=</span><span class="n">mesh1d</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh1d&quot;</span><span class="p">,</span>
+    <span class="n">network_name</span><span class="o">=</span><span class="s2">&quot;network1d&quot;</span><span class="p">,</span>
+    <span class="n">branch_id</span><span class="o">=</span><span class="n">branch_id</span><span class="p">,</span>
+    <span class="n">branch_offset</span><span class="o">=</span><span class="n">branch_offset</span><span class="p">,</span>
+    <span class="n">node_name_id</span><span class="o">=</span><span class="n">node_name_id</span><span class="p">,</span>
+    <span class="n">node_name_long</span><span class="o">=</span><span class="n">node_name_long</span><span class="p">,</span>
+    <span class="n">edge_edge_id</span><span class="o">=</span><span class="n">edge_edge_id</span><span class="p">,</span>
+    <span class="n">edge_edge_offset</span><span class="o">=</span><span class="n">edge_edge_offset</span><span class="p">,</span>
+    <span class="n">edge_x</span><span class="o">=</span><span class="n">edge_x</span><span class="p">,</span>
+    <span class="n">edge_y</span><span class="o">=</span><span class="n">edge_y</span><span class="p">,</span>
+    <span class="n">double_fill_value</span><span class="o">=-</span><span class="mf">999.0</span><span class="p">,</span>
+    <span class="n">int_fill_value</span><span class="o">=</span><span class="mi">999</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh1DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh1d_define</span><span class="p">(</span><span class="n">mesh1d_ugrid</span><span class="p">)</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">mesh1d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh1d_ugrid</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

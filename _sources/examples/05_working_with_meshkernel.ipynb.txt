@@ -4,9 +4,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Writing a meshkernel mesh to UGrid file\n",
+    "# Writing meshkernel meshes to ugrid file\n",
     "\n",
-    "This is a basic introduction for writing a meshkernel mesh2D to file.\n",
+    "This is a basic introduction for writing meshkernel meshes to file.\n",
     "\n",
     "First, UGrid is imported"
    ]
@@ -15,18 +15,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "'0.7.0'"
-      ]
-     },
-     "execution_count": 1,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
+   "outputs": [],
    "source": [
     "from ugrid import UGrid, UGridMesh2D\n",
     "from ugrid.version import __version__\n",
@@ -46,7 +35,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from meshkernel import meshkernel, Mesh2dFactory "
+    "from meshkernel import meshkernel, Mesh1d, Mesh2dFactory "
    ]
   },
   {
@@ -69,7 +58,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Create a meshkernel mesh2d"
+    "## Write a meshkernel mesh2d"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Create a meshkernel mesh2d"
    ]
   },
   {
@@ -79,6 +75,13 @@
    "outputs": [],
    "source": [
     "mesh2d_mesh_kernel = Mesh2dFactory.create_rectilinear_mesh(3, 7, origin_x=-0.1, origin_y=-1.5)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Convert a meshkernel mesh2d to an ugrid mesh2d"
    ]
   },
   {
@@ -94,7 +97,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Write ugrid mesh to file"
+    "### Write UGrid mesh2d  to file"
    ]
   },
   {
@@ -106,6 +109,97 @@
     "with UGrid(\"./Mesh2DMesKernelWrite.nc\", \"w+\") as ug:\n",
     "    topology_id = ug.mesh2d_define(mesh2d_ugrid)\n",
     "    ug.mesh2d_put(topology_id, mesh2d_ugrid)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Write a meshkernel mesh1d"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Create a meshkernel mesh1d"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# create a meshkernel mesh1d\n",
+    "node_x = np.array([0.0, 1.0, 2.0, 3.0], dtype=np.double)\n",
+    "node_y = np.array([0.0, 0.0, 0.0, 0.0], dtype=np.double)\n",
+    "edge_nodes = np.array([0, 1, 1, 2, 2, 3], dtype=np.int)\n",
+    "mesh1d = Mesh1d(node_x=node_x, node_y=node_y, edge_nodes=edge_nodes)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Create data required to instatiate a valid ugrid mesh1d"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "branch_id = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.int)\n",
+    "branch_offset = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.double)\n",
+    "node_name_id = [\"branchname\"]\n",
+    "node_name_long = [\"branchnamelong\"]\n",
+    "edge_edge_id = np.array([0, 0, 0], dtype=np.int)\n",
+    "edge_edge_offset = np.array([0.5, 1.5, 2.5], dtype=np.double)\n",
+    "edge_x = np.array([0.5, 1.5, 2.5], dtype=np.double)\n",
+    "edge_y = np.array([0.0, 0.0, 0.0], dtype=np.double)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Converts a meshkernel mesh1d to an ugrid mesh1d, by adding the additional fields, such as network names or branch offsets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mesh1d_ugrid = UGrid.from_meshkernel_mesh1d_to_ugrid_mesh1d(\n",
+    "    mesh1d=mesh1d,\n",
+    "    name=\"mesh1d\",\n",
+    "    network_name=\"network1d\",\n",
+    "    branch_id=branch_id,\n",
+    "    branch_offset=branch_offset,\n",
+    "    node_name_id=node_name_id,\n",
+    "    node_name_long=node_name_long,\n",
+    "    edge_edge_id=edge_edge_id,\n",
+    "    edge_edge_offset=edge_edge_offset,\n",
+    "    edge_x=edge_x,\n",
+    "    edge_y=edge_y,\n",
+    "    double_fill_value=-999.0,\n",
+    "    int_fill_value=999,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with UGrid(\"Mesh1DMesKernelWrite.nc\", \"w+\") as ug:\n",
+    "    topology_id = ug.mesh1d_define(mesh1d_ugrid)\n",
+    "    ug.mesh1d_put(topology_id, mesh1d_ugrid)"
    ]
   },
   {
