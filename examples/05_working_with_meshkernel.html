@@ -172,7 +172,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.6.0&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.7.0&#39;
 </pre></div>
 </div>
 </div>
@@ -208,48 +208,14 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">e0ffe72c7dd0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">mesh2d_ugrid</span> <span class="o">=</span> <span class="n">UGrid</span><span class="o">.</span><span class="n">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">=</span><span class="n">mesh2d_mesh_kernel</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh2d&quot;</span><span class="p">,</span> <span class="n">is_spherical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nn">d:\apps\python_3_8_6\lib\site-packages\ugrid\ugrid.py</span> in <span class="ni">from_meshkernel_mesh2d_to_ugrid_mesh2d</span><span class="nt">(mesh2d, name, is_spherical)</span>
-<span class="g g-Whitespace">    </span><span class="mi">511</span> 
-<span class="g g-Whitespace">    </span><span class="mi">512</span>         <span class="n">num_faces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">nodes_per_face</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">513</span>         <span class="n">num_face_nodes_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">nodes_per_face</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">514</span>         <span class="n">face_nodes_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">515</span>             <span class="n">num_faces</span> <span class="o">*</span> <span class="n">num_face_nodes_max</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span>
-
-<span class="nn">&lt;__array_function__ internals&gt;</span> in <span class="ni">amax</span><span class="nt">(*args, **kwargs)</span>
-
-<span class="nn">d:\apps\python_3_8_6\lib\site-packages\numpy\core\fromnumeric.py</span> in <span class="ni">amax</span><span class="nt">(a, axis, out, keepdims, initial, where)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2665</span>     <span class="mi">5</span>
-<span class="g g-Whitespace">   </span><span class="mi">2666</span>     <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">2667</span><span class="s2">     return _wrapreduction(a, np.maximum, &#39;max&#39;, axis, None, out,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2668</span><span class="s2">                           keepdims=keepdims, initial=initial, where=where)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2669</span><span class="s2"> </span>
-
-<span class="nn">d:\apps\python_3_8_6\lib\site-packages\numpy\core\fromnumeric.py</span> in <span class="ni">_wrapreduction</span><span class="nt">(obj, ufunc, method, axis, dtype, out, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">88</span><span class="s2">                 return reduction(axis=axis, out=out, **passkwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">89</span><span class="s2"> </span>
-<span class="ne">---&gt; </span><span class="mi">90</span><span class="s2">     return ufunc.reduce(obj, axis, dtype, out, **passkwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">91</span><span class="s2"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">92</span><span class="s2"> </span>
-
-<span class="ne">ValueError</span>: zero-size array to reduction operation maximum which has no identity
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="write-ugrid-mesh-to-file">
 <h3>Write ugrid mesh to file<a class="headerlink" href="#write-ugrid-mesh-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./data/written_files/Mesh2DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
-    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">ugrid_mesh2d</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">topology_id</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">ugrid_mesh2d</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./Mesh2DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">mesh2d_ugrid</span><span class="p">)</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh2d_ugrid</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
