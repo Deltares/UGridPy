@@ -9,8 +9,8 @@ def create_network1d():
 
     node_x = np.array([293.78, 538.89], dtype=np.double)
     node_y = np.array([27.48, 956.75], dtype=np.double)
-    branch_node = np.array([0, 1], dtype=np.int)
-    branch_length = np.array([1165.29], dtype=np.double)
+    edge_node = np.array([0, 1], dtype=np.int)
+    edge_length = np.array([1165.29], dtype=np.double)
     branch_order = np.array([0], dtype=np.int)
 
     geometry_nodes_x = np.array(
@@ -81,18 +81,18 @@ def create_network1d():
         name="network",
         node_x=node_x,
         node_y=node_y,
-        branch_node=branch_node,
-        branch_length=branch_length,
-        branch_order=branch_order,
+        edge_node=edge_node,
+        edge_length=edge_length,
+        edge_order=branch_order,
         geometry_nodes_x=geometry_nodes_x,
         geometry_nodes_y=geometry_nodes_y,
-        num_branch_geometry_nodes=num_branch_geometry_nodes,
+        num_edge_geometry_nodes=num_branch_geometry_nodes,
     )
 
-    network1d.node_name_id = ["nodesids", "nodesids"]
-    network1d.node_name_long = ["nodeslongNames", "nodeslongNames"]
-    network1d.branch_name_id = ["branchids"]
-    network1d.branch_name_long = ["branchlongNames"]
+    network1d.node_id = ["nodesids", "nodesids"]
+    network1d.node_long_name = ["nodeslongNames", "nodeslongNames"]
+    network1d.edge_id = ["branchids"]
+    network1d.edge_long_name = ["branchlongNames"]
 
     return network1d
 
@@ -108,19 +108,17 @@ def test_network1d_get():
 
         assert expected_network1d.name == network1d.name
 
-        assert_array_equal(network1d.node_name_id, expected_network1d.node_name_id)
-        assert_array_equal(network1d.node_name_long, expected_network1d.node_name_long)
+        assert_array_equal(network1d.node_id, expected_network1d.node_id)
+        assert_array_equal(network1d.node_long_name, expected_network1d.node_long_name)
 
-        assert_array_equal(network1d.branch_name_id, expected_network1d.branch_name_id)
-        assert_array_equal(
-            network1d.branch_name_long, expected_network1d.branch_name_long
-        )
+        assert_array_equal(network1d.edge_id, expected_network1d.edge_id)
+        assert_array_equal(network1d.edge_long_name, expected_network1d.edge_long_name)
 
         assert_array_equal(network1d.node_x, expected_network1d.node_x)
         assert_array_equal(network1d.node_y, expected_network1d.node_y)
 
-        assert_array_equal(network1d.branch_node, expected_network1d.branch_node)
-        assert_array_equal(network1d.branch_length, expected_network1d.branch_length)
+        assert_array_equal(network1d.edge_node, expected_network1d.edge_node)
+        assert_array_equal(network1d.edge_length, expected_network1d.edge_length)
 
         assert_array_equal(
             network1d.geometry_nodes_x, expected_network1d.geometry_nodes_x

@@ -10,16 +10,16 @@ class UGridNetwork1D:
         name (str): The network name.
         node_x (ndarray): The x-coordinates of the network node.
         node_y (ndarray): The y-coordinates of the network node.
-        branch_node (ndarray): The nodes defining each branch.
-        branch_length (ndarray): The edge lengths.
+        edge_node (ndarray): The nodes defining each branch.
+        edge_length (ndarray): The edge lengths.
         geometry_nodes_x (ndarray): The geometry nodes x coordinates.
         geometry_nodes_y (ndarray): The geometry nodes y coordinates.
-        num_branch_geometry_nodes (ndarray): The number of geometry node on each branch.
-        branch_order (ndarray): The order of the branches.
-        node_name_id (str): The node names ids.
+        num_edge_geometry_nodes (ndarray): The number of geometry node on each branch.
+        edge_order (ndarray): The order of the branches.
+        node_id (str): The node names ids.
         node_name_long (str): The node long names.
-        branch_name_id (list): The name of the branches.
-        branch_name_long (list): The long name of the branches.
+        edge_id (list): The name of the branches.
+        edge_long_name (list): The long name of the branches.
     """
 
     def __init__(
@@ -27,30 +27,30 @@ class UGridNetwork1D:
         name,
         node_x,
         node_y,
-        branch_node,
-        branch_length,
+        edge_node,
+        edge_length,
         geometry_nodes_x,
         geometry_nodes_y,
-        num_branch_geometry_nodes,
-        branch_order=array([]),
-        node_name_id=[],
+        num_edge_geometry_nodes,
+        edge_order=array([]),
+        node_id=[],
         node_name_long=[],
-        branch_name_id=[],
-        branch_name_long=[],
+        edge_id=[],
+        edge_long_name=[],
     ):
         self.name: str = name
         self.node_x: ndarray = node_x
         self.node_y: ndarray = node_y
-        self.node_name_id: list = node_name_id
-        self.node_name_long: list = node_name_long
-        self.branch_node: ndarray = branch_node
-        self.branch_length: ndarray = branch_length
-        self.branch_order: ndarray = branch_order
-        self.branch_name_id: list = branch_name_id
-        self.branch_name_long: list = branch_name_long
+        self.node_id: list = node_id
+        self.node_long_name: list = node_name_long
+        self.edge_node: ndarray = edge_node
+        self.edge_length: ndarray = edge_length
+        self.edge_order: ndarray = edge_order
+        self.edge_id: list = edge_id
+        self.edge_long_name: list = edge_long_name
         self.geometry_nodes_x: ndarray = geometry_nodes_x
         self.geometry_nodes_y: ndarray = geometry_nodes_y
-        self.num_branch_geometry_nodes = num_branch_geometry_nodes
+        self.num_edge_geometry_nodes = num_edge_geometry_nodes
         self.is_spherical: bool = False
         self.start_index: int = 0
 
@@ -64,12 +64,12 @@ class UGridMesh1D:
         node_x (ndarray):  The node x coordinate.
         node_y (ndarray):  The node y coordinate.
         edge_node (ndarray): The edge node connectivity.
-        branch_id (ndarray):  The network branch id where every node lies.
-        branch_offset (ndarray): The offset of each node on the network branch
+        node_edge_id (ndarray):  The network edge id where every node lies.
+        node_edge_offset (ndarray): The offset of each node on the network edge.
         node_name_id (list): A list of node names ids.
         node_name_long (c_char_p): A list of node long names.
         edge_edge_id (ndarray): The network edge id where every edge lies.
-        edge_edge_offset (ndarray): The offset of each edge on the network branch.
+        edge_edge_offset (ndarray): The offset of each edge on the network edge.
         edge_x (ndarray): The edge x coordinate.
         edge_y (ndarray): The edge y coordinate.
         double_fill_value (c_double): The fill value for array of doubles.
@@ -80,8 +80,8 @@ class UGridMesh1D:
         self,
         name,
         network_name,
-        branch_id,
-        branch_offset,
+        node_edge_id,
+        node_edge_offset,
         node_x=array([]),
         node_y=array([]),
         edge_node=array([]),
@@ -99,8 +99,8 @@ class UGridMesh1D:
         self.node_x: ndarray = node_x
         self.node_y: ndarray = node_y
         self.edge_node: ndarray = edge_node
-        self.branch_id: ndarray = branch_id
-        self.branch_offset: ndarray = branch_offset
+        self.node_edge_id: ndarray = node_edge_id
+        self.node_edge_offset: ndarray = node_edge_offset
         self.node_name_id: list = node_name_id
         self.node_name_long: list = node_name_long
         self.edge_edge_id: ndarray = edge_edge_id

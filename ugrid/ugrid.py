@@ -175,23 +175,23 @@ class UGrid:
         ugrid_network1d.name = decode_byte_vector_to_string(
             c_ugrid_network1d.name, name_size
         )
-        ugrid_network1d.node_name_id = decode_byte_vector_to_list_of_strings(
-            c_ugrid_network1d.node_name_id, c_ugrid_network1d.num_nodes, name_size
+        ugrid_network1d.node_id = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.node_id, c_ugrid_network1d.num_nodes, name_size
         )
-        ugrid_network1d.node_name_long = decode_byte_vector_to_list_of_strings(
-            c_ugrid_network1d.node_name_long,
+        ugrid_network1d.node_long_name = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.node_long_name,
             c_ugrid_network1d.num_nodes,
             name_long_size,
         )
 
-        ugrid_network1d.branch_name_id = decode_byte_vector_to_list_of_strings(
-            c_ugrid_network1d.branch_name_id,
-            c_ugrid_network1d.num_branches,
+        ugrid_network1d.edge_id = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.edge_id,
+            c_ugrid_network1d.num_edges,
             name_size,
         )
-        ugrid_network1d.branch_name_long = decode_byte_vector_to_list_of_strings(
-            c_ugrid_network1d.branch_name_long,
-            c_ugrid_network1d.num_branches,
+        ugrid_network1d.edge_long_name = decode_byte_vector_to_list_of_strings(
+            c_ugrid_network1d.edge_long_name,
+            c_ugrid_network1d.num_edges,
             name_long_size,
         )
 
@@ -551,8 +551,8 @@ class UGrid:
         mesh1d: Mesh1d,
         name: str,
         network_name: str,
-        branch_id: np.ndarray,
-        branch_offset: np.ndarray,
+        node_edge_id: np.ndarray,
+        node_edge_offset: np.ndarray,
         node_name_id: list,
         node_name_long: list,
         edge_edge_id: np.ndarray,
@@ -569,12 +569,12 @@ class UGrid:
             network_name (c_char_p): The x-coordinates of the network node.
             node_x (ndarray):  The node x coordinate.
             node_y (ndarray):  The node y coordinate.
-            branch_id (ndarray):  The network branch id where every node lies.
-            branch_offset (ndarray): The offset of each node on the network branch
+            node_edge_id (ndarray):  The network edge id where every node lies.
+            node_edge_offset (ndarray): The offset of each node on the network edge
             node_name_id (list): A list of node names ids.
             node_name_long (c_char_p): A list of node long names.
             edge_edge_id (ndarray): The network edge id where every edge lies.
-            edge_edge_offset (ndarray): The offset of each edge on the network branch.
+            edge_edge_offset (ndarray): The offset of each edge on the network edge.
             edge_x (ndarray): The edge x coordinate.
             edge_y (ndarray): The edge y coordinate.
             double_fill_value (c_double): The fill value for array of doubles.
@@ -587,8 +587,8 @@ class UGrid:
             node_x=mesh1d.node_x,
             node_y=mesh1d.node_y,
             edge_node=mesh1d.edge_nodes,
-            branch_id=branch_id,
-            branch_offset=branch_offset,
+            node_edge_id=node_edge_id,
+            node_edge_offset=node_edge_offset,
             node_name_id=node_name_id,
             node_name_long=node_name_long,
             edge_edge_id=edge_edge_id,

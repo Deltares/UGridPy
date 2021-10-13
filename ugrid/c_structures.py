@@ -48,19 +48,19 @@ class CUGridNetwork1D(Structure):
         name (c_char_p): The network name.
         node_x (POINTER(c_double)): The x-coordinates of the network node.
         node_y (POINTER(c_double)): The y-coordinates of the network node.
-        node_name_id (c_char_p): The node names ids.
-        node_name_long (c_char_p): The node long names.
-        branch_node (POINTER(c_int)): The nodes defining each branch.
-        branch_length (POINTER(c_double)): The edge lengths.
-        branch_order (POINTER(c_int)): The order of the branches.
-        branch_name_id (c_char_p): The name of the branches.
-        branch_name_long (c_char_p): The long name of the branches.
+        node_id (c_char_p): The node names ids.
+        node_long_name (c_char_p): The node long names.
+        edge_node (POINTER(c_int)): The nodes defining each branch.
+        edge_length (POINTER(c_double)): The edge lengths.
+        edge_order (POINTER(c_int)): The order of the branches.
+        edge_id (c_char_p): The name of the branches.
+        edge_long_name (c_char_p): The long name of the branches.
         geometry_nodes_x (POINTER(c_double)): The geometry nodes x coordinates.
         geometry_nodes_y (POINTER(c_double)): The geometry nodes y coordinates.
-        num_branch_geometry_nodes (POINTER(c_int)): The number of geometry nodes for each branch.
+        num_edges_geometry_nodes (POINTER(c_int)): The number of geometry nodes for each branch.
         num_geometry_nodes (c_int): The number of geometry nodes.
         num_nodes (c_int): The number of network1d nodes.
-        num_branches (c_int): The number of network1d branches.
+        num_edges (c_int): The number of network1d branches.
         is_spherical (c_int): 1 if the coordinates are in a spherical system, 0 otherwise .
         start_index (c_int): The start index used in arrays using indices, such as in the branch_node array.
     """
@@ -69,19 +69,19 @@ class CUGridNetwork1D(Structure):
         ("name", c_char_p),
         ("node_x", POINTER(c_double)),
         ("node_y", POINTER(c_double)),
-        ("node_name_id", c_char_p),
-        ("node_name_long", c_char_p),
-        ("branch_node", POINTER(c_int)),
-        ("branch_length", POINTER(c_double)),
-        ("branch_order", POINTER(c_int)),
-        ("branch_name_id", c_char_p),
-        ("branch_name_long", c_char_p),
+        ("node_id", c_char_p),
+        ("node_long_name", c_char_p),
+        ("edge_node", POINTER(c_int)),
+        ("edge_length", POINTER(c_double)),
+        ("edge_order", POINTER(c_int)),
+        ("edge_id", c_char_p),
+        ("edge_long_name", c_char_p),
         ("geometry_nodes_x", POINTER(c_double)),
         ("geometry_nodes_y", POINTER(c_double)),
-        ("num_branch_geometry_nodes", POINTER(c_int)),
+        ("num_edges_geometry_nodes", POINTER(c_int)),
         ("num_geometry_nodes", c_int),
         ("num_nodes", c_int),
-        ("num_branches", c_int),
+        ("num_edges", c_int),
         ("is_spherical", c_int),
         ("start_index", c_int),
     ]
@@ -101,18 +101,14 @@ class CUGridNetwork1D(Structure):
 
         name_padded = ugrid_network1D.name.ljust(name_long_size)
 
-        node_name_id = pad_and_join_list_of_strings(
-            ugrid_network1D.node_name_id, name_size
-        )
-        node_name_long = pad_and_join_list_of_strings(
-            ugrid_network1D.node_name_long, name_long_size
+        node_id = pad_and_join_list_of_strings(ugrid_network1D.node_id, name_size)
+        node_long_name = pad_and_join_list_of_strings(
+            ugrid_network1D.node_long_name, name_long_size
         )
 
-        branch_name_id = pad_and_join_list_of_strings(
-            ugrid_network1D.branch_name_id, name_size
-        )
-        branch_name_long = pad_and_join_list_of_strings(
-            ugrid_network1D.branch_name_long, name_long_size
+        edge_id = pad_and_join_list_of_strings(ugrid_network1D.edge_id, name_size)
+        edge_long_name = pad_and_join_list_of_strings(
+            ugrid_network1D.edge_long_name, name_long_size
         )
 
         c_ugrid_network = CUGridNetwork1D()
@@ -121,17 +117,13 @@ class CUGridNetwork1D(Structure):
         c_ugrid_network.name = c_char_p(name_padded.encode("ASCII"))
         c_ugrid_network.node_x = numpy_array_to_ctypes(ugrid_network1D.node_x)
         c_ugrid_network.node_y = numpy_array_to_ctypes(ugrid_network1D.node_y)
-        c_ugrid_network.node_name_id = c_char_p(node_name_id.encode("ASCII"))
-        c_ugrid_network.node_name_long = c_char_p(node_name_long.encode("ASCII"))
-        c_ugrid_network.branch_node = numpy_array_to_ctypes(ugrid_network1D.branch_node)
-        c_ugrid_network.branch_length = numpy_array_to_ctypes(
-            ugrid_network1D.branch_length
-        )
-        c_ugrid_network.branch_order = numpy_array_to_ctypes(
-            ugrid_network1D.branch_order
-        )
-        c_ugrid_network.branch_name_id = c_char_p(branch_name_id.encode("ASCII"))
-        c_ugrid_network.branch_name_long = c_char_p(branch_name_long.encode("ASCII"))
+        c_ugrid_network.node_id = c_char_p(node_id.encode("ASCII"))
+        c_ugrid_network.node_long_name = c_char_p(node_long_name.encode("ASCII"))
+        c_ugrid_network.edge_node = numpy_array_to_ctypes(ugrid_network1D.edge_node)
+        c_ugrid_network.edge_length = numpy_array_to_ctypes(ugrid_network1D.edge_length)
+        c_ugrid_network.edge_order = numpy_array_to_ctypes(ugrid_network1D.edge_order)
+        c_ugrid_network.edge_id = c_char_p(edge_id.encode("ASCII"))
+        c_ugrid_network.edge_long_name = c_char_p(edge_long_name.encode("ASCII"))
         c_ugrid_network.geometry_nodes_x = numpy_array_to_ctypes(
             ugrid_network1D.geometry_nodes_x
         )
@@ -142,7 +134,7 @@ class CUGridNetwork1D(Structure):
         # Set the sizes
         c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
         c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
-        c_ugrid_network.num_branches = ugrid_network1D.branch_node.size // 2
+        c_ugrid_network.num_edges = ugrid_network1D.edge_node.size // 2
         c_ugrid_network.is_spherical = ugrid_network1D.is_spherical
         c_ugrid_network.start_index = ugrid_network1D.start_index
 
@@ -164,43 +156,41 @@ class CUGridNetwork1D(Structure):
         name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
-        node_name_id = " " * self.num_nodes * name_size
-        node_name_long = " " * self.num_nodes * name_long_size
-        branch_node = np.empty(self.num_nodes, dtype=np.int)
-        branch_length = np.empty(self.num_branches, dtype=np.double)
-        branch_order = np.empty(self.num_branches, dtype=np.int)
-        branch_name_id = " " * self.num_branches * name_size
-        branch_name_long = " " * self.num_branches * name_long_size
+        node_id = " " * self.num_nodes * name_size
+        node_long_name = " " * self.num_nodes * name_long_size
+        edge_node = np.empty(self.num_nodes, dtype=np.int)
+        edge_length = np.empty(self.num_edges, dtype=np.double)
+        edge_order = np.empty(self.num_edges, dtype=np.int)
+        edge_id = " " * self.num_edges * name_size
+        edge_long_name = " " * self.num_edges * name_long_size
         geometry_nodes_x = np.empty(self.num_geometry_nodes, dtype=np.double)
         geometry_nodes_y = np.empty(self.num_geometry_nodes, dtype=np.double)
-        num_branch_geometry_nodes = np.empty(self.num_branches, dtype=np.int)
+        num_edge_geometry_nodes = np.empty(self.num_edges, dtype=np.int)
 
         self.name = c_char_p(name.encode("ASCII"))
         self.node_x = numpy_array_to_ctypes(node_x)
         self.node_y = numpy_array_to_ctypes(node_y)
-        self.node_name_id = c_char_p(node_name_id.encode("ASCII"))
-        self.node_name_long = c_char_p(node_name_long.encode("ASCII"))
-        self.branch_node = numpy_array_to_ctypes(branch_node)
-        self.branch_length = numpy_array_to_ctypes(branch_length)
-        self.branch_order = numpy_array_to_ctypes(branch_order)
-        self.branch_name_id = c_char_p(branch_name_id.encode("ASCII"))
-        self.branch_name_long = c_char_p(branch_name_long.encode("ASCII"))
+        self.node_id = c_char_p(node_id.encode("ASCII"))
+        self.node_long_name = c_char_p(node_long_name.encode("ASCII"))
+        self.edge_node = numpy_array_to_ctypes(edge_node)
+        self.edge_length = numpy_array_to_ctypes(edge_length)
+        self.edge_order = numpy_array_to_ctypes(edge_order)
+        self.edge_id = c_char_p(edge_id.encode("ASCII"))
+        self.edge_long_name = c_char_p(edge_long_name.encode("ASCII"))
         self.geometry_nodes_x = numpy_array_to_ctypes(geometry_nodes_x)
         self.geometry_nodes_y = numpy_array_to_ctypes(geometry_nodes_y)
-        self.num_branch_geometry_nodes = numpy_array_to_ctypes(
-            num_branch_geometry_nodes
-        )
+        self.num_edge_geometry_nodes = numpy_array_to_ctypes(num_edge_geometry_nodes)
 
         return UGridNetwork1D(
             name=name,
             node_x=node_x,
             node_y=node_y,
-            branch_node=branch_node,
-            branch_length=branch_length,
-            branch_order=branch_order,
+            edge_node=edge_node,
+            edge_length=edge_length,
+            edge_order=edge_order,
             geometry_nodes_x=geometry_nodes_x,
             geometry_nodes_y=geometry_nodes_y,
-            num_branch_geometry_nodes=num_branch_geometry_nodes,
+            num_edge_geometry_nodes=num_edge_geometry_nodes,
         )
 
 
@@ -216,12 +206,12 @@ class CUGridMesh1D(Structure):
         node_x (POINTER(c_double)):  The node x coordinate.
         node_y (POINTER(c_double)):  The node y coordinate.
         edge_node (POINTER(c_int)): The edge node connectivity.
-        branch_id (POINTER(c_int)):  The network branch id where every node lies.
-        branch_offset (POINTER(c_double)): The offset of each node on the network branch
+        node_edge_id (POINTER(c_int)):  The network edge id where every node lies.
+        branch_offset (POINTER(c_double)): The offset of each node on the network edge
         node_name_id (POINTER(c_int)): The node name.
         node_name_long (c_char_p): The node long name.
         edge_edge_id (c_char_p): The network edge id where every edge lies.
-        edge_edge_offset (POINTER(c_double)): The offset of each edge on the network branch.
+        edge_edge_offset (POINTER(c_double)): The offset of each edge on the network edge.
         edge_x (POINTER(c_double)): The edge x coordinate.
         edge_y (c_int): The edge y coordinate.
         num_nodes (c_int): The number of nodes.
@@ -238,7 +228,7 @@ class CUGridMesh1D(Structure):
         ("node_x", POINTER(c_double)),
         ("node_y", POINTER(c_double)),
         ("edge_node", POINTER(c_int)),
-        ("branch_id", POINTER(c_int)),
+        ("node_edge_id", POINTER(c_int)),
         ("branch_offset", POINTER(c_double)),
         ("node_name_id", c_char_p),
         ("node_name_long", c_char_p),
@@ -284,8 +274,8 @@ class CUGridMesh1D(Structure):
         c_mesh1d.node_x = numpy_array_to_ctypes(mesh1d.node_x)
         c_mesh1d.node_y = numpy_array_to_ctypes(mesh1d.node_y)
         c_mesh1d.edge_node = numpy_array_to_ctypes(mesh1d.edge_node)
-        c_mesh1d.branch_id = numpy_array_to_ctypes(mesh1d.branch_id)
-        c_mesh1d.branch_offset = numpy_array_to_ctypes(mesh1d.branch_offset)
+        c_mesh1d.node_edge_id = numpy_array_to_ctypes(mesh1d.node_edge_id)
+        c_mesh1d.branch_offset = numpy_array_to_ctypes(mesh1d.node_edge_offset)
         c_mesh1d.node_name_id = c_char_p(node_name_id.encode("ASCII"))
         c_mesh1d.node_name_long = c_char_p(node_name_long.encode("ASCII"))
         c_mesh1d.edge_edge_id = numpy_array_to_ctypes(mesh1d.edge_edge_id)
@@ -335,7 +325,7 @@ class CUGridMesh1D(Structure):
         self.node_x = numpy_array_to_ctypes(node_x)
         self.node_y = numpy_array_to_ctypes(node_y)
         self.edge_node = numpy_array_to_ctypes(edge_node)
-        self.branch_id = numpy_array_to_ctypes(branch_id)
+        self.node_edge_id = numpy_array_to_ctypes(branch_id)
         self.branch_offset = numpy_array_to_ctypes(branch_offset)
         self.node_name_id = c_char_p(node_name_id.encode("ASCII"))
         self.node_name_long = c_char_p(node_name_long.encode("ASCII"))
@@ -347,8 +337,8 @@ class CUGridMesh1D(Structure):
         return UGridMesh1D(
             name=name,
             network_name=network_name,
-            branch_id=branch_id,
-            branch_offset=branch_offset,
+            node_edge_id=branch_id,
+            node_edge_offset=branch_offset,
             node_x=node_x,
             node_y=node_y,
             edge_node=edge_node,

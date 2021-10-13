@@ -1,5 +1,4 @@
 import numpy as np
-from meshkernel import Mesh1d
 from numpy.testing import assert_array_equal
 
 from ugrid import UGrid, UGridMesh1D
@@ -63,7 +62,7 @@ def create_mesh1d():
         ],
         dtype=np.int,
     )
-    branch_id = np.array(
+    node_edge_id = np.array(
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         dtype=np.int,
     )
@@ -97,21 +96,21 @@ def create_mesh1d():
         ],
         dtype=np.double,
     )
-    node_x = np.empty(branch_id.size, dtype=np.double)
-    node_y = np.empty(branch_id.size, dtype=np.double)
+    node_x = np.empty(node_edge_id.size, dtype=np.double)
+    node_y = np.empty(node_edge_id.size, dtype=np.double)
     edge_edge_id = np.empty(edge_node.size // 2, dtype=np.int)
     edge_edge_offset = np.empty(edge_node.size // 2, dtype=np.double)
     edge_x = np.empty(edge_node.size // 2, dtype=np.double)
     edge_y = np.empty(edge_node.size // 2, dtype=np.double)
 
-    node_name_id = ["meshnodeids" for _ in range(branch_id.size)]
-    node_name_long = ["meshnodelongnames" for _ in range(branch_id.size)]
+    node_name_id = ["meshnodeids" for _ in range(node_edge_id.size)]
+    node_name_long = ["meshnodelongnames" for _ in range(node_edge_id.size)]
 
     mesh1d = UGridMesh1D(
         name=name,
         network_name=network_name,
-        branch_id=branch_id,
-        branch_offset=branch_offset,
+        node_edge_id=node_edge_id,
+        node_edge_offset=branch_offset,
         node_x=node_x,
         node_y=node_y,
         edge_node=edge_node,
@@ -138,8 +137,8 @@ def test_mesh1d_get():
         assert expected_mesh1d.network_name == mesh1d.network_name
 
         assert_array_equal(mesh1d.edge_node, expected_mesh1d.edge_node)
-        assert_array_equal(mesh1d.branch_id, expected_mesh1d.branch_id)
-        assert_array_equal(mesh1d.branch_offset, expected_mesh1d.branch_offset)
+        assert_array_equal(mesh1d.node_edge_id, expected_mesh1d.node_edge_id)
+        assert_array_equal(mesh1d.node_edge_offset, expected_mesh1d.node_edge_offset)
 
         assert_array_equal(mesh1d.node_name_id, expected_mesh1d.node_name_id)
         assert_array_equal(mesh1d.node_name_long, expected_mesh1d.node_name_long)
