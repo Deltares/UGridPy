@@ -67,7 +67,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 4,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [
     {
@@ -75,7 +75,7 @@
      "output_type": "stream",
      "text": [
       "Network 1D name: network\n",
-      "Network 1D num branch geometry nodes: [25]\n",
+      "Network 1D num branch geometry nodes: [1918854755]\n",
       "Network 1D branch nodes: [0 1]\n",
       "Network 1D node x: [293.78 538.89]\n",
       "Network 1D node y: [ 27.48 956.75]\n",
@@ -93,14 +93,14 @@
    ],
    "source": [
     "print(f\"Network 1D name: {network1d.name}\")\n",
-    "print(f\"Network 1D num branch geometry nodes: {network1d.num_branch_geometry_nodes}\")\n",
-    "print(f\"Network 1D branch nodes: {network1d.branch_node}\")\n",
+    "print(f\"Network 1D num branch geometry nodes: {network1d.num_edge_geometry_nodes}\")\n",
+    "print(f\"Network 1D branch nodes: {network1d.edge_node}\")\n",
     "print(f\"Network 1D node x: {network1d.node_x}\")\n",
     "print(f\"Network 1D node y: {network1d.node_y}\")\n",
     "print(f\"Network 1D geometry nodes x: {network1d.geometry_nodes_x}\")\n",
     "print(f\"Network 1D geometry nodes y: {network1d.geometry_nodes_y}\")\n",
-    "print(f\"Network 1D node name id: {network1d.node_name_id}\")\n",
-    "print(f\"Network 1D node name long: {network1d.node_name_long}\")\n",
+    "print(f\"Network 1D node name id: {network1d.node_id}\")\n",
+    "print(f\"Network 1D node name long: {network1d.node_long_name}\")\n",
     "print(f\"Network 1D is spherical: {network1d.is_spherical}\")"
    ]
   },
@@ -120,7 +120,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 5,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -204,7 +204,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -212,12 +212,12 @@
     "    name=\"network\",\n",
     "    node_x=node_x,\n",
     "    node_y=node_y,\n",
-    "    branch_node=branch_node,\n",
-    "    branch_length=branch_length,\n",
-    "    branch_order=branch_order,\n",
+    "    edge_node=branch_node,\n",
+    "    edge_length=branch_length,\n",
+    "    edge_order=branch_order,\n",
     "    geometry_nodes_x=geometry_nodes_x,\n",
     "    geometry_nodes_y=geometry_nodes_y,\n",
-    "    num_branch_geometry_nodes=num_branch_geometry_nodes,\n",
+    "    num_edge_geometry_nodes=num_branch_geometry_nodes,\n",
     ")"
    ]
   },
@@ -230,7 +230,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [],
    "source": [

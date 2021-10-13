@@ -203,6 +203,11 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.8.0&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <p>Then meshkernel is imported</p>
 <div class="cell docutils container">
@@ -275,8 +280,8 @@
 <h3>Create data required to instatiate a valid ugrid mesh1d<a class="headerlink" href="#create-data-required-to-instatiate-a-valid-ugrid-mesh1d" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">branch_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
-<span class="n">branch_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">node_edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+<span class="n">node_edge_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 <span class="n">node_name_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;branchname&quot;</span><span class="p">]</span>
 <span class="n">node_name_long</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;branchnamelong&quot;</span><span class="p">]</span>
 <span class="n">edge_edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
@@ -296,8 +301,8 @@
     <span class="n">mesh1d</span><span class="o">=</span><span class="n">mesh1d</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mesh1d&quot;</span><span class="p">,</span>
     <span class="n">network_name</span><span class="o">=</span><span class="s2">&quot;network1d&quot;</span><span class="p">,</span>
-    <span class="n">branch_id</span><span class="o">=</span><span class="n">branch_id</span><span class="p">,</span>
-    <span class="n">branch_offset</span><span class="o">=</span><span class="n">branch_offset</span><span class="p">,</span>
+    <span class="n">node_edge_id</span><span class="o">=</span><span class="n">node_edge_id</span><span class="p">,</span>
+    <span class="n">node_edge_offset</span><span class="o">=</span><span class="n">node_edge_offset</span><span class="p">,</span>
     <span class="n">node_name_id</span><span class="o">=</span><span class="n">node_name_id</span><span class="p">,</span>
     <span class="n">node_name_long</span><span class="o">=</span><span class="n">node_name_long</span><span class="p">,</span>
     <span class="n">edge_edge_id</span><span class="o">=</span><span class="n">edge_edge_id</span><span class="p">,</span>

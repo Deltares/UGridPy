@@ -69,21 +69,7 @@
    "cell_type": "code",
    "execution_count": 4,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Mesh 2D name: mesh2d\n",
-      "Mesh 2D first 10 elements of node_x: [480.21459667 451.69658827 425.13756519 401.45064545 380.26184868\n",
-      " 361.45101045 343.94589513 261.25486588 242.90975278 222.99468601]\n",
-      "Mesh 2D first 10 elements of node_y: [82.29153983 73.89186051 66.06917971 59.09244673 52.87717774 47.40762474\n",
-      " 42.38109201 19.25716325 14.35937578  9.08769854]\n",
-      "Mesh 2D edge_node: [ 20  33  46 ... 451 451 452]\n",
-      "Mesh 2D face_node: [ 79 132  80 ... 451 452 439]\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
     "print(f\"Mesh 2D name: {mesh2d.name}\")\n",
     "print(f\"Mesh 2D first 10 elements of node_x: {mesh2d.node_x[:10]}\")\n",
