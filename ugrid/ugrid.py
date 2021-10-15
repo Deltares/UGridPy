@@ -1197,15 +1197,15 @@ class UGrid:
         if isinstance(
             attribute_values, np.ndarray
         ) and attribute_values.dtype is np.dtype("int32"):
-            funct = self.lib.ug_attribute_int_define
+            fun = self.lib.ug_attribute_int_define
             c_attribute_values = numpy_array_to_ctypes(attribute_values)
         elif isinstance(
             attribute_values, np.ndarray
         ) and attribute_values.dtype is np.dtype("float"):
-            funct = self.lib.ug_attribute_double_define
+            fun = self.lib.ug_attribute_double_define
             c_attribute_values = numpy_array_to_ctypes(attribute_values)
         elif isinstance(attribute_values, str):
-            funct = self.lib.ug_attribute_char_define
+            fun = self.lib.ug_attribute_char_define
             c_attribute_values = c_char_p(attribute_values.encode("ASCII"))
         else:
             raise UGridError(
@@ -1213,7 +1213,7 @@ class UGrid:
             )
 
         self.__execute_function(
-            funct,
+            fun,
             self._file_id,
             c_variable_name_encoded,
             c_attribute_name_encoded,
@@ -1256,3 +1256,46 @@ class UGrid:
                 c_attribute_value_encoded,
                 attribute_values_len,
             )
+
+    def network1d_get_attributes(self, name: str):
+        """Get a dictionary of network1d default attribute names.
+
+        Args:
+            name (str): The network1d name.
+        """
+
+        return {
+            "cf_role": "mesh_topology",
+            "long_name": "Topology data of 1D network",
+            "topology_dimension": 1,
+            "node_dimension": f"{name}_nNodes",
+            "node_coordinates": f"{name}_node_x {name}_node_y",
+            "node_id": f"{name}_node_id",
+            "node_long_name": f"{name}_node_long_name",
+            "edge_dimension": f"{name}_nEdges",
+            "edge_node_connectivity": f"{name}_edge_nodes",
+            "edge_length": f"{name}_edge_length",
+            "edge_id": f"{name}_edge_id",
+            "edge_long_name": f"{name}_edge_long_name",
+            "edge_geometry": f"{name}_edge_geometry",
+        }
+
+    def mesh2d_get_attributes(self, name: str):
+        """Get a dictionary of mesh2d default attribute names.
+
+        Args:
+            name (str): The mesh2d name.
+        """
+        return {
+            "cf_role": "mesh_topology",
+            "long_name": "Topology data of 2D mesh",
+            "topology_dimension": 2,
+            "node_dimension": f"{name}_nNodes",
+            "node_coordinates": f"{name}_node_x {name}_node_y",
+            "edge_dimension": f"{name}_nNodes",
+            "edge_node_connectivity": f"{name}_edge_nodes",
+            "face_dimension": f"{name}_nFaces",
+            "face_node_connectivity": f"{name}_face_nodes",
+            "max_face_nodes_dimension": f"{name}_nMax_face_nodes",
+            "face_coordinates": f"{name}_face_x {name}_face_y",
+        }
