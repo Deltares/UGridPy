@@ -1262,6 +1262,9 @@ class UGrid:
 
         Args:
             name (str): The network1d name.
+
+        Returns:
+            dict: A dictionary containing the attribute names and the corresponding default values
         """
 
         return {
@@ -1285,6 +1288,9 @@ class UGrid:
 
         Args:
             name (str): The mesh2d name.
+
+        Returns:
+            dict: A dictionary containing the attribute names and the corresponding default values
         """
         return {
             "cf_role": "mesh_topology",
