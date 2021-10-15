@@ -1258,13 +1258,13 @@ class UGrid:
             )
 
     def network1d_get_attributes(self, name: str):
-        """Get a dictionary of network1d default attribute names.
+        """Get a dictionary of network1d default attribute names and the corresponding default values.
 
         Args:
             name (str): The network1d name.
 
         Returns:
-            dict: A dictionary containing the attribute names and the corresponding default values
+            dict: A dictionary containing the attribute names and the corresponding default values.
         """
 
         return {
@@ -1290,7 +1290,7 @@ class UGrid:
             name (str): The mesh2d name.
 
         Returns:
-            dict: A dictionary containing the attribute names and the corresponding default values
+            dict: A dictionary containing the attribute names and the corresponding default values.
         """
         return {
             "cf_role": "mesh_topology",
