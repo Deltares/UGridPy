@@ -189,6 +189,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridMesh1D</span>
+<span class="kn">from</span> <span class="nn">ugrid.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.9.0&#39;
 </pre></div>
 </div>
 </div>
@@ -219,6 +226,13 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 1D name: </span><span class="si">{</span><span class="n">mesh1d</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 1D network name : </span><span class="si">{</span><span class="n">mesh1d</span><span class="o">.</span><span class="n">network_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 2D first 10 elements of edge_node: </span><span class="si">{</span><span class="n">mesh1d</span><span class="o">.</span><span class="n">edge_node</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mesh 1D name: 1dmesh
+Mesh 1D network name : network
+Mesh 2D first 10 elements of edge_node: [0 1 1 2 2 3 3 4 4 5]
 </pre></div>
 </div>
 </div>
@@ -286,11 +300,11 @@
     <span class="p">],</span>
     <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">branch_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<span class="n">node_edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
     <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">branch_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<span class="n">node_edge_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="mi">0</span><span class="p">,</span>
         <span class="mf">49.65</span><span class="p">,</span>
@@ -320,15 +334,15 @@
     <span class="p">],</span>
     <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">node_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">branch_id</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
-<span class="n">node_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">branch_id</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">node_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">node_edge_id</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">node_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">node_edge_id</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 <span class="n">edge_edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">edge_node</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
 <span class="n">edge_edge_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">edge_node</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 <span class="n">edge_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">edge_node</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 <span class="n">edge_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">edge_node</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 
-<span class="n">node_name_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;meshnodeids&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">branch_id</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
-<span class="n">node_name_long</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;meshnodelongnames&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">branch_id</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="n">node_name_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;meshnodeids&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">node_edge_id</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="n">node_name_long</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;meshnodelongnames&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">node_edge_id</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -341,8 +355,8 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh1d</span> <span class="o">=</span> <span class="n">UGridMesh1D</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
     <span class="n">network_name</span><span class="o">=</span><span class="n">network_name</span><span class="p">,</span>
-    <span class="n">branch_id</span><span class="o">=</span><span class="n">branch_id</span><span class="p">,</span>
-    <span class="n">branch_offset</span><span class="o">=</span><span class="n">branch_offset</span><span class="p">,</span>
+    <span class="n">node_edge_id</span><span class="o">=</span><span class="n">node_edge_id</span><span class="p">,</span>
+    <span class="n">node_edge_offset</span><span class="o">=</span><span class="n">node_edge_offset</span><span class="p">,</span>
     <span class="n">node_x</span><span class="o">=</span><span class="n">node_x</span><span class="p">,</span>
     <span class="n">node_y</span><span class="o">=</span><span class="n">node_y</span><span class="p">,</span>
     <span class="n">edge_node</span><span class="o">=</span><span class="n">edge_node</span><span class="p">,</span>
@@ -363,8 +377,30 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh1DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="c1"># 1. Define a new mesh1d</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh1d_define</span><span class="p">(</span><span class="n">mesh1d</span><span class="p">)</span>
+    <span class="c1"># 2. Write a new mesh1d</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">mesh1d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh1d</span><span class="p">)</span>
+    <span class="c1"># 3. Add crs to file</span>
+    <span class="n">attribute_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;longitude_of_prime_meridian&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_major_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6378137.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_minor_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;inverse_flattening&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;EPSG_code&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value is equal to EPSG code&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">variable_int_with_attributes_define</span><span class="p">(</span><span class="s2">&quot;projected_coordinate_system&quot;</span><span class="p">,</span> <span class="n">attribute_dict</span><span class="p">)</span>
+    <span class="c1"># 4. Add conventions (global attributes)</span>
+    <span class="n">conventions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="s2">&quot;Deltares&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown Unknown. Model: Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="s2">&quot;Created on 2017-11-27T18:05:09+0100, Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Conventions&quot;</span><span class="p">:</span> <span class="s2">&quot;CF-1.6 UGRID-1.0/Deltares-0.8&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">attribute_global_define</span><span class="p">(</span><span class="n">conventions</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

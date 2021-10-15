@@ -189,6 +189,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridMesh2D</span>
+<span class="kn">from</span> <span class="nn">ugrid.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.9.0&#39;
 </pre></div>
 </div>
 </div>
@@ -223,6 +230,17 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 2D first 10 elements of node_y: </span><span class="si">{</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">node_y</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 2D edge_node: </span><span class="si">{</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">edge_node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mesh 2D face_node: </span><span class="si">{</span><span class="n">mesh2d</span><span class="o">.</span><span class="n">face_node</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mesh 2D name: mesh2d
+Mesh 2D first 10 elements of node_x: [480.21459667 451.69658827 425.13756519 401.45064545 380.26184868
+ 361.45101045 343.94589513 261.25486588 242.90975278 222.99468601]
+Mesh 2D first 10 elements of node_y: [82.29153983 73.89186051 66.06917971 59.09244673 52.87717774 47.40762474
+ 42.38109201 19.25716325 14.35937578  9.08769854]
+Mesh 2D edge_node: [ 20  33  46 ... 451 451 452]
+Mesh 2D face_node: [ 79 132  80 ... 451 452 439]
 </pre></div>
 </div>
 </div>
@@ -363,8 +381,30 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh2DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="c1"># 1. Define a new network1d</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">mesh2d</span><span class="p">)</span>
+    <span class="c1"># 2. Write a new network1d</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh2d</span><span class="p">)</span>
+    <span class="c1"># 3. Add crs to file</span>
+    <span class="n">attribute_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;longitude_of_prime_meridian&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_major_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6378137.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_minor_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;inverse_flattening&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;EPSG_code&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value is equal to EPSG code&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">variable_int_with_attributes_define</span><span class="p">(</span><span class="s2">&quot;projected_coordinate_system&quot;</span><span class="p">,</span> <span class="n">attribute_dict</span><span class="p">)</span>
+    <span class="c1"># 4. Add conventions (global attributes)</span>
+    <span class="n">conventions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="s2">&quot;Deltares&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown Unknown. Model: Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="s2">&quot;Created on 2017-11-27T18:05:09+0100, Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Conventions&quot;</span><span class="p">:</span> <span class="s2">&quot;CF-1.6 UGRID-1.0/Deltares-0.8&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">attribute_global_define</span><span class="p">(</span><span class="n">conventions</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -164,8 +164,8 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#write-the-ugridnetwork1d-instance-to-file">
-     Write the UGridNetwork1D instance to file
+    <a class="reference internal nav-link" href="#write-the-ugridnetwork1d-instance-to-file-and-add-crs-and-conventions">
+     Write the UGridNetwork1D instance to file and add crs and conventions
     </a>
    </li>
   </ul>
@@ -189,6 +189,13 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ugrid</span> <span class="kn">import</span> <span class="n">UGrid</span><span class="p">,</span> <span class="n">UGridNetwork1D</span>
+<span class="kn">from</span> <span class="nn">ugrid.version</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.9.0&#39;
 </pre></div>
 </div>
 </div>
@@ -233,7 +240,7 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network 1D name: network
-Network 1D num branch geometry nodes: [1918854755]
+Network 1D num branch geometry nodes: [-1330765608]
 Network 1D branch nodes: [0 1]
 Network 1D node x: [293.78 538.89]
 Network 1D node y: [ 27.48 956.75]
@@ -352,13 +359,35 @@ Network 1D is spherical: False
 </div>
 </div>
 </div>
-<div class="section" id="write-the-ugridnetwork1d-instance-to-file">
-<h3>Write the UGridNetwork1D instance to file<a class="headerlink" href="#write-the-ugridnetwork1d-instance-to-file" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="write-the-ugridnetwork1d-instance-to-file-and-add-crs-and-conventions">
+<h3>Write the UGridNetwork1D instance to file and add crs and conventions<a class="headerlink" href="#write-the-ugridnetwork1d-instance-to-file-and-add-crs-and-conventions" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Network1DWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="c1"># 1. Define a new network1d</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">network1d_define</span><span class="p">(</span><span class="n">network1d</span><span class="p">)</span>
+    <span class="c1"># 2. Write network1d</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">network1d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">network1d</span><span class="p">)</span>
+    <span class="c1"># 3. Add crs to file</span>
+    <span class="n">attribute_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;longitude_of_prime_meridian&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_major_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6378137.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_minor_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;inverse_flattening&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;EPSG_code&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value is equal to EPSG code&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">variable_int_with_attributes_define</span><span class="p">(</span><span class="s2">&quot;projected_coordinate_system&quot;</span><span class="p">,</span> <span class="n">attribute_dict</span><span class="p">)</span>
+    <span class="c1"># 4. Add conventions (global attributes)</span>
+    <span class="n">conventions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="s2">&quot;Deltares&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown Unknown. Model: Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="s2">&quot;Created on 2017-11-27T18:05:09+0100, Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Conventions&quot;</span><span class="p">:</span> <span class="s2">&quot;CF-1.6 UGRID-1.0/Deltares-0.8&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">attribute_global_define</span><span class="p">(</span><span class="n">conventions</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

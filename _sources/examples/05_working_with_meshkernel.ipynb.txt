@@ -15,18 +15,7 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "text/plain": [
-       "'0.8.0'"
-      ]
-     },
-     "execution_count": 1,
-     "metadata": {},
-     "output_type": "execute_result"
-    }
-   ],
+   "outputs": [],
    "source": [
     "from ugrid import UGrid, UGridMesh2D\n",
     "from ugrid.version import __version__\n",
@@ -209,8 +198,30 @@
    "outputs": [],
    "source": [
     "with UGrid(\"Mesh1DMesKernelWrite.nc\", \"w+\") as ug:\n",
+    "    # 1. Define a new mesh1d\n",
     "    topology_id = ug.mesh1d_define(mesh1d_ugrid)\n",
-    "    ug.mesh1d_put(topology_id, mesh1d_ugrid)"
+    "    # 2. Write a new mesh1d\n",
+    "    ug.mesh1d_put(topology_id, mesh1d_ugrid)\n",
+    "    # 3. Add crs to file\n",
+    "    attribute_dict = {\n",
+    "        \"name\": \"Unknown projected\",\n",
+    "        \"epsg\": np.array([0], dtype=int),\n",
+    "        \"grid_mapping_name\": \"Unknown projected\",\n",
+    "        \"longitude_of_prime_meridian\": np.array([0.0], dtype=float),\n",
+    "        \"semi_major_axis\": np.array([6378137.0], dtype=float),\n",
+    "        \"semi_minor_axis\": np.array([6356752.314245], dtype=float),\n",
+    "        \"inverse_flattening\": np.array([6356752.314245], dtype=float),\n",
+    "        \"EPSG_code\": \"EPSG:0\",\n",
+    "        \"value\": \"value is equal to EPSG code\"}\n",
+    "    ug.variable_int_with_attributes_define(\"projected_coordinate_system\", attribute_dict)\n",
+    "    # 4. Add conventions (global attributes)\n",
+    "    conventions = {\n",
+    "        \"institution\": \"Deltares\",\n",
+    "        \"references\": \"Unknown\",\n",
+    "        \"source\": \"Unknown Unknown. Model: Unknown\",\n",
+    "        \"history\": \"Created on 2017-11-27T18:05:09+0100, Unknown\",\n",
+    "        \"Conventions\": \"CF-1.6 UGRID-1.0/Deltares-0.8\"}\n",
+    "    ug.attribute_global_define(conventions)"
    ]
   },
   {

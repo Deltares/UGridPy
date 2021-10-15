@@ -15,11 +15,24 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 1,
+   "execution_count": 5,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'0.9.0'"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
    "source": [
-    "from ugrid import UGrid, UGridNetwork1D"
+    "from ugrid import UGrid, UGridNetwork1D\n",
+    "from ugrid.version import __version__\n",
+    "__version__"
    ]
   },
   {
@@ -31,7 +44,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 2,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -47,7 +60,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 3,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -67,7 +80,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [
     {
@@ -75,7 +88,7 @@
      "output_type": "stream",
      "text": [
       "Network 1D name: network\n",
-      "Network 1D num branch geometry nodes: [1918854755]\n",
+      "Network 1D num branch geometry nodes: [-1330765608]\n",
       "Network 1D branch nodes: [0 1]\n",
       "Network 1D node x: [293.78 538.89]\n",
       "Network 1D node y: [ 27.48 956.75]\n",
@@ -120,7 +133,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -225,7 +238,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Write the UGridNetwork1D instance to file"
+    "### Write the UGridNetwork1D instance to file and add crs and conventions"
    ]
   },
   {
@@ -235,8 +248,30 @@
    "outputs": [],
    "source": [
     "with UGrid(\"Network1DWrite.nc\", \"w+\") as ug:\n",
+    "    # 1. Define a new network1d\n",
     "    topology_id = ug.network1d_define(network1d)\n",
-    "    ug.network1d_put(topology_id, network1d)"
+    "    # 2. Write network1d\n",
+    "    ug.network1d_put(topology_id, network1d)\n",
+    "    # 3. Add crs to file\n",
+    "    attribute_dict = {\n",
+    "        \"name\": \"Unknown projected\",\n",
+    "        \"epsg\": np.array([0], dtype=int),\n",
+    "        \"grid_mapping_name\": \"Unknown projected\",\n",
+    "        \"longitude_of_prime_meridian\": np.array([0.0], dtype=float),\n",
+    "        \"semi_major_axis\": np.array([6378137.0], dtype=float),\n",
+    "        \"semi_minor_axis\": np.array([6356752.314245], dtype=float),\n",
+    "        \"inverse_flattening\": np.array([6356752.314245], dtype=float),\n",
+    "        \"EPSG_code\": \"EPSG:0\",\n",
+    "        \"value\": \"value is equal to EPSG code\"}\n",
+    "    ug.variable_int_with_attributes_define(\"projected_coordinate_system\", attribute_dict)\n",
+    "    # 4. Add conventions (global attributes)\n",
+    "    conventions = {\n",
+    "        \"institution\": \"Deltares\",\n",
+    "        \"references\": \"Unknown\",\n",
+    "        \"source\": \"Unknown Unknown. Model: Unknown\",\n",
+    "        \"history\": \"Created on 2017-11-27T18:05:09+0100, Unknown\",\n",
+    "        \"Conventions\": \"CF-1.6 UGRID-1.0/Deltares-0.8\"}\n",
+    "    ug.attribute_global_define(conventions)"
    ]
   },
   {
