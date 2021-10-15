@@ -67,14 +67,6 @@ def test_get_data_int():
         assert_array_equal(data_variable[:5], [1, 2, 1, 3, 4])
 
 
-def test_get_data_int():
-    r"""Tests `variable_get_data_double` gets int data."""
-
-    with UGrid("./data/ResultFile.nc", "r") as ug:
-        data_variable = ug.variable_get_data_int("mesh1d_edge_nodes")
-        assert_array_equal(data_variable[:5], [1, 2, 1, 3, 4])
-
-
 def test_variable_int_with_attributes_define():
     r"""Tests `variable_int_with_attributes_define` for defining a coordinate reference system."""
 
