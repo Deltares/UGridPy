@@ -95,26 +95,6 @@ def test_variable_int_with_attributes_define():
         )
 
 
-def test_variable_int_with_attributes_define():
-    r"""Tests `variable_int_with_attributes_define` for defining a coordinate reference system."""
-
-    with UGrid("./data/written_files/CoordinateReferenceSystem.nc", "w+") as ug:
-        attribute_dict = {
-            "name": "Unknown projected",
-            "epsg": np.array([0], dtype=int),
-            "grid_mapping_name": "Unknown projected",
-            "longitude_of_prime_meridian": np.array([0.0], dtype=float),
-            "semi_major_axis": np.array([6378137.0], dtype=float),
-            "semi_minor_axis": np.array([6356752.314245], dtype=float),
-            "inverse_flattening": np.array([6356752.314245], dtype=float),
-            "EPSG_code": "EPSG:0",
-            "value": "value is equal to EPSG code",
-        }
-        ug.variable_int_with_attributes_define(
-            "projected_coordinate_system", attribute_dict
-        )
-
-
 def test_attribute_global_define():
     r"""Tests `attribute_global_define` for defining global attributes, such as the conventions."""
 

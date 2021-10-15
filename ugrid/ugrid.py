@@ -1183,7 +1183,7 @@ class UGrid:
         Args:
             variable_name (str): The variable name.
             attribute_name (str): The attribute name.
-            attribute_values: The attribute values. Can be anumpy array of int, floats or a string
+            attribute_values: The attribute values. Can be a numpy array of int, floats or a string
         """
 
         variable_name_long = self.__adjust_name(variable_name)
@@ -1199,14 +1199,18 @@ class UGrid:
         ) and attribute_values.dtype is np.dtype("int32"):
             funct = self.lib.ug_attribute_int_define
             c_attribute_values = numpy_array_to_ctypes(attribute_values)
-        if isinstance(
+        elif isinstance(
             attribute_values, np.ndarray
         ) and attribute_values.dtype is np.dtype("float"):
             funct = self.lib.ug_attribute_double_define
             c_attribute_values = numpy_array_to_ctypes(attribute_values)
-        if isinstance(attribute_values, str):
+        elif isinstance(attribute_values, str):
             funct = self.lib.ug_attribute_char_define
             c_attribute_values = c_char_p(attribute_values.encode("ASCII"))
+        else:
+            raise UGridError(
+                "__attribute_define: attribute_values types are not supported"
+            )
 
         self.__execute_function(
             funct,
