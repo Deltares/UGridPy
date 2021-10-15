@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.testing import assert_array_equal
 
 from ugrid import UGrid
@@ -64,3 +65,66 @@ def test_get_data_int():
     with UGrid("./data/ResultFile.nc", "r") as ug:
         data_variable = ug.variable_get_data_int("mesh1d_edge_nodes")
         assert_array_equal(data_variable[:5], [1, 2, 1, 3, 4])
+
+
+def test_get_data_int():
+    r"""Tests `variable_get_data_double` gets int data."""
+
+    with UGrid("./data/ResultFile.nc", "r") as ug:
+        data_variable = ug.variable_get_data_int("mesh1d_edge_nodes")
+        assert_array_equal(data_variable[:5], [1, 2, 1, 3, 4])
+
+
+def test_variable_int_with_attributes_define():
+    r"""Tests `variable_int_with_attributes_define` for defining a coordinate reference system."""
+
+    with UGrid("./data/written_files/CoordinateReferenceSystem.nc", "w+") as ug:
+        attribute_dict = {
+            "name": "Unknown projected",
+            "epsg": np.array([0], dtype=int),
+            "grid_mapping_name": "Unknown projected",
+            "longitude_of_prime_meridian": np.array([0.0], dtype=float),
+            "semi_major_axis": np.array([6378137.0], dtype=float),
+            "semi_minor_axis": np.array([6356752.314245], dtype=float),
+            "inverse_flattening": np.array([6356752.314245], dtype=float),
+            "EPSG_code": "EPSG:0",
+            "value": "value is equal to EPSG code",
+        }
+        ug.variable_int_with_attributes_define(
+            "projected_coordinate_system", attribute_dict
+        )
+
+
+def test_variable_int_with_attributes_define():
+    r"""Tests `variable_int_with_attributes_define` for defining a coordinate reference system."""
+
+    with UGrid("./data/written_files/CoordinateReferenceSystem.nc", "w+") as ug:
+        attribute_dict = {
+            "name": "Unknown projected",
+            "epsg": np.array([0], dtype=int),
+            "grid_mapping_name": "Unknown projected",
+            "longitude_of_prime_meridian": np.array([0.0], dtype=float),
+            "semi_major_axis": np.array([6378137.0], dtype=float),
+            "semi_minor_axis": np.array([6356752.314245], dtype=float),
+            "inverse_flattening": np.array([6356752.314245], dtype=float),
+            "EPSG_code": "EPSG:0",
+            "value": "value is equal to EPSG code",
+        }
+        ug.variable_int_with_attributes_define(
+            "projected_coordinate_system", attribute_dict
+        )
+
+
+def test_attribute_global_define():
+    r"""Tests `attribute_global_define` for defining global attributes, such as the conventions."""
+
+    with UGrid("./data/written_files/Conventions.nc", "w+") as ug:
+
+        conventions = {
+            "institution": "Deltares",
+            "references": "Unknown",
+            "source": "Unknown Unknown. Model: Unknown",
+            "history": "Created on 2017-11-27T18:05:09+0100, Unknown",
+            "Conventions": "CF-1.6 UGRID-1.0/Deltares-0.8",
+        }
+        ug.attribute_global_define(conventions)

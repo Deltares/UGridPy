@@ -138,13 +138,3 @@ def test_ugrid_mesh2d_get():
         assert_array_equal(ugrid_mesh2d.face_x, expected_ugrid_mesh2d.face_x)
         assert_array_equal(ugrid_mesh2d.face_y, expected_ugrid_mesh2d.face_y)
         assert_array_equal(ugrid_mesh2d.face_node, expected_ugrid_mesh2d.face_node)
-
-
-def test_ugrid_mesh2d_define_and_put():
-    r"""Tests `mesh2d_define` and `mesh2d_put` to define and write a mesh2d to file."""
-
-    with UGrid("./data/written_files/Mesh2DWrite.nc", "w+") as ug:
-        ugrid_mesh2d = create_ugrid_mesh2d()
-        topology_id = ug.mesh2d_define(ugrid_mesh2d)
-        assert topology_id == 0
-        ug.mesh2d_put(topology_id, ugrid_mesh2d)

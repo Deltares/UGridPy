@@ -18,6 +18,7 @@ from ugrid.c_structures import (
     CUGridNetwork1D,
     decode_byte_vector_to_list_of_strings,
     decode_byte_vector_to_string,
+    numpy_array_to_ctypes,
 )
 from ugrid.errors import UGridError
 from ugrid.py_structures import UGridContacts, UGridMesh1D, UGridMesh2D, UGridNetwork1D
@@ -1159,3 +1160,95 @@ class UGrid:
         )
 
         return data_vec
+
+    def __variable_int_define(self, variable_name: str):
+        """Defines a new integer variable
+
+        Args:
+            variable_name (str): The variable name.
+        """
+
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+
+        self.__execute_function(
+            self.lib.ug_variable_int_define, self._file_id, c_variable_name_encoded
+        )
+
+    def __attribute_define(
+        self, variable_name: str, attribute_name: str, attribute_values
+    ):
+        """Defines a new variable attribute with a name and an array of values.
+
+        Args:
+            variable_name (str): The variable name.
+            attribute_name (str): The attribute name.
+            attribute_values: The attribute values. Can be anumpy array of int, floats or a string
+        """
+
+        variable_name_long = self.__adjust_name(variable_name)
+        c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
+
+        attribute_name_long = self.__adjust_name(attribute_name)
+        c_attribute_name_encoded = c_char_p(attribute_name_long.encode("ASCII"))
+
+        attribute_values_len = c_int(len(attribute_values))
+
+        if isinstance(
+            attribute_values, np.ndarray
+        ) and attribute_values.dtype is np.dtype("int32"):
+            funct = self.lib.ug_attribute_int_define
+            c_attribute_values = numpy_array_to_ctypes(attribute_values)
+        if isinstance(
+            attribute_values, np.ndarray
+        ) and attribute_values.dtype is np.dtype("float"):
+            funct = self.lib.ug_attribute_double_define
+            c_attribute_values = numpy_array_to_ctypes(attribute_values)
+        if isinstance(attribute_values, str):
+            funct = self.lib.ug_attribute_char_define
+            c_attribute_values = c_char_p(attribute_values.encode("ASCII"))
+
+        self.__execute_function(
+            funct,
+            self._file_id,
+            c_variable_name_encoded,
+            c_attribute_name_encoded,
+            c_attribute_values,
+            attribute_values_len,
+        )
+
+    def variable_int_with_attributes_define(
+        self, variable_name: str, variable_dict: dict
+    ):
+        """Defines a new variable with attributes. It can be used to write the coordinate reference system to file.
+
+        Args:
+            variable_name (str): The new variable name.
+            variable_dict (dict): A dictionary containing the variable values and names
+        """
+
+        self.__variable_int_define(variable_name)
+        for names, values in variable_dict.items():
+            self.__attribute_define(variable_name, names, values)
+
+    def attribute_global_define(self, variable_dict: dict):
+        """Defines new global attributes
+
+        Args:
+            variable_dict (dict): A dictionary containing the attribute names and values.
+        """
+        for attribute_name, attribute_value in variable_dict.items():
+
+            attribute_name_long = self.__adjust_name(attribute_name)
+            c_attribute_name_encoded = c_char_p(attribute_name_long.encode("ASCII"))
+
+            c_attribute_value_encoded = c_char_p(attribute_value.encode("ASCII"))
+            attribute_values_len = c_int(len(attribute_value))
+
+            self.__execute_function(
+                self.lib.ug_attribute_global_char_define,
+                self._file_id,
+                c_attribute_name_encoded,
+                c_attribute_value_encoded,
+                attribute_values_len,
+            )
