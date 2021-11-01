@@ -69,6 +69,7 @@ docs/api/stubs
 
 # Test artifacts
 tests/bin
+tests/data/written_files
 
 # DLLs
 *.dll
