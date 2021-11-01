@@ -58,11 +58,11 @@ def create_contacts() -> UGridContacts:
             353,
             23,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
     contact_type = np.array(
         [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        dtype=np.int,
+        dtype=np.int32,
     )
 
     mesh_from_name = "mesh2d"
@@ -118,12 +118,12 @@ def test_contacts_define_and_put():
 
 def test_contacts_meshkernel_define_and_put():
     r"""Tests a meshkernel contacts is correctly converted to UGridContacts and written to file."""
-    mesh1d_indices = np.array([0, 1, 2], dtype=np.int)
-    mesh2d_indices = np.array([0, 1, 2], dtype=np.int)
+    mesh1d_indices = np.array([0, 1, 2], dtype=np.int32)
+    mesh2d_indices = np.array([0, 1, 2], dtype=np.int32)
 
     contacts = Contacts(mesh1d_indices=mesh1d_indices, mesh2d_indices=mesh2d_indices)
 
-    contact_type = np.array([3, 3, 3], dtype=np.int)
+    contact_type = np.array([3, 3, 3], dtype=np.int32)
     contact_name_id = ["linkid" for _ in range(mesh1d_indices.size)]
     contact_name_long = ["linklongname" for _ in range(mesh1d_indices.size)]
 

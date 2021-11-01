@@ -158,14 +158,14 @@ class CUGridNetwork1D(Structure):
         node_y = np.empty(self.num_nodes, dtype=np.double)
         node_id = " " * self.num_nodes * name_size
         node_long_name = " " * self.num_nodes * name_long_size
-        edge_node = np.empty(self.num_nodes, dtype=np.int)
+        edge_node = np.empty(self.num_nodes, dtype=np.int32)
         edge_length = np.empty(self.num_edges, dtype=np.double)
-        edge_order = np.empty(self.num_edges, dtype=np.int)
+        edge_order = np.empty(self.num_edges, dtype=np.int32)
         edge_id = " " * self.num_edges * name_size
         edge_long_name = " " * self.num_edges * name_long_size
         geometry_nodes_x = np.empty(self.num_geometry_nodes, dtype=np.double)
         geometry_nodes_y = np.empty(self.num_geometry_nodes, dtype=np.double)
-        num_edge_geometry_nodes = np.empty(self.num_edges, dtype=np.int)
+        num_edge_geometry_nodes = np.empty(self.num_edges, dtype=np.int32)
 
         self.name = c_char_p(name.encode("ASCII"))
         self.node_x = numpy_array_to_ctypes(node_x)
@@ -310,12 +310,12 @@ class CUGridMesh1D(Structure):
         network_name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
-        edge_node = np.empty(self.num_edges * 2, dtype=np.int)
-        branch_id = np.empty(self.num_nodes, dtype=np.int)
+        edge_node = np.empty(self.num_edges * 2, dtype=np.int32)
+        branch_id = np.empty(self.num_nodes, dtype=np.int32)
         branch_offset = np.empty(self.num_nodes, dtype=np.double)
         node_name_id = " " * self.num_nodes * name_size
         node_name_long = " " * self.num_nodes * name_long_size
-        edge_edge_id = np.empty(self.num_edges, dtype=np.int)
+        edge_edge_id = np.empty(self.num_edges, dtype=np.int32)
         edge_edge_offset = np.empty(self.num_edges, dtype=np.double)
         edge_x = np.empty(self.num_edges, dtype=np.double)
         edge_y = np.empty(self.num_edges, dtype=np.double)
@@ -492,24 +492,24 @@ class CUGridMesh2D(Structure):
         name = " " * name_long_size
         node_x = np.empty(self.num_nodes, dtype=np.double)
         node_y = np.empty(self.num_nodes, dtype=np.double)
-        edge_node = np.empty(self.num_edges * 2, dtype=np.int)
+        edge_node = np.empty(self.num_edges * 2, dtype=np.int32)
 
         node_z = np.empty(self.num_nodes, dtype=np.double)
         edge_x = np.empty(self.num_edges, dtype=np.double)
         edge_y = np.empty(self.num_edges, dtype=np.double)
         edge_z = np.empty(self.num_edges, dtype=np.double)
-        edge_face = np.empty(self.num_edges * 2, dtype=np.int)
+        edge_face = np.empty(self.num_edges * 2, dtype=np.int32)
 
-        face_node = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int)
-        face_edge = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int)
-        face_face = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int)
+        face_node = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int32)
+        face_edge = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int32)
+        face_face = np.empty(self.num_faces * self.num_face_nodes_max, dtype=np.int32)
         face_x = np.empty(self.num_faces, dtype=np.double)
         face_y = np.empty(self.num_faces, dtype=np.double)
         face_z = np.empty(self.num_faces, dtype=np.double)
 
         layer_zs = np.empty(self.num_layers, dtype=np.double)
         boundary_node_connectivity = np.empty(self.num_nodes, dtype=np.double)
-        volume_coordinates = np.empty(self.num_faces, dtype=np.int)
+        volume_coordinates = np.empty(self.num_faces, dtype=np.int32)
 
         self.name = c_char_p(name.encode("ASCII"))
         self.edge_node = numpy_array_to_ctypes(edge_node)
@@ -655,8 +655,8 @@ class CUGridContacts(Structure):
         name = " " * name_long_size
         mesh_from_name = " " * name_long_size
         mesh_to_name = " " * name_long_size
-        edges = np.empty(self.num_contacts * 2, dtype=np.int)
-        contact_type = np.empty(self.num_contacts, dtype=np.int)
+        edges = np.empty(self.num_contacts * 2, dtype=np.int32)
+        contact_type = np.empty(self.num_contacts, dtype=np.int32)
         contact_name_id = " " * self.num_contacts * name_size
         contact_name_long = " " * self.num_contacts * name_long_size
 

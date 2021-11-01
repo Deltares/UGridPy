@@ -9,9 +9,9 @@ def create_network1d():
 
     node_x = np.array([293.78, 538.89], dtype=np.double)
     node_y = np.array([27.48, 956.75], dtype=np.double)
-    edge_node = np.array([0, 1], dtype=np.int)
+    edge_node = np.array([0, 1], dtype=np.int32)
     edge_length = np.array([1165.29], dtype=np.double)
-    branch_order = np.array([0], dtype=np.int)
+    branch_order = np.array([0], dtype=np.int32)
 
     geometry_nodes_x = np.array(
         [
@@ -75,7 +75,7 @@ def create_network1d():
         dtype=np.double,
     )
 
-    num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int)
+    num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int32)
 
     network1d = UGridNetwork1D(
         name="network",

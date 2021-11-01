@@ -61,7 +61,7 @@ def create_ugrid_mesh2d():
             15,
             16,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
 
     face_x = np.array([0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 2.5, 2.5, 2.5], dtype=np.double)
@@ -105,7 +105,7 @@ def create_ugrid_mesh2d():
             16,
             12,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
 
     ugrid_mesh2d = UGridMesh2D(
