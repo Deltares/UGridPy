@@ -1257,7 +1257,8 @@ class UGrid:
                 attribute_values_len,
             )
 
-    def network1d_get_attributes(self, name: str):
+    @staticmethod
+    def network1d_get_attributes(name: str):
         """Get a dictionary of network1d default attribute names and the corresponding default values.
 
         Args:
@@ -1283,7 +1284,8 @@ class UGrid:
             "edge_geometry": f"{name}_edge_geometry",
         }
 
-    def mesh2d_get_attributes(self, name: str):
+    @staticmethod
+    def mesh2d_get_attributes(name: str):
         """Get a dictionary of mesh2d default attribute names.
 
         Args:
