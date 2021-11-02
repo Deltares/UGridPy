@@ -148,7 +148,7 @@ def test_mesh2d_get_attributes():
         "topology_dimension": 2,
         "node_dimension": "my-mesh_nNodes",
         "node_coordinates": "my-mesh_node_x my-mesh_node_y",
-        "edge_dimension": "my-mesh_nNodes",
+        "edge_dimension": "my-mesh_nEdges",
         "edge_node_connectivity": "my-mesh_edge_nodes",
         "face_dimension": "my-mesh_nFaces",
         "face_node_connectivity": "my-mesh_face_nodes",

@@ -1300,7 +1300,7 @@ class UGrid:
             "topology_dimension": 2,
             "node_dimension": f"{name}_nNodes",
             "node_coordinates": f"{name}_node_x {name}_node_y",
-            "edge_dimension": f"{name}_nNodes",
+            "edge_dimension": f"{name}_nEdges",
             "edge_node_connectivity": f"{name}_edge_nodes",
             "face_dimension": f"{name}_nFaces",
             "face_node_connectivity": f"{name}_face_nodes",
