@@ -15,7 +15,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 1,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [
     {
@@ -24,7 +24,7 @@
        "'0.9.0'"
       ]
      },
-     "execution_count": 1,
+     "execution_count": 6,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -44,7 +44,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 2,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -60,7 +60,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 3,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -80,7 +80,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 4,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [
     {
@@ -121,7 +121,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 5,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -236,7 +236,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -248,6 +248,7 @@
     "    face_x=face_x,\n",
     "    face_y=face_y,\n",
     "    face_node=face_node,\n",
+    "    start_index=1\n",
     ")"
    ]
   },
@@ -260,7 +261,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 12,
    "metadata": {},
    "outputs": [],
    "source": [

@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Writing meshkernel meshes to ugrid file &#8212; UGridPy  documentation</title>
     
-  <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -23,23 +23,29 @@
 
     
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-book-theme.css?digest=84ace793992934648b4de8eed757e5a2" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script src="../_static/sphinx-book-theme.9d8b4a8b9bb19db25eeaddc40d639ba2.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
     
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
@@ -51,7 +57,12 @@
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<div class="col-12 col-md-3 bd-sidebar site-navigation " id="site-navigation">
     
         <div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="../index.html">
@@ -81,22 +92,22 @@
 
 
           
+<!-- This is an invisible pixel that we watch to see if we've scrolled. -->
+<div class="sbt-scroll-pixel-helper"></div>
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
     
     <div class="topbar container-xl fixed-top">
     <div class="topbar-contents row">
         <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
         <div class="col pl-md-4 topbar-main">
-            
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
+            <div class="topbar-left">
+                
+                <label class="nav-toggle-button" for="__navigation">
+                    <div class="visually-hidden">Toggle navigation</div>
+                    <i class="fas fa-bars"></i>
+                </label>
+                
+            </div>
             
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
@@ -111,7 +122,7 @@
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
@@ -129,7 +140,7 @@
         </div>
 
         <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
             <div class="tocsection onthispage pt-5 pb-3">
                 <i class="fas fa-list"></i> Contents
@@ -142,8 +153,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#create-a-meshkernel-mesh2d">
-     Create a meshkernel mesh2d
+    <a class="reference internal nav-link" href="#create-a-triangular-mesh2d-with-meshkernel">
+     Create a triangular mesh2d with meshkernel
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -188,7 +199,69 @@
 </div>
     <div id="main-content" class="row">
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Writing meshkernel meshes to ugrid file</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#write-a-meshkernel-mesh2d">
+   Write a meshkernel mesh2d
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-a-triangular-mesh2d-with-meshkernel">
+     Create a triangular mesh2d with meshkernel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#convert-a-meshkernel-mesh2d-to-an-ugrid-mesh2d">
+     Convert a meshkernel mesh2d to an ugrid mesh2d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#write-ugrid-mesh2d-to-file">
+     Write UGrid mesh2d  to file
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#write-a-meshkernel-mesh1d">
+   Write a meshkernel mesh1d
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-a-meshkernel-mesh1d">
+     Create a meshkernel mesh1d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-data-required-to-instatiate-a-valid-ugrid-mesh1d">
+     Create data required to instatiate a valid ugrid mesh1d
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#converts-a-meshkernel-mesh1d-to-an-ugrid-mesh1d-by-adding-the-additional-fields-such-as-network-names-or-branch-offsets">
+     Converts a meshkernel mesh1d to an ugrid mesh1d, by adding the additional fields, such as network names or branch offsets
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
               <div>
                 
   <div class="tex2jax_ignore mathjax_ignore section" id="writing-meshkernel-meshes-to-ugrid-file">
@@ -203,11 +276,16 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;0.9.0&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <p>Then meshkernel is imported</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshkernel</span> <span class="kn">import</span> <span class="n">meshkernel</span><span class="p">,</span> <span class="n">Mesh1d</span><span class="p">,</span> <span class="n">Mesh2dFactory</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshkernel</span> <span class="kn">import</span> <span class="n">meshkernel</span><span class="p">,</span> <span class="n">Mesh1d</span><span class="p">,</span> <span class="n">Mesh2dFactory</span><span class="p">,</span> <span class="n">MeshKernel</span><span class="p">,</span> <span class="n">GeometryList</span>
 </pre></div>
 </div>
 </div>
@@ -216,17 +294,50 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="write-a-meshkernel-mesh2d">
 <h2>Write a meshkernel mesh2d<a class="headerlink" href="#write-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="create-a-meshkernel-mesh2d">
-<h3>Create a meshkernel mesh2d<a class="headerlink" href="#create-a-meshkernel-mesh2d" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="create-a-triangular-mesh2d-with-meshkernel">
+<h3>Create a triangular mesh2d with meshkernel<a class="headerlink" href="#create-a-triangular-mesh2d-with-meshkernel" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_mesh_kernel</span> <span class="o">=</span> <span class="n">Mesh2dFactory</span><span class="o">.</span><span class="n">create_rectilinear_mesh</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">origin_x</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">origin_y</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">mk</span> <span class="o">=</span> <span class="n">MeshKernel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">polygon_file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;data_examples&quot;</span> <span class="o">/</span> <span class="s2">&quot;test.pol&quot;</span>
+<span class="n">polygon_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">polygon_file_path</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">polygon_np</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">y_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">polygon_np</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">polygon</span> <span class="o">=</span> <span class="n">GeometryList</span><span class="p">(</span><span class="n">x_coordinates</span><span class="p">,</span> <span class="n">y_coordinates</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mk</span><span class="o">.</span><span class="n">mesh2d_make_mesh_from_polygon</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh2d_mesh_kernel</span> <span class="o">=</span> <span class="n">mk</span><span class="o">.</span><span class="n">mesh2d_get</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -246,9 +357,31 @@
 <h3>Write UGrid mesh2d  to file<a class="headerlink" href="#write-ugrid-mesh2d-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./Mesh2DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;./Mesh2DMesKernelWrite_net.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+    <span class="c1"># 1. Define a new mesh2d</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_define</span><span class="p">(</span><span class="n">mesh2d_ugrid</span><span class="p">)</span>
+    <span class="c1"># 3. Put a new mesh2d</span>
     <span class="n">ug</span><span class="o">.</span><span class="n">mesh2d_put</span><span class="p">(</span><span class="n">topology_id</span><span class="p">,</span> <span class="n">mesh2d_ugrid</span><span class="p">)</span>
+    <span class="c1"># 3. Add crs to file</span>
+    <span class="n">attribute_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="s2">&quot;grid_mapping_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown projected&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;longitude_of_prime_meridian&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_major_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6378137.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;semi_minor_axis&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;inverse_flattening&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6356752.314245</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="s2">&quot;EPSG_code&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG:0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;value is equal to EPSG code&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">variable_int_with_attributes_define</span><span class="p">(</span><span class="s2">&quot;projected_coordinate_system&quot;</span><span class="p">,</span> <span class="n">attribute_dict</span><span class="p">)</span>
+    <span class="c1"># 4. Add conventions (global attributes)</span>
+    <span class="n">conventions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="s2">&quot;Deltares&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown Unknown. Model: Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="s2">&quot;Created on 2017-11-27T18:05:09+0100, Unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Conventions&quot;</span><span class="p">:</span> <span class="s2">&quot;CF-1.6 UGRID-1.0/Deltares-0.8&quot;</span><span class="p">}</span>
+    <span class="n">ug</span><span class="o">.</span><span class="n">attribute_global_define</span><span class="p">(</span><span class="n">conventions</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -313,7 +446,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh1DMesKernelWrite.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">UGrid</span><span class="p">(</span><span class="s2">&quot;Mesh1DMesKernelWrite_net.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ug</span><span class="p">:</span>
     <span class="c1"># 1. Define a new mesh1d</span>
     <span class="n">topology_id</span> <span class="o">=</span> <span class="n">ug</span><span class="o">.</span><span class="n">mesh1d_define</span><span class="p">(</span><span class="n">mesh1d_ugrid</span><span class="p">)</span>
     <span class="c1"># 2. Write a new mesh1d</span>
@@ -349,34 +482,26 @@
 
               </div>
               
-        
             
-
-
-
-<div class='prev-next-bottom'>
-    
-
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
 </div>
-        
+            
         </div>
     </div>
     <footer class="footer">
-    <div class="container">
-      <p>
-        
-            &copy; Copyright 2021, Deltares.<br/>
-      </p>
-    </div>
-  </footer>
+  <p>
+    
+        &copy; Copyright 2021, Deltares.<br/>
+  </p>
+</footer>
 </main>
 
 
       </div>
     </div>
   
-  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 
-  
   </body>
 </html>
