@@ -516,13 +516,16 @@ class UGrid:
             face_nodes_array = np.full(
                 num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1
             )
-            for index, (face_nodes, nodes_per_face) in enumerate(
-                zip(mesh2d.face_nodes, mesh2d.nodes_per_face)
-            ):
+
+            index_in_mesh2d = 0
+            for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
+                face_node_index = face_index * num_face_nodes_max
                 face_nodes_array[
-                    index * num_face_nodes_max : index * num_face_nodes_max
-                    + nodes_per_face
-                ] = face_nodes
+                    face_node_index : face_node_index + num_face_nodes
+                ] = mesh2d.face_nodes[
+                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
+                ]
+                index_in_mesh2d = index_in_mesh2d + num_face_nodes
 
             return UGridMesh2D(
                 name=name,
