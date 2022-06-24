@@ -22,8 +22,8 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
@@ -320,14 +320,14 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="ugridpy">
+  <section id="ugridpy">
 <h1>UGridPy<a class="headerlink" href="#ugridpy" title="Permalink to this headline">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">UGridPy</span></code> is a library for writing/reading ugrid files.
 It supports 1D and 2D unstructured meshes.
 Support for curvilinear meshes is planned.
 The underlying C++ library <code class="docutils literal notranslate"><span class="pre">UGrid</span></code> can be found <a class="reference external" href="https://github.com/Deltares/UGrid.git">here</a>.</p>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="installation">
+<section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
 <section id="windows">
 <h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">#</a></h2>
@@ -342,17 +342,17 @@ The underlying C++ library <code class="docutils literal notranslate"><span clas
 We plan to release a manylinux wheel at PyPI in the future.</p>
 </section>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="examples">
+<section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h1>
 <p><em>To be detailed</em></p>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="license">
+<section id="license">
 <h1>License<a class="headerlink" href="#license" title="Permalink to this headline">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">UGridPy</span></code> uses the MIT license.
 However, the wheels on PyPI bundle the LGPL licensed <a class="reference external" href="https://github.com/Deltares/UGrid">UGrid</a>.
 Please make sure that this fits your needs before depending on it.</p>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="contributing">
+<section id="contributing">
 <h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">#</a></h1>
 <p>In order to install <code class="docutils literal notranslate"><span class="pre">UGridPy</span></code> locally, please execute the following line inside your virtual environment</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -e <span class="s2">&quot;.[tests, lint, docs]&quot;</span>

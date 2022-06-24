@@ -179,7 +179,7 @@
     "        15,\n",
     "        16,\n",
     "    ],\n",
-    "    dtype=np.int,\n",
+    "    dtype=np.int32,\n",
     ")\n",
     "\n",
     "face_x = np.array([0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 2.5, 2.5, 2.5], dtype=np.double)\n",
@@ -223,7 +223,7 @@
     "        16,\n",
     "        12,\n",
     "    ],\n",
-    "    dtype=np.int,\n",
+    "    dtype=np.int32,\n",
     ")"
    ]
   },
