@@ -514,7 +514,7 @@ class UGrid:
         if num_faces > 0:
             num_face_nodes_max = np.max(mesh2d.nodes_per_face)
             face_nodes_array = np.full(
-                num_faces * num_face_nodes_max, dtype=np.int, fill_value=-1
+                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
             )
 
             index_in_mesh2d = 0
@@ -632,7 +632,7 @@ class UGrid:
         """
 
         num_edges = len(contacts.mesh1d_indices)
-        edges_array = np.full(num_edges * 2, dtype=np.int, fill_value=-1)
+        edges_array = np.full(num_edges * 2, dtype=np.int32, fill_value=-1)
         for index, (mesh1d_indices, mesh2d_indices) in enumerate(
             zip(contacts.mesh1d_indices, contacts.mesh2d_indices)
         ):
@@ -1101,7 +1101,7 @@ class UGrid:
             byref(c_num_dimensions),
         )
 
-        dimension_vec = np.empty(c_num_dimensions.value, dtype=np.int)
+        dimension_vec = np.empty(c_num_dimensions.value, dtype=np.int32)
         dimension_vec_ptr = as_ctypes(dimension_vec)
         self.__execute_function(
             self.lib.ug_variable_get_data_dimensions,
@@ -1151,7 +1151,7 @@ class UGrid:
 
         data_vec_dimension = functools.reduce(operator.mul, dimension_vec)
 
-        data_vec = np.empty(data_vec_dimension, dtype=np.int)
+        data_vec = np.empty(data_vec_dimension, dtype=np.int32)
         data_vec_ptr = as_ctypes(data_vec)
         variable_name_long = self.__adjust_name(variable_name)
         c_variable_name_encoded = c_char_p(variable_name_long.encode("ASCII"))
@@ -1260,7 +1260,8 @@ class UGrid:
                 attribute_values_len,
             )
 
-    def network1d_get_attributes(self, name: str):
+    @staticmethod
+    def network1d_get_attributes(name: str):
         """Get a dictionary of network1d default attribute names and the corresponding default values.
 
         Args:
@@ -1286,7 +1287,8 @@ class UGrid:
             "edge_geometry": f"{name}_edge_geometry",
         }
 
-    def mesh2d_get_attributes(self, name: str):
+    @staticmethod
+    def mesh2d_get_attributes(name: str):
         """Get a dictionary of mesh2d default attribute names.
 
         Args:
@@ -1301,7 +1303,7 @@ class UGrid:
             "topology_dimension": 2,
             "node_dimension": f"{name}_nNodes",
             "node_coordinates": f"{name}_node_x {name}_node_y",
-            "edge_dimension": f"{name}_nNodes",
+            "edge_dimension": f"{name}_nEdges",
             "edge_node_connectivity": f"{name}_edge_nodes",
             "face_dimension": f"{name}_nFaces",
             "face_node_connectivity": f"{name}_face_nodes",

@@ -9,10 +9,10 @@ def test_mesh2d_meshkernel_define_and_put():
     node_x = np.array([0.0, 1.0, 1.0, 0.0], dtype=np.double)
     node_y = np.array([0.0, 0.0, 1.0, 1.0], dtype=np.double)
 
-    edge_nodes = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.int)
+    edge_nodes = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.int32)
 
-    face_nodes = np.array([0, 1, 2, 3], dtype=np.int)
-    nodes_per_face = np.array([4], dtype=np.int)
+    face_nodes = np.array([0, 1, 2, 3], dtype=np.int32)
+    nodes_per_face = np.array([4], dtype=np.int32)
 
     ugrid_mesh2d = Mesh2d(
         node_x=node_x,
@@ -54,15 +54,15 @@ def test_mesh1d_meshkernel_define_and_put():
     # create a meshkernel mesh1d
     node_x = np.array([0.0, 1.0, 2.0, 3.0], dtype=np.double)
     node_y = np.array([0.0, 0.0, 0.0, 0.0], dtype=np.double)
-    edge_nodes = np.array([0, 1, 1, 2, 2, 3], dtype=np.int)
+    edge_nodes = np.array([0, 1, 1, 2, 2, 3], dtype=np.int32)
     mesh1d = Mesh1d(node_x=node_x, node_y=node_y, edge_nodes=edge_nodes)
 
     # all extra data required to instatiate a valid ugrid mesh1d
-    branch_id = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.int)
+    branch_id = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.int32)
     branch_offset = np.array([0, 1, 1, 2, 2, 3, 2, 0], dtype=np.double)
     node_name_id = ["branchname"]
     node_name_long = ["branchnamelong"]
-    edge_edge_id = np.array([0, 0, 0], dtype=np.int)
+    edge_edge_id = np.array([0, 0, 0], dtype=np.int32)
     edge_edge_offset = np.array([0.5, 1.5, 2.5], dtype=np.double)
     edge_x = np.array([0.5, 1.5, 2.5], dtype=np.double)
     edge_y = np.array([0.0, 0.0, 0.0], dtype=np.double)

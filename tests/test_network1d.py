@@ -9,9 +9,9 @@ def create_network1d():
 
     node_x = np.array([293.78, 538.89], dtype=np.double)
     node_y = np.array([27.48, 956.75], dtype=np.double)
-    edge_node = np.array([0, 1], dtype=np.int)
+    edge_node = np.array([0, 1], dtype=np.int32)
     edge_length = np.array([1165.29], dtype=np.double)
-    branch_order = np.array([0], dtype=np.int)
+    branch_order = np.array([0], dtype=np.int32)
 
     geometry_nodes_x = np.array(
         [
@@ -75,7 +75,7 @@ def create_network1d():
         dtype=np.double,
     )
 
-    num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int)
+    num_branch_geometry_nodes = np.array([len(geometry_nodes_x)], dtype=np.int32)
 
     network1d = UGridNetwork1D(
         name="network",
@@ -136,3 +136,23 @@ def test_network1d_define_and_put():
         topology_id = ug.network1d_define(network1d)
         assert topology_id == 0
         ug.network1d_put(topology_id, network1d)
+
+
+def test_network1d_get_attributes():
+    actual = UGrid.network1d_get_attributes("my-network")
+    expected = {
+        "cf_role": "mesh_topology",
+        "long_name": "Topology data of 1D network",
+        "topology_dimension": 1,
+        "node_dimension": "my-network_nNodes",
+        "node_coordinates": "my-network_node_x my-network_node_y",
+        "node_id": "my-network_node_id",
+        "node_long_name": "my-network_node_long_name",
+        "edge_dimension": "my-network_nEdges",
+        "edge_node_connectivity": "my-network_edge_nodes",
+        "edge_length": "my-network_edge_length",
+        "edge_id": "my-network_edge_id",
+        "edge_long_name": "my-network_edge_long_name",
+        "edge_geometry": "my-network_edge_geometry",
+    }
+    assert actual == expected

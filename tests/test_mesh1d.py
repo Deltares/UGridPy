@@ -60,11 +60,11 @@ def create_mesh1d():
             23,
             24,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
     node_edge_id = np.array(
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        dtype=np.int,
+        dtype=np.int32,
     )
     branch_offset = np.array(
         [
@@ -98,7 +98,7 @@ def create_mesh1d():
     )
     node_x = np.empty(node_edge_id.size, dtype=np.double)
     node_y = np.empty(node_edge_id.size, dtype=np.double)
-    edge_edge_id = np.empty(edge_node.size // 2, dtype=np.int)
+    edge_edge_id = np.empty(edge_node.size // 2, dtype=np.int32)
     edge_edge_offset = np.empty(edge_node.size // 2, dtype=np.double)
     edge_x = np.empty(edge_node.size // 2, dtype=np.double)
     edge_y = np.empty(edge_node.size // 2, dtype=np.double)

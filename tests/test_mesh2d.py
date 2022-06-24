@@ -61,7 +61,7 @@ def create_ugrid_mesh2d():
             15,
             16,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
 
     face_x = np.array([0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 2.5, 2.5, 2.5], dtype=np.double)
@@ -105,7 +105,7 @@ def create_ugrid_mesh2d():
             16,
             12,
         ],
-        dtype=np.int,
+        dtype=np.int32,
     )
 
     ugrid_mesh2d = UGridMesh2D(
@@ -138,3 +138,21 @@ def test_ugrid_mesh2d_get():
         assert_array_equal(ugrid_mesh2d.face_x, expected_ugrid_mesh2d.face_x)
         assert_array_equal(ugrid_mesh2d.face_y, expected_ugrid_mesh2d.face_y)
         assert_array_equal(ugrid_mesh2d.face_node, expected_ugrid_mesh2d.face_node)
+
+
+def test_mesh2d_get_attributes():
+    actual = UGrid.mesh2d_get_attributes("my-mesh")
+    expected = {
+        "cf_role": "mesh_topology",
+        "long_name": "Topology data of 2D mesh",
+        "topology_dimension": 2,
+        "node_dimension": "my-mesh_nNodes",
+        "node_coordinates": "my-mesh_node_x my-mesh_node_y",
+        "edge_dimension": "my-mesh_nEdges",
+        "edge_node_connectivity": "my-mesh_edge_nodes",
+        "face_dimension": "my-mesh_nFaces",
+        "face_node_connectivity": "my-mesh_face_nodes",
+        "max_face_nodes_dimension": "my-mesh_nMax_face_nodes",
+        "face_coordinates": "my-mesh_face_x my-mesh_face_y",
+    }
+    assert actual == expected
