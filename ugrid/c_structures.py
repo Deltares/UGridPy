@@ -33,9 +33,9 @@ def pad_and_join_list_of_strings(string_list: list, str_size: int):
 
 def numpy_array_to_ctypes(arr):
     """Cast an array to ctypes only if its len is not 0"""
-    if len(arr) == 0:
-        return None
-    return as_ctypes(arr)
+    if arr is not None and len(arr) > 0:
+        return as_ctypes(arr)
+    return None
 
 
 class CUGridNetwork1D(Structure):

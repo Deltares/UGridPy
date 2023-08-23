@@ -91,7 +91,6 @@ def test_attribute_global_define():
     r"""Tests `attribute_global_define` for defining global attributes, such as the conventions."""
 
     with UGrid("./data/written_files/Conventions.nc", "w+") as ug:
-
         conventions = {
             "institution": "Deltares",
             "references": "Unknown",

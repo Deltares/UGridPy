@@ -513,52 +513,37 @@ class UGrid:
             name (str): The name of mesh2d
             is_spherical (bool): Spherical or cartesian coordinate system
         """
-
         num_faces = len(mesh2d.nodes_per_face)
+
         if num_faces > 0:
             num_face_nodes_max = np.max(mesh2d.nodes_per_face)
-            face_nodes_array = np.full(
-                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
-            )
-            face_edges_array = np.full(
-                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
-            )
-            edge_faces_array = np.full(
-                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
-            )
 
-            index_in_mesh2d = 0
-            for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
-                current_index = face_index * num_face_nodes_max
+            def fill_int_face_array(face_array):
+                if len(face_array) == 0:
+                    return np.array([], dtype=np.int32)
 
-                face_nodes_array[
-                    current_index : current_index + num_face_nodes
-                ] = mesh2d.face_nodes[
-                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
-                ]
+                result = np.full(
+                    num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
+                )
+                index = 0
+                for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
+                    current_index = face_index * num_face_nodes_max
+                    result[current_index : current_index + num_face_nodes] = face_array[
+                        index : index + num_face_nodes
+                    ]
 
-                face_edges_array[
-                    current_index : current_index + num_face_nodes
-                ] = mesh2d.face_edges[
-                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
-                ]
-
-                edge_faces_array[
-                    current_index : current_index + num_face_nodes
-                ] = mesh2d.edge_faces[
-                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
-                ]
-
-                index_in_mesh2d = index_in_mesh2d + num_face_nodes
+            face_nodes_flat_array = fill_int_face_array(mesh2d.face_nodes)
+            face_edges_flat_array = fill_int_face_array(mesh2d.face_edges)
+            edge_faces_flat_array = fill_int_face_array(mesh2d.edge_faces)
 
             return UGridMesh2D(
                 name=name,
                 node_x=mesh2d.node_x,
                 node_y=mesh2d.node_y,
                 edge_node=mesh2d.edge_nodes,
-                face_nodes=face_nodes_array,
-                face_edges=face_edges_array,
-                edge_faces=edge_faces_array,
+                face_nodes=face_nodes_flat_array,
+                face_edges=face_edges_flat_array,
+                edge_faces=edge_faces_flat_array,
                 edge_x=mesh2d.edge_x,
                 edge_y=mesh2d.edge_y,
                 face_x=mesh2d.face_x,

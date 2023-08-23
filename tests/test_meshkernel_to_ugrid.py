@@ -1,8 +1,9 @@
 import numpy as np
 from meshkernel import Mesh1d, Mesh2d
+from test_utils import Mesh2dFactory
 
 from ugrid import UGrid
-from test_utils import Mesh2dFactory
+
 
 def test_mesh2d_meshkernel_define_and_put():
     r"""Tests a meshkernel mesh2d is correctly converted to UGridMesh2D and written to file."""
@@ -35,9 +36,7 @@ def test_mesh2d_meshkernel_factory_define_and_put():
     r"""Tests a meshkernel mesh2d is correctly converted to UGridMesh2D and written to file
     when Mesh2dFactory is used."""
 
-    mesh2d_mesh_kernel = Mesh2dFactory.create_rectilinear_mesh(
-        3, 7, origin_x=-0.1, origin_y=-1.5
-    )
+    mesh2d_mesh_kernel = Mesh2dFactory.create(3, 7, origin_x=-0.1, origin_y=-1.5)
 
     ugrid_mesh2d = UGrid.from_meshkernel_mesh2d_to_ugrid_mesh2d(
         mesh2d=mesh2d_mesh_kernel, name="mesh2d", is_spherical=False

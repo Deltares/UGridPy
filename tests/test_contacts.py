@@ -4,6 +4,7 @@ from numpy.testing import assert_array_equal
 
 from ugrid import UGrid, UGridContacts
 
+
 def create_contacts() -> UGridContacts:
     r"""Creates an instance of UGridContacts to be used for testing"""
 
