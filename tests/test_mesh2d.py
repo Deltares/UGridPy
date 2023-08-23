@@ -115,7 +115,7 @@ def create_ugrid_mesh2d():
         edge_node=edge_node,
         face_x=face_x,
         face_y=face_y,
-        face_node=face_node,
+        face_nodes=face_node,
     )
     return ugrid_mesh2d
 
@@ -133,11 +133,11 @@ def test_ugrid_mesh2d_get():
 
         assert_array_equal(ugrid_mesh2d.node_x, expected_ugrid_mesh2d.node_x)
         assert_array_equal(ugrid_mesh2d.node_y, expected_ugrid_mesh2d.node_y)
-        assert_array_equal(ugrid_mesh2d.edge_node, expected_ugrid_mesh2d.edge_node)
+        assert_array_equal(ugrid_mesh2d.edge_nodes, expected_ugrid_mesh2d.edge_nodes)
 
         assert_array_equal(ugrid_mesh2d.face_x, expected_ugrid_mesh2d.face_x)
         assert_array_equal(ugrid_mesh2d.face_y, expected_ugrid_mesh2d.face_y)
-        assert_array_equal(ugrid_mesh2d.face_node, expected_ugrid_mesh2d.face_node)
+        assert_array_equal(ugrid_mesh2d.face_nodes, expected_ugrid_mesh2d.face_nodes)
 
 
 def test_mesh2d_get_attributes():

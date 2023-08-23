@@ -1,6 +1,7 @@
 import functools
 import logging
 import operator
+import os
 import platform
 from ctypes import CDLL, byref, c_char_p, c_int
 from enum import IntEnum, unique
@@ -45,13 +46,16 @@ class UGrid:
 
         # Determine OS
         system = platform.system()
+        lib_path = Path(__file__).parent
         if system == "Windows":
-            lib_path = Path(__file__).parent / "UGridApi.dll"
+            lib_path = os.path.join(lib_path, "UGridApi.dll")
         elif system == "Linux":
-            lib_path = Path(__file__).parent / "UGridApi.so"
+            lib_path = os.path.join(lib_path, "UGridApi.so")
         elif system == "Darwin":
-            lib_path = Path(__file__).parent / "UGridApi.dylib"
+            lib_path = os.path.join(lib_path, "UGridApi.dylib")
         else:
+            if not system:
+                system = "Unknown OS"
             raise OSError(f"Unsupported operating system: {system}")
 
         self.lib = CDLL(str(lib_path))
@@ -516,15 +520,35 @@ class UGrid:
             face_nodes_array = np.full(
                 num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
             )
+            face_edges_array = np.full(
+                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
+            )
+            edge_faces_array = np.full(
+                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
+            )
 
             index_in_mesh2d = 0
             for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
-                face_node_index = face_index * num_face_nodes_max
+                current_index = face_index * num_face_nodes_max
+
                 face_nodes_array[
-                    face_node_index : face_node_index + num_face_nodes
+                    current_index : current_index + num_face_nodes
                 ] = mesh2d.face_nodes[
                     index_in_mesh2d : index_in_mesh2d + num_face_nodes
                 ]
+
+                face_edges_array[
+                    current_index : current_index + num_face_nodes
+                ] = mesh2d.face_edges[
+                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
+                ]
+
+                edge_faces_array[
+                    current_index : current_index + num_face_nodes
+                ] = mesh2d.edge_faces[
+                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
+                ]
+
                 index_in_mesh2d = index_in_mesh2d + num_face_nodes
 
             return UGridMesh2D(
@@ -532,7 +556,9 @@ class UGrid:
                 node_x=mesh2d.node_x,
                 node_y=mesh2d.node_y,
                 edge_node=mesh2d.edge_nodes,
-                face_node=face_nodes_array,
+                face_nodes=face_nodes_array,
+                face_edges=face_edges_array,
+                edge_faces=edge_faces_array,
                 edge_x=mesh2d.edge_x,
                 edge_y=mesh2d.edge_y,
                 face_x=mesh2d.face_x,
@@ -870,7 +896,6 @@ class UGrid:
         return location.value
 
     def topology_get_network1d_enum(self) -> int:
-
         """Gets the topology enum value associated with network1d.
 
         Returns:
@@ -884,7 +909,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_mesh1d_enum(self) -> int:
-
         """Gets the topology enum value associated with mesh1d.
 
         Returns:
@@ -898,7 +922,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_mesh2d_enum(self) -> int:
-
         """Gets the topology enum value associated with mesh2d.
 
         Returns:
@@ -912,7 +935,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_contacts_enum(self) -> int:
-
         """Gets the topology enum value associated with contacts.
 
         Returns:
@@ -1245,7 +1267,6 @@ class UGrid:
             variable_dict (dict): A dictionary containing the attribute names and values.
         """
         for attribute_name, attribute_value in variable_dict.items():
-
             attribute_name_long = self.__adjust_name(attribute_name)
             c_attribute_name_encoded = c_char_p(attribute_name_long.encode("ASCII"))
 

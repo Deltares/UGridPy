@@ -1,8 +1,8 @@
 import numpy as np
-from meshkernel import Mesh1d, Mesh2d, Mesh2dFactory
+from meshkernel import Mesh1d, Mesh2d
 
 from ugrid import UGrid
-
+from test_utils import Mesh2dFactory
 
 def test_mesh2d_meshkernel_define_and_put():
     r"""Tests a meshkernel mesh2d is correctly converted to UGridMesh2D and written to file."""
