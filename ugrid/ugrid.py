@@ -531,10 +531,11 @@ class UGrid:
                     result[current_index : current_index + num_face_nodes] = face_array[
                         index : index + num_face_nodes
                     ]
+                    index = index + num_face_nodes
+                return result
 
             face_nodes_flat_array = fill_int_face_array(mesh2d.face_nodes)
             face_edges_flat_array = fill_int_face_array(mesh2d.face_edges)
-            edge_faces_flat_array = fill_int_face_array(mesh2d.edge_faces)
 
             return UGridMesh2D(
                 name=name,
@@ -543,7 +544,7 @@ class UGrid:
                 edge_node=mesh2d.edge_nodes,
                 face_nodes=face_nodes_flat_array,
                 face_edges=face_edges_flat_array,
-                edge_faces=edge_faces_flat_array,
+                edge_faces=mesh2d.edge_faces,
                 edge_x=mesh2d.edge_x,
                 edge_y=mesh2d.edge_y,
                 face_x=mesh2d.face_x,
