@@ -44,25 +44,29 @@ class UGrid:
             OSError: This gets raised in case UGrid is used within an unsupported OS.
         """
 
-        # Determine OS
-        system = platform.system()
-        lib_path = Path(__file__).parent
-        if system == "Windows":
-            lib_path = os.path.join(lib_path, "UGridApi.dll")
-        elif system == "Linux":
-            lib_path = os.path.join(lib_path, "UGridApi.so")
-        elif system == "Darwin":
-            lib_path = os.path.join(lib_path, "UGridApi.dylib")
-        else:
-            if not system:
-                system = "Unknown OS"
-            raise OSError(f"Unsupported operating system: {system}")
-
+        lib_path = self.__get_library_path()
         self.lib = CDLL(str(lib_path))
         self.__open(file_path, method)
 
     def __enter__(self):
         return self
+
+    def __get_library_path(self):
+        """Gets the library path
+
+        Raises:
+            OSError: This gets raised in case UGrid is used within an unsupported OS.
+        """
+        system = platform.system()
+        lib_path = Path(__file__).parent
+        if system == "Windows":
+            lib_path = os.path.join(lib_path, "UGridApi.dll")
+        else:
+            if not system:
+                system = "Unknown OS"
+            raise OSError(f"Unsupported operating system: {system}")
+
+        return lib_path
 
     def __exit__(self, type, value, traceback):
         self.__execute_function(self.lib.ug_file_close, self._file_id)
