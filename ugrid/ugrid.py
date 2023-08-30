@@ -1,8 +1,9 @@
 import functools
 import logging
 import operator
+import os
 import platform
-from ctypes import CDLL, byref, c_char_p, c_int
+from ctypes import CDLL, byref, c_char_p, c_double, c_int
 from enum import IntEnum, unique
 from pathlib import Path
 from typing import Callable
@@ -43,22 +44,29 @@ class UGrid:
             OSError: This gets raised in case UGrid is used within an unsupported OS.
         """
 
-        # Determine OS
-        system = platform.system()
-        if system == "Windows":
-            lib_path = Path(__file__).parent / "UGridApi.dll"
-        elif system == "Linux":
-            lib_path = Path(__file__).parent / "UGridApi.so"
-        elif system == "Darwin":
-            lib_path = Path(__file__).parent / "UGridApi.dylib"
-        else:
-            raise OSError(f"Unsupported operating system: {system}")
-
+        lib_path = self.__get_library_path()
         self.lib = CDLL(str(lib_path))
         self.__open(file_path, method)
 
     def __enter__(self):
         return self
+
+    def __get_library_path(self):
+        """Gets the library path
+
+        Raises:
+            OSError: This gets raised in case UGrid is used within an unsupported OS.
+        """
+        system = platform.system()
+        lib_path = Path(__file__).parent
+        if system == "Windows":
+            lib_path = os.path.join(lib_path, "UGridApi.dll")
+        else:
+            if not system:
+                system = "Unknown OS"
+            raise OSError(f"Unsupported operating system: {system}")
+
+        return lib_path
 
     def __exit__(self, type, value, traceback):
         self.__execute_function(self.lib.ug_file_close, self._file_id)
@@ -498,9 +506,8 @@ class UGrid:
             byref(c_ugrid_mesh2d),
         )
 
-    @staticmethod
     def from_meshkernel_mesh2d_to_ugrid_mesh2d(
-        mesh2d: Mesh2d, name: str, is_spherical: bool
+        self, mesh2d: Mesh2d, name: str, is_spherical: bool
     ) -> UGridMesh2D:
         """Converts a meshkernel mesh2d to ugrid mesh2d
 
@@ -509,30 +516,40 @@ class UGrid:
             name (str): The name of mesh2d
             is_spherical (bool): Spherical or cartesian coordinate system
         """
-
         num_faces = len(mesh2d.nodes_per_face)
+
         if num_faces > 0:
             num_face_nodes_max = np.max(mesh2d.nodes_per_face)
-            face_nodes_array = np.full(
-                num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
-            )
 
-            index_in_mesh2d = 0
-            for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
-                face_node_index = face_index * num_face_nodes_max
-                face_nodes_array[
-                    face_node_index : face_node_index + num_face_nodes
-                ] = mesh2d.face_nodes[
-                    index_in_mesh2d : index_in_mesh2d + num_face_nodes
-                ]
-                index_in_mesh2d = index_in_mesh2d + num_face_nodes
+            def fill_int_face_array(face_array):
+                if len(face_array) == 0:
+                    return np.array([], dtype=np.int32)
+
+                result = np.full(
+                    num_faces * num_face_nodes_max,
+                    dtype=np.int32,
+                    fill_value=self.__get_int_fill_value(),
+                )
+                index = 0
+                for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
+                    current_index = face_index * num_face_nodes_max
+                    result[current_index : current_index + num_face_nodes] = face_array[
+                        index : index + num_face_nodes
+                    ]
+                    index = index + num_face_nodes
+                return result
+
+            face_nodes_flat_array = fill_int_face_array(mesh2d.face_nodes)
+            face_edges_flat_array = fill_int_face_array(mesh2d.face_edges)
 
             return UGridMesh2D(
                 name=name,
                 node_x=mesh2d.node_x,
                 node_y=mesh2d.node_y,
                 edge_node=mesh2d.edge_nodes,
-                face_node=face_nodes_array,
+                face_nodes=face_nodes_flat_array,
+                face_edges=face_edges_flat_array,
+                edge_faces=mesh2d.edge_faces,
                 edge_x=mesh2d.edge_x,
                 edge_y=mesh2d.edge_y,
                 face_x=mesh2d.face_x,
@@ -550,8 +567,8 @@ class UGrid:
             edge_node=mesh2d.edge_nodes,
         )
 
-    @staticmethod
     def from_meshkernel_mesh1d_to_ugrid_mesh1d(
+        self,
         mesh1d: Mesh1d,
         name: str,
         network_name: str,
@@ -605,8 +622,8 @@ class UGrid:
 
         return ugrid_mesh1d
 
-    @staticmethod
     def from_meshkernel_contacts_to_ugrid_contacts(
+        self,
         contacts: Contacts,
         name: str,
         contact_type: np.ndarray,
@@ -632,7 +649,9 @@ class UGrid:
         """
 
         num_edges = len(contacts.mesh1d_indices)
-        edges_array = np.full(num_edges * 2, dtype=np.int32, fill_value=-1)
+        edges_array = np.full(
+            num_edges * 2, dtype=np.int32, fill_value=self.__get_int_fill_value()
+        )
         for index, (mesh1d_indices, mesh2d_indices) in enumerate(
             zip(contacts.mesh1d_indices, contacts.mesh2d_indices)
         ):
@@ -870,7 +889,6 @@ class UGrid:
         return location.value
 
     def topology_get_network1d_enum(self) -> int:
-
         """Gets the topology enum value associated with network1d.
 
         Returns:
@@ -884,7 +902,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_mesh1d_enum(self) -> int:
-
         """Gets the topology enum value associated with mesh1d.
 
         Returns:
@@ -898,7 +915,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_mesh2d_enum(self) -> int:
-
         """Gets the topology enum value associated with mesh2d.
 
         Returns:
@@ -912,7 +928,6 @@ class UGrid:
         return topology_enum.value
 
     def topology_get_contacts_enum(self) -> int:
-
         """Gets the topology enum value associated with contacts.
 
         Returns:
@@ -1224,6 +1239,18 @@ class UGrid:
             attribute_values_len,
         )
 
+    def __get_int_fill_value(self):
+        """Gets the double fill value"""
+        fillValue = c_int(-1)
+        self.__execute_function(self.lib.ug_get_int_fill_value, byref(fillValue))
+        return fillValue.value
+
+    def __get_double_fill_value(self):
+        """Gets the double fill value"""
+        fillValue = c_double(-1)
+        self.__execute_function(self.lib.ug_get_double_fill_value, byref(fillValue))
+        return fillValue.value
+
     def variable_int_with_attributes_define(
         self, variable_name: str, variable_dict: dict
     ):
@@ -1245,7 +1272,6 @@ class UGrid:
             variable_dict (dict): A dictionary containing the attribute names and values.
         """
         for attribute_name, attribute_value in variable_dict.items():
-
             attribute_name_long = self.__adjust_name(attribute_name)
             c_attribute_name_encoded = c_char_p(attribute_name_long.encode("ASCII"))
 

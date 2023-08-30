@@ -127,9 +127,9 @@ class UGridMesh2D:
         edge_y (ndarray): The x-coordinates of the mesh edges' middle points.
         face_x (ndarray): The x-coordinates of the mesh faces' mass centers.
         face_y (ndarray): The y-coordinates of the mesh faces' mass centers.
-        edge_face (ndarray): The edges composing each face.
-        face_edge (ndarray): For each face, the edges composing it.
-        face_face (ndarray): For each face, the neighboring faces.
+        edge_faces (ndarray): The edges composing each face.
+        face_edges (ndarray): For each face, the edges composing it.
+        face_faces (ndarray): For each face, the neighboring faces.
         node_z (ndarray): The node z coordinates.
         edge_z (ndarray): The edge z coordinates.
         face_z (ndarray): The face z coordinates.
@@ -150,14 +150,14 @@ class UGridMesh2D:
         node_x,
         node_y,
         edge_node,
-        face_node=array([]),
+        face_nodes=array([]),
         edge_x=array([]),
         edge_y=array([]),
         face_x=array([]),
         face_y=array([]),
-        edge_face=array([]),
-        face_edge=array([]),
-        face_face=array([]),
+        edge_faces=array([]),
+        face_edges=array([]),
+        face_faces=array([]),
         node_z=array([]),
         edge_z=array([]),
         face_z=array([]),
@@ -172,18 +172,18 @@ class UGridMesh2D:
         int_fill_value=-999,
     ):
         self.name: str = name
-        self.edge_node: ndarray = edge_node
+        self.edge_nodes: ndarray = edge_node
         self.node_x: ndarray = node_x
         self.node_y: ndarray = node_y
 
-        self.face_node: ndarray = face_node
+        self.face_nodes: ndarray = face_nodes
         self.edge_x: ndarray = edge_x
         self.edge_y: ndarray = edge_y
         self.face_x: ndarray = face_x
         self.face_y: ndarray = face_y
-        self.edge_face: ndarray = edge_face
-        self.face_edge: ndarray = face_edge
-        self.face_face: ndarray = face_face
+        self.edge_faces: ndarray = edge_faces
+        self.face_edges: ndarray = face_edges
+        self.face_faces: ndarray = face_faces
         self.node_z: ndarray = node_z
         self.edge_z: ndarray = edge_z
         self.face_z: ndarray = face_z

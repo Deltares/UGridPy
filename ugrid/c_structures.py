@@ -33,9 +33,9 @@ def pad_and_join_list_of_strings(string_list: list, str_size: int):
 
 def numpy_array_to_ctypes(arr):
     """Cast an array to ctypes only if its len is not 0"""
-    if len(arr) == 0:
-        return None
-    return as_ctypes(arr)
+    if arr is not None and len(arr) > 0:
+        return as_ctypes(arr)
+    return None
 
 
 class CUGridNetwork1D(Structure):
@@ -132,9 +132,12 @@ class CUGridNetwork1D(Structure):
         )
 
         # Set the sizes
-        c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
-        c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
-        c_ugrid_network.num_edges = ugrid_network1D.edge_node.size // 2
+        if ugrid_network1D.geometry_nodes_x is not None:
+            c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
+        if ugrid_network1D.node_x is not None:
+            c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
+        if ugrid_network1D.edge_node is not None:
+            c_ugrid_network.num_edges = ugrid_network1D.edge_node.size // 2
         c_ugrid_network.is_spherical = ugrid_network1D.is_spherical
         c_ugrid_network.start_index = ugrid_network1D.start_index
 
@@ -284,8 +287,10 @@ class CUGridMesh1D(Structure):
         c_mesh1d.edge_y = numpy_array_to_ctypes(mesh1d.edge_y)
 
         # Set the sizes
-        c_mesh1d.num_nodes = mesh1d.node_x.size
-        c_mesh1d.num_edges = mesh1d.edge_node.size // 2
+        if mesh1d.node_x is not None:
+            c_mesh1d.num_nodes = mesh1d.node_x.size
+        if mesh1d.edge_node is not None:
+            c_mesh1d.num_edges = mesh1d.edge_node.size // 2
 
         # Set other properties
         c_mesh1d.is_spherical = mesh1d.is_spherical
@@ -437,7 +442,7 @@ class CUGridMesh2D(Structure):
         # Required arrays
         mesh2d_name_padded = mesh2d.name.ljust(name_long_size)
         c_mesh2d.name = c_char_p(mesh2d_name_padded.encode("ASCII"))
-        c_mesh2d.edge_node = numpy_array_to_ctypes(mesh2d.edge_node)
+        c_mesh2d.edge_node = numpy_array_to_ctypes(mesh2d.edge_nodes)
         c_mesh2d.node_x = numpy_array_to_ctypes(mesh2d.node_x)
         c_mesh2d.node_y = numpy_array_to_ctypes(mesh2d.node_y)
 
@@ -446,11 +451,11 @@ class CUGridMesh2D(Structure):
         c_mesh2d.edge_y = numpy_array_to_ctypes(mesh2d.edge_y)
         c_mesh2d.face_x = numpy_array_to_ctypes(mesh2d.face_x)
         c_mesh2d.face_y = numpy_array_to_ctypes(mesh2d.face_y)
-        c_mesh2d.edge_face = numpy_array_to_ctypes(mesh2d.edge_face)
+        c_mesh2d.edge_face = numpy_array_to_ctypes(mesh2d.edge_faces)
 
-        c_mesh2d.face_node = numpy_array_to_ctypes(mesh2d.face_node)
-        c_mesh2d.face_edge = numpy_array_to_ctypes(mesh2d.face_edge)
-        c_mesh2d.face_face = numpy_array_to_ctypes(mesh2d.face_face)
+        c_mesh2d.face_node = numpy_array_to_ctypes(mesh2d.face_nodes)
+        c_mesh2d.face_edge = numpy_array_to_ctypes(mesh2d.face_edges)
+        c_mesh2d.face_face = numpy_array_to_ctypes(mesh2d.face_faces)
 
         c_mesh2d.node_z = numpy_array_to_ctypes(mesh2d.node_z)
         c_mesh2d.edge_z = numpy_array_to_ctypes(mesh2d.edge_z)
@@ -463,10 +468,14 @@ class CUGridMesh2D(Structure):
         c_mesh2d.volume_coordinates = numpy_array_to_ctypes(mesh2d.volume_coordinates)
 
         # Set the sizes
-        c_mesh2d.num_nodes = mesh2d.node_x.size
-        c_mesh2d.num_edges = mesh2d.edge_node.size // 2
-        c_mesh2d.num_faces = mesh2d.face_x.size
-        c_mesh2d.num_layers = mesh2d.layer_zs.size
+        if mesh2d.node_x is not None:
+            c_mesh2d.num_nodes = mesh2d.node_x.size
+        if mesh2d.edge_nodes is not None:
+            c_mesh2d.num_edges = mesh2d.edge_nodes.size // 2
+        if mesh2d.face_x is not None:
+            c_mesh2d.num_faces = mesh2d.face_x.size
+        if mesh2d.layer_zs is not None:
+            c_mesh2d.num_layers = mesh2d.layer_zs.size
 
         # Set other properties
         c_mesh2d.start_index = mesh2d.start_index
@@ -545,14 +554,14 @@ class CUGridMesh2D(Structure):
             node_x=node_x,
             node_y=node_y,
             edge_node=edge_node,
-            face_node=face_node,
+            face_nodes=face_node,
             edge_x=edge_x,
             edge_y=edge_y,
             face_x=face_x,
             face_y=face_y,
-            edge_face=edge_face,
-            face_edge=face_edge,
-            face_face=face_face,
+            edge_faces=edge_face,
+            face_edges=face_edge,
+            face_faces=face_face,
             node_z=node_z,
             edge_z=edge_z,
             face_z=face_z,
@@ -636,7 +645,8 @@ class CUGridContacts(Structure):
         c_contacts.mesh_to_location = contacts.mesh_to_location
 
         # Set the size
-        c_contacts.num_contacts = contacts.edges.size // 2
+        if contacts.edges is not None:
+            c_contacts.num_contacts = contacts.edges.size // 2
 
         return c_contacts
 
