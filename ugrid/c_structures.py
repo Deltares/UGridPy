@@ -132,9 +132,12 @@ class CUGridNetwork1D(Structure):
         )
 
         # Set the sizes
-        c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
-        c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
-        c_ugrid_network.num_edges = ugrid_network1D.edge_node.size // 2
+        if ugrid_network1D.geometry_nodes_x is not None:
+            c_ugrid_network.num_geometry_nodes = ugrid_network1D.geometry_nodes_x.size
+        if ugrid_network1D.node_x is not None:
+            c_ugrid_network.num_nodes = ugrid_network1D.node_x.size
+        if ugrid_network1D.edge_node is not None:
+            c_ugrid_network.num_edges = ugrid_network1D.edge_node.size // 2
         c_ugrid_network.is_spherical = ugrid_network1D.is_spherical
         c_ugrid_network.start_index = ugrid_network1D.start_index
 
@@ -284,8 +287,10 @@ class CUGridMesh1D(Structure):
         c_mesh1d.edge_y = numpy_array_to_ctypes(mesh1d.edge_y)
 
         # Set the sizes
-        c_mesh1d.num_nodes = mesh1d.node_x.size
-        c_mesh1d.num_edges = mesh1d.edge_node.size // 2
+        if mesh1d.node_x is not None:
+            c_mesh1d.num_nodes = mesh1d.node_x.size
+        if mesh1d.edge_node is not None:
+            c_mesh1d.num_edges = mesh1d.edge_node.size // 2
 
         # Set other properties
         c_mesh1d.is_spherical = mesh1d.is_spherical
@@ -636,7 +641,8 @@ class CUGridContacts(Structure):
         c_contacts.mesh_to_location = contacts.mesh_to_location
 
         # Set the size
-        c_contacts.num_contacts = contacts.edges.size // 2
+        if contacts.edges is not None:
+            c_contacts.num_contacts = contacts.edges.size // 2
 
         return c_contacts
 
