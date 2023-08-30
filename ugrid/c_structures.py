@@ -468,10 +468,14 @@ class CUGridMesh2D(Structure):
         c_mesh2d.volume_coordinates = numpy_array_to_ctypes(mesh2d.volume_coordinates)
 
         # Set the sizes
-        c_mesh2d.num_nodes = mesh2d.node_x.size
-        c_mesh2d.num_edges = mesh2d.edge_nodes.size // 2
-        c_mesh2d.num_faces = mesh2d.face_x.size
-        c_mesh2d.num_layers = mesh2d.layer_zs.size
+        if mesh2d.node_x is not None:
+            c_mesh2d.num_nodes = mesh2d.node_x.size
+        if mesh2d.edge_nodes is not None:
+            c_mesh2d.num_edges = mesh2d.edge_nodes.size // 2
+        if mesh2d.face_x is not None:
+            c_mesh2d.num_faces = mesh2d.face_x.size
+        if mesh2d.layer_zs is not None:
+            c_mesh2d.num_layers = mesh2d.layer_zs.size
 
         # Set other properties
         c_mesh2d.start_index = mesh2d.start_index
