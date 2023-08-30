@@ -127,18 +127,19 @@ def test_contacts_meshkernel_define_and_put():
     contact_name_id = ["linkid" for _ in range(mesh1d_indices.size)]
     contact_name_long = ["linklongname" for _ in range(mesh1d_indices.size)]
 
-    ugrid_contacts = UGrid.from_meshkernel_contacts_to_ugrid_contacts(
-        contacts=contacts,
-        name="contacts",
-        contact_type=contact_type,
-        contact_name_id=contact_name_id,
-        contact_name_long=contact_name_long,
-        mesh_from_name="mesh2d",
-        mesh_to_name="mesh1d",
-        mesh_from_location=0,
-        mesh_to_location=0,
-    )
     with UGrid("./data/written_files/Mesh2DMesKernelWrite.nc", "w+") as ug:
+        ugrid_contacts = ug.from_meshkernel_contacts_to_ugrid_contacts(
+            contacts=contacts,
+            name="contacts",
+            contact_type=contact_type,
+            contact_name_id=contact_name_id,
+            contact_name_long=contact_name_long,
+            mesh_from_name="mesh2d",
+            mesh_to_name="mesh1d",
+            mesh_from_location=0,
+            mesh_to_location=0,
+        )
+
         topology_id = ug.contacts_define(ugrid_contacts)
         assert topology_id == 0
         ug.contacts_put(topology_id, ugrid_contacts)

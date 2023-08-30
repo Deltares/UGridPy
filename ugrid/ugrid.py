@@ -3,7 +3,7 @@ import logging
 import operator
 import os
 import platform
-from ctypes import CDLL, byref, c_char_p, c_int
+from ctypes import CDLL, byref, c_char_p, c_double, c_int
 from enum import IntEnum, unique
 from pathlib import Path
 from typing import Callable
@@ -506,9 +506,8 @@ class UGrid:
             byref(c_ugrid_mesh2d),
         )
 
-    @staticmethod
     def from_meshkernel_mesh2d_to_ugrid_mesh2d(
-        mesh2d: Mesh2d, name: str, is_spherical: bool
+        self, mesh2d: Mesh2d, name: str, is_spherical: bool
     ) -> UGridMesh2D:
         """Converts a meshkernel mesh2d to ugrid mesh2d
 
@@ -527,7 +526,9 @@ class UGrid:
                     return np.array([], dtype=np.int32)
 
                 result = np.full(
-                    num_faces * num_face_nodes_max, dtype=np.int32, fill_value=-1
+                    num_faces * num_face_nodes_max,
+                    dtype=np.int32,
+                    fill_value=self.__get_int_fill_value(),
                 )
                 index = 0
                 for face_index, num_face_nodes in enumerate(mesh2d.nodes_per_face):
@@ -566,8 +567,8 @@ class UGrid:
             edge_node=mesh2d.edge_nodes,
         )
 
-    @staticmethod
     def from_meshkernel_mesh1d_to_ugrid_mesh1d(
+        self,
         mesh1d: Mesh1d,
         name: str,
         network_name: str,
@@ -621,8 +622,8 @@ class UGrid:
 
         return ugrid_mesh1d
 
-    @staticmethod
     def from_meshkernel_contacts_to_ugrid_contacts(
+        self,
         contacts: Contacts,
         name: str,
         contact_type: np.ndarray,
@@ -648,7 +649,9 @@ class UGrid:
         """
 
         num_edges = len(contacts.mesh1d_indices)
-        edges_array = np.full(num_edges * 2, dtype=np.int32, fill_value=-1)
+        edges_array = np.full(
+            num_edges * 2, dtype=np.int32, fill_value=self.__get_int_fill_value()
+        )
         for index, (mesh1d_indices, mesh2d_indices) in enumerate(
             zip(contacts.mesh1d_indices, contacts.mesh2d_indices)
         ):
@@ -1235,6 +1238,18 @@ class UGrid:
             c_attribute_values,
             attribute_values_len,
         )
+
+    def __get_int_fill_value(self):
+        """Gets the double fill value"""
+        fillValue = c_int(-1)
+        self.__execute_function(self.lib.ug_get_int_fill_value, byref(fillValue))
+        return fillValue.value
+
+    def __get_double_fill_value(self):
+        """Gets the double fill value"""
+        fillValue = c_double(-1)
+        self.__execute_function(self.lib.ug_get_double_fill_value, byref(fillValue))
+        return fillValue.value
 
     def variable_int_with_attributes_define(
         self, variable_name: str, variable_dict: dict
